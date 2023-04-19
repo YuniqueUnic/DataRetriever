@@ -3,10 +3,227 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VSTSDataProvider"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:local="clr-namespace:VSTSDataProvider"
+        xmlns:msflib="clr-namespace:System;assembly=mscorlib"
+        xmlns:vc="clr-namespace:VSTSDataProvider.Common"
+        Title="MainWindow"
+        Width="800"
+        Height="450">
+    <Window.Resources>
+        <ResourceDictionary>
+            <vc:FontSizeScaleConverter x:Key="FontSizeScaleConverter" />
+
+            <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Padding="2"
+                                    BorderBrush="Black"
+                                    BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Orientation="Vertical">
+                                    <Label Name="TitleLabel"
+                                           Padding="4,2"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           Content="{TemplateBinding Tag}" />
+                                    <ScrollViewer>
+                                        <TextBox Name="ContentTextBox"
+                                                 MinHeight="18"
+                                                 Padding="4"
+                                                 AcceptsReturn="True"
+                                                 Text="{TemplateBinding Text}">
+                                            <TextBox.FontSize>
+                                                <Binding Converter="{StaticResource FontSizeScaleConverter}"
+                                                         ConverterParameter="1.5"
+                                                         ElementName="TitleLabel"
+                                                         Path="FontSize" />
+                                            </TextBox.FontSize>
+                                        </TextBox>
+                                    </ScrollViewer>
+                                </StackPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+            <Style x:Key="TextBoxLongWithLabel" TargetType="TextBox">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Padding="4"
+                                    BorderBrush="Black"
+                                    BorderThickness="1">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Name="TitleLabel"
+                                           Grid.Row="0"
+                                           Padding="4,2"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           Content="{TemplateBinding Tag}" />
+                                    <ScrollViewer Grid.Row="1"
+                                                  ScrollViewer.PanningMode="Both"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <TextBox Name="ContentTextBox"
+                                                 Grid.Row="1"
+                                                 MinHeight="18"
+                                                 Padding="4"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="{TemplateBinding TextWrapping}"
+                                                 Text="{TemplateBinding Text}">
+                                            <TextBox.FontSize>
+                                                <Binding Converter="{StaticResource FontSizeScaleConverter}"
+                                                         ConverterParameter="1.5"
+                                                         ElementName="TitleLabel"
+                                                         Path="FontSize" />
+                                            </TextBox.FontSize>
+                                        </TextBox>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+            <Style x:Key="BaseButtonStyle" TargetType="Button">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+                                  MinWidth="10"
+                                  MaxWidth="200" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--  row = 0  -->
+            <Grid Name="LeftInfoGrid"
+                  Grid.Row="0"
+                  Grid.Column="0"
+                  Margin="4"
+                  Background="#1000">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MaxHeight="100" />
+                    <RowDefinition Height="Auto" MaxHeight="100" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
+                <TextBox Name="TestPlanTextBox"
+                         Style="{StaticResource TextBoxShortWithLabel}"
+                         Grid.Row="0"
+                         Margin="0,4"
+                         Tag="Test Plan"
+                         Text="Test Plan" />
+                <TextBox Name="TestSuiteTextBox"
+                         Style="{StaticResource TextBoxShortWithLabel}"
+                         Grid.Row="1"
+                         Margin="0,4"
+                         Tag="Test Suite"
+                         Text="Test Suite" />
+                <TextBox Name="CompleteURLTextBox"
+                         Style="{StaticResource TextBoxLongWithLabel}"
+                         Grid.Row="2"
+                         Margin="0,4"
+                         Tag="Complete Url"
+                         TextWrapping="WrapWithOverflow" />
+                <TextBox Name="CookieTextBox"
+                         Style="{StaticResource TextBoxLongWithLabel}"
+                         Grid.Row="3"
+                         Margin="0,4"
+                         Tag="Cookie"
+                         TextWrapping="Wrap"
+                         Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie." />
+            </Grid>
+            <GridSplitter Grid.Row="0"
+                          Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"
+                          Background="#4000"
+                          ResizeDirection="Columns"
+                          ShowsPreview="True" />
+            <Grid Name="TableGrid"
+                  Grid.Row="0"
+                  Grid.Column="2"
+                  Margin="4">
+                <Border Margin="0,2"
+                        BorderBrush="Blue"
+                        BorderThickness="1">
+                    <DataGrid Name="VSTSDataGrid"
+                              d:ItemsSource="{d:SampleData ItemCount=100}"
+                              AutoGenerateColumns="True"
+                              CanUserReorderColumns="True"
+                              CanUserResizeColumns="True"
+                              CanUserResizeRows="True"
+                              CanUserSortColumns="True" />
+                </Border>
+            </Grid>
+        </Grid>
+        <!--  row = 1  -->
+        <Grid Name="BottomFunctionsGrid"
+              Grid.Row="1"
+              Grid.Column="0"
+              Grid.ColumnSpan="3"
+              Margin="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Button Name="GetDataButton"
+                    Style="{StaticResource BaseButtonStyle}"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,0,4,0"
+                    Content="Get Data" />
+            <ComboBox Name="FilterComboBox"
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      IsEditable="True" />
+            <ProgressBar Name="GetProgressBar"
+                         Grid.Row="0"
+                         Grid.Column="1"
+                         Width="{Binding ElementName=FilterComboBox, Path=ActualWidth}"
+                         Height="{Binding ElementName=FilterComboBox, Path=ActualHeight}"
+                         VerticalAlignment="Center"
+                         IsIndeterminate="True"
+                         Visibility="Hidden" />
+            <Button Name="RefreshButton"
+                    Style="{StaticResource BaseButtonStyle}"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="4,0,0,0"
+                    ToolTip="Refresh the table."
+                    Content="Refresh" />
+        </Grid>
     </Grid>
 </Window>
