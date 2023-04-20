@@ -4,12 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider"
         xmlns:msflib="clr-namespace:System;assembly=mscorlib"
         xmlns:vc="clr-namespace:VSTSDataProvider.Common"
+        xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="MainWindow"
         Width="800"
-        Height="450">
+        Height="450"
+        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}">
     <Window.Resources>
         <ResourceDictionary>
             <vc:FontSizeScaleConverter x:Key="FontSizeScaleConverter" />
@@ -105,6 +108,13 @@
 
         </ResourceDictionary>
     </Window.Resources>
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding MainWindowLoadedCommand}" CommandParameter="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -125,12 +135,16 @@
                   Grid.Column="0"
                   Margin="4"
                   Background="#1000">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" MaxHeight="100" />
                     <RowDefinition Height="Auto" MaxHeight="100" />
                     <RowDefinition Height="3*" />
                     <RowDefinition Height="3*" />
                 </Grid.RowDefinitions>
+
                 <TextBox Name="TestPlanTextBox"
                          Style="{StaticResource TextBoxShortWithLabel}"
                          Grid.Row="0"
