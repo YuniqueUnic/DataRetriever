@@ -14,7 +14,7 @@ namespace VSTSDataProvider.ViewModels.ViewModelBase;
 //    }
 //}
 
-public abstract class BaseViewModel : INotifyPropertyChanged
+public abstract class BaseViewModel : INotifyPropertyChanged, INotifyPropertyChanging
 {
     public event PropertyChangingEventHandler PropertyChanging;
     public event PropertyChangedEventHandler PropertyChanged;

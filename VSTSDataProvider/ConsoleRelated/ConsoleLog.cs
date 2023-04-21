@@ -65,7 +65,7 @@ public static class ConsoleEx
         Console.WindowWidth = 80;
         Console.CursorVisible = false;
         Console.Title = consoleTitle;
-        Console.WriteLine("DEBUG CONSOLE WAIT OUTPUTING...{0} {1}\n" , DateTime.Now.ToLongTimeString());
+        Console.WriteLine("DEBUG CONSOLE WAIT OUTPUTING...{0} \n" , DateTime.Now.ToLongTimeString());
     }
 
     public static void Log(String format , params object[] args)

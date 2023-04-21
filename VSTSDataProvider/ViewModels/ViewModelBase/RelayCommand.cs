@@ -11,6 +11,12 @@ public class RelayCommand : ICommand
     private readonly Action _executeNonParam;
     private readonly Predicate<object> _canExecute;
 
+    public event EventHandler CanExecuteChanged;
+    //{
+    //    add { CommandManager.RequerySuggested += value; }
+    //    remove { CommandManager.RequerySuggested -= value; }
+    //}
+
     public RelayCommand(Action<object> execute , Predicate<object> canExecute = null)
     {
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
@@ -40,11 +46,16 @@ public class RelayCommand : ICommand
         }
     }
 
-    public event EventHandler CanExecuteChanged
+    public void RaiseCanExecuteChanged( )
     {
-        add { CommandManager.RequerySuggested += value; }
-        remove { CommandManager.RequerySuggested -= value; }
+        OnCanExecuteChanged(); // 触发命令可执行性改变事件
     }
+
+    protected virtual void OnCanExecuteChanged( )
+    {
+        CanExecuteChanged?.Invoke(this , EventArgs.Empty); // 触发命令可执行性改变事件
+    }
+
 }
 
 public class AsyncRelayCommand : ICommand
@@ -68,7 +79,7 @@ public class AsyncRelayCommand : ICommand
         }
     }
 
-    public event EventHandler CanExecuteChanged; // 命令可执行性改变时触发的事件
+    public event EventHandler? CanExecuteChanged; // 命令可执行性改变时触发的事件
 
     public AsyncRelayCommand(Func<CancellationToken , Task> execute , Func<object , bool> canExecute = null , Action onCompleted = null)
     {
