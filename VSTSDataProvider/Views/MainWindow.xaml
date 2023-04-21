@@ -109,6 +109,10 @@
         </ResourceDictionary>
     </Window.Resources>
 
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding MainWindowLoadedCommand}" CommandParameter="True" />
@@ -149,27 +153,31 @@
                          Style="{StaticResource TextBoxShortWithLabel}"
                          Grid.Row="0"
                          Margin="0,4"
+                         d:Text="Test Plan"
                          Tag="Test Plan"
-                         Text="Test Plan" />
+                         Text="{Binding TestPlanID}" />
                 <TextBox Name="TestSuiteTextBox"
                          Style="{StaticResource TextBoxShortWithLabel}"
                          Grid.Row="1"
                          Margin="0,4"
+                         d:Text="Test Suite"
                          Tag="Test Suite"
-                         Text="Test Suite" />
+                         Text="{Binding TestSuiteID}" />
                 <TextBox Name="CompleteURLTextBox"
                          Style="{StaticResource TextBoxLongWithLabel}"
                          Grid.Row="2"
                          Margin="0,4"
                          Tag="Complete Url"
-                         TextWrapping="WrapWithOverflow" />
+                         TextWrapping="WrapWithOverflow"
+                         Text="{Binding CompleteUrl}" />
                 <TextBox Name="CookieTextBox"
                          Style="{StaticResource TextBoxLongWithLabel}"
                          Grid.Row="3"
                          Margin="0,4"
+                         d:Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie."
                          Tag="Cookie"
                          TextWrapping="Wrap"
-                         Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie." />
+                         Text="{Binding Cookie}" />
             </Grid>
             <GridSplitter Grid.Row="0"
                           Grid.Column="1"
@@ -215,6 +223,7 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     Margin="0,0,4,0"
+                    Command="{Binding GetDataButtonClicked}"
                     Content="Get Data" />
             <ComboBox Name="FilterComboBox"
                       Grid.Row="0"
