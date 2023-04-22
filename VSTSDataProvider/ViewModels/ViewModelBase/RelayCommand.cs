@@ -46,36 +46,28 @@ public class RelayCommand : ICommand
         }
     }
 
-    public void RaiseCanExecuteChanged( )
-    {
-        OnCanExecuteChanged(); // 触发命令可执行性改变事件
-    }
+    public void RaiseCanExecuteChanged( ) => OnCanExecuteChanged(); // 触发命令可执行性改变事件
 
-    protected virtual void OnCanExecuteChanged( )
-    {
-        CanExecuteChanged?.Invoke(this , EventArgs.Empty); // 触发命令可执行性改变事件
-    }
-
+    protected virtual void OnCanExecuteChanged( ) => CanExecuteChanged?.Invoke(this , EventArgs.Empty);
 }
 
-public class AsyncRelayCommand : ICommand
+public class AsyncRelayCommand : ViewModelBase.BaseViewModel, ICommand
 {
     private readonly Func<CancellationToken , Task> _execute; // 异步执行的委托
     private readonly Func<object , bool> _canExecute; // 判断命令是否可执行的委托
     private readonly Action _onCompleted; // 命令执行完成时的回调函数
     private CancellationTokenSource _cancellationTokenSource; // 取消命令执行的令牌源
     private bool _isExecuting; // 表示命令是否正在执行的标志位
+    private Func<Task> refreshDataTableAsync;
+    private Func<object , bool> value;
 
     public bool IsExecuting
     {
-        get { return _isExecuting; }
+        get => _isExecuting;
         private set
         {
-            if( _isExecuting != value )
-            {
-                _isExecuting = value;
-                OnCanExecuteChanged();
-            }
+            SetProperty(ref _isExecuting , value);
+            OnCanExecuteChanged();
         }
     }
 
@@ -87,6 +79,12 @@ public class AsyncRelayCommand : ICommand
         _canExecute = canExecute; // 可执行性判断的委托可选
         _onCompleted = onCompleted; // 命令执行完成时的回调函数可选
         _cancellationTokenSource = new CancellationTokenSource(); // 创建取消命令执行的令牌源
+    }
+
+    public AsyncRelayCommand(Func<Task> refreshDataTableAsync , Func<object , bool> value)
+    {
+        this.refreshDataTableAsync = refreshDataTableAsync;
+        this.value = value;
     }
 
     public bool CanExecute(object parameter)
@@ -143,19 +141,15 @@ public class AsyncRelayCommand : ICommand
         }
     }
 
-    public void RaiseCanExecuteChanged( )
-    {
-        OnCanExecuteChanged(); // 触发命令可执行性改变事件
-    }
+    // 触发命令可执行性改变事件 
+    public void RaiseCanExecuteChanged( ) => OnCanExecuteChanged();
 
-    protected virtual void OnCanExecuteChanged( )
-    {
-        CanExecuteChanged?.Invoke(this , EventArgs.Empty); // 触发命令可执行性改变事件
-    }
+    // 触发命令可执行性改变事件
+    protected virtual void OnCanExecuteChanged( ) => CanExecuteChanged?.Invoke(this , EventArgs.Empty);
 }
 
 //带结果的 AsyncRelayCommand
-public class AsyncRelayCommand<TResult> : ICommand
+public class AsyncRelayCommand<TResult> : ViewModelBase.BaseViewModel, ICommand
 {
     private readonly Func<CancellationToken , Task<TResult>> _execute;
     private readonly Func<bool> _canExecute;
@@ -167,11 +161,8 @@ public class AsyncRelayCommand<TResult> : ICommand
         get { return _isExecuting; }
         private set
         {
-            if( _isExecuting != value )
-            {
-                _isExecuting = value;
-                OnCanExecuteChanged();
-            }
+            SetProperty(ref _isExecuting , value);
+            OnCanExecuteChanged();
         }
     }
 
@@ -213,29 +204,15 @@ public class AsyncRelayCommand<TResult> : ICommand
         }
     }
 
-    public void RaiseCanExecuteChanged( )
-    {
-        OnCanExecuteChanged(); // 触发命令可执行性改变事件
-    }
+    // 触发命令可执行性改变事件
+    public void RaiseCanExecuteChanged( ) => OnCanExecuteChanged();
 
-    public void Cancel( )
-    {
-        _cts?.Cancel();
-    }
+    public void Cancel( ) => _cts?.Cancel();
 
+    protected virtual void OnExecutionCompleted(TResult result) => ExecutionCompleted?.Invoke(this , result);
 
-    protected virtual void OnExecutionCompleted(TResult result)
-    {
-        ExecutionCompleted?.Invoke(this , result);
-    }
+    protected virtual void OnExecutionError(Exception ex) => ExecutionError?.Invoke(this , ex);
 
-    protected virtual void OnExecutionError(Exception ex)
-    {
-        ExecutionError?.Invoke(this , ex);
-    }
-
-    protected virtual void OnCanExecuteChanged( )
-    {
-        CanExecuteChanged?.Invoke(this , EventArgs.Empty); // 触发命令可执行性改变事件
-    }
+    // 触发命令可执行性改变事件 
+    protected virtual void OnCanExecuteChanged( ) => CanExecuteChanged?.Invoke(this , EventArgs.Empty);
 }

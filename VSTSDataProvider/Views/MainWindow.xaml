@@ -23,7 +23,7 @@
 
             <vc:FontSizeScaleConverter x:Key="FontSizeScaleConverter" />
             <vc:DoubleValueScaleConverter x:Key="DoubleValueScaleConverter" />
-            <vc:BoolenNullableToVisibility x:Key="BoolenNullableToVisibility" />
+            <vc:BoolenNullableToVisibility x:Key="BoolenNullableToVisibility" IsEnabled="True" />
 
             <Style x:Key="TextBoxWithErrorTemplate" TargetType="{x:Type TextBox}">
                 <!--  定义常见的Padding、Margin，包括左侧10像素的空隙  -->
@@ -316,7 +316,7 @@
                          Height="{Binding ElementName=FilterComboBox, Path=ActualHeight}"
                          VerticalAlignment="Center"
                          IsIndeterminate="True"
-                         Visibility="{Binding ProgressShowing, Converter={StaticResource BoolenNullableToVisibility}}" />
+                         Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />
             <Button Name="RefreshButton"
                     Style="{StaticResource BaseButtonStyle}"
                     Grid.Row="0"

@@ -16,7 +16,6 @@ public sealed class StringValueAttribute : Attribute
     }
 }
 
-
 public static class EnumExtensions
 {
     private sealed class EnumInfo<TEnum, TObject>
@@ -65,5 +64,4 @@ public static class EnumExtensions
         var enumInfo = enumInfos.Find(ei => ei.EnumValue.Equals(value , StringComparison.OrdinalIgnoreCase));
         return enumInfo?.Enum ?? default;
     }
-
 }

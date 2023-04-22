@@ -3,6 +3,33 @@ using VSTSDataProvider.Common;
 
 namespace VSTSDataProvider.Models;
 
+/// <summary>
+/// 表示 TestPlan 和 TestSuite 的 ID。
+/// </summary>
+public struct TestPlanSuiteId
+{
+    /// <summary>
+    /// TestPlan ID。如果未设置，则为 -1。
+    /// </summary>
+    public int PlanId { get; } = -1;
+
+    /// <summary>
+    /// TestSuite ID。如果未设置，则为 -1。
+    /// </summary>
+    public int SuiteId { get; } = -1;
+
+    /// <summary>
+    /// 初始化一个新的 TestPlanSuiteId 结构。
+    /// </summary>
+    /// <param name="planId">要设置的 TestPlan ID。</param>
+    /// <param name="suiteId">要设置的 TestSuite ID。</param>
+    public TestPlanSuiteId(int planId , int suiteId)
+    {
+        PlanId = planId;
+        SuiteId = suiteId;
+    }
+}
+
 
 public class TestPoint : ITestObject
 {
@@ -12,7 +39,8 @@ public class TestPoint : ITestObject
     public string? Configuration { get; set; }
     public string? AssignedTo { get; set; }
     public string? RunBy { get; set; }
-
+    public string? displayName { get; set; }
+    public string? uniqueName { get; set; }
 }
 
 public class TestCase : ITestObject
@@ -27,7 +55,7 @@ public class TestCase : ITestObject
     public bool IsAutomated { get; set; }
     public string? ScriptName { get; set; }
     public TestPoint? SelfTestPoint { get; set; }
-    public TestSutie? ParentTestSutie { get; set; }
+    public TestSuite? ParentTestSuite { get; set; }
     public ProductAreas ProductArea => _productArea;
     public TestTools? TestTool { get => _testTools; }
     public OutcomeState Outcome => _outcome;
@@ -53,7 +81,7 @@ public class TestCase : ITestObject
         }
     }
 }
-public class TestSutie : ITestObject
+public class TestSuite : ITestObject
 {
     public string? Name { get; set; }
     public int ID { get; set; }
@@ -65,7 +93,7 @@ public class TestPlan : ITestObject
 {
     public string? Name { get; set; }
     public int ID { get; set; }
-    public TestSutie? ChildTestSutie { get; set; }
+    public TestSuite? ChildTestSuite { get; set; }
 }
 
 public interface ITestObject

@@ -1,8 +1,9 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 
 namespace VSTSDataProvider.ViewModels;
@@ -25,8 +26,9 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     {
         MainWindowLoadedCommand = new RelayCommand(MainWindowLoaded);
         GetDataButtonClickedCommand = new AsyncRelayCommand(GetVSTSDataTask , CanGetData);
-        RefreshButtonClickedCommand = new RelayCommand(RefreshDataTable);
+        RefreshButtonClickedCommand = new AsyncRelayCommand(RefreshDataTableAsync , (o) => true);
     }
+
 
 
 
@@ -80,6 +82,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             GetDataButtonClickedCommand.RaiseCanExecuteChanged();
         }
     }
+
     public string? ComboBoxText
     {
         get { return _comboBoxText ?? string.Empty; }
@@ -88,7 +91,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             SetProperty(ref _comboBoxText , value);
         }
     }
-
 
     public bool? ProgressShowing
     {
@@ -105,11 +107,11 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
 
     #region 用于界面 Binding 的命令 - RelayCommands
+
     public RelayCommand MainWindowLoadedCommand { get; set; }
 
     private void MainWindowLoaded( )
     {
-        bool hello = DataObjectsHelper.IsDefault<string>(null);
     }
 
 
@@ -148,11 +150,18 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     }
 
-    public RelayCommand RefreshButtonClickedCommand { get; set; }
+    public AsyncRelayCommand RefreshButtonClickedCommand { get; set; }
 
-    private void RefreshDataTable( )
+    private async Task RefreshDataTableAsync(CancellationToken arg)
     {
-        ProgressShowing = !ProgressShowing;
+        using( var dataFile = File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\Documents\LINQPad Queries\Data\Json\NewExcuateFile.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            int a = 0;
+            var responseJson = JsonConvert.DeserializeObject<string>(fileData);
+
+            int vb = 0;
+        }
     }
 
 
