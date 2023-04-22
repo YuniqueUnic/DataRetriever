@@ -11,7 +11,7 @@ namespace VSTSDataProvider.Common;
 public class NetUtils
 {
     //需要再完善
-    public static async Task<string> GetAccessToken(string apiUrl , string username , string password)
+    public static async Task<string> GetAccessToken(Uri apiUrl , string username , string password)
     {
         using( HttpClient client = new HttpClient() )
         {
@@ -33,7 +33,7 @@ public class NetUtils
         }
     }
 
-    public static async Task SendRequestWithAccessToken(string apiUrl , string accessToken)
+    public static async Task SendRequestWithAccessToken(Uri apiUrl , string accessToken)
     {
         using( HttpClient client = new HttpClient() )
         {
@@ -105,7 +105,7 @@ public class NetUtils
     /// <param name="accessCookie">要在请求头中设置的 Cookie 值。</param>
     /// <param name="callBackAction">请求完成后要执行的回调函数。</param>
     /// <returns>表示操作结果的 Task，其 Result 属性将包含响应内容的 JObject 对象。</returns>
-    public static async Task<string> SendRequestWithCookieForStr(string apiUrl , string accessCookie , Action callBackAction = null)
+    public static async Task<string> SendRequestWithCookieForStr(Uri apiUrl , string accessCookie , Action callBackAction = null)
     {
         // 创建一个 HttpClient 对象，并使用 using 语句确保在使用完毕后正确释放资源
         using( HttpClient httpClient = new HttpClient() )
@@ -135,7 +135,7 @@ public class NetUtils
     /// <param name="accessCookie">要在请求头中设置的 Cookie 值。</param>
     /// <param name="callBackAction">请求完成后要执行的回调函数。</param>
     /// <returns>表示操作结果的 Task，其 Result 属性将包含响应内容的 JObject 对象。</returns>
-    public static async Task<JObject> SendRequestWithCookieForJObj(string apiUrl , string accessCookie , Action callBackAction = null)
+    public static async Task<JObject> SendRequestWithCookieForJObj(Uri apiUrl , string accessCookie , Action callBackAction = null)
     {
         // 创建一个 HttpClient 对象，并使用 using 语句确保在使用完毕后正确释放资源
         using( HttpClient httpClient = new HttpClient() )

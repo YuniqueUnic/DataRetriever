@@ -65,12 +65,14 @@ public static class ConsoleEx
         Console.WindowWidth = 80;
         Console.CursorVisible = false;
         Console.Title = consoleTitle;
-        Console.WriteLine("DEBUG CONSOLE WAIT OUTPUTING...{0} \n" , DateTime.Now.ToLongTimeString());
+        Console.WriteLine("DEBUG CONSOLE WAIT OUTPUTING...{0} \n" , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
     }
 
     public static void Log(String format , params object[] args)
     {
-        Console.WriteLine("[" + DateTime.Now.ToLongTimeString() + "] " + format , args);
+        //DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")
+        //DateTime.Now.ToLongTimeString()
+        Console.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + "] " + format , args);
     }
     public static void Log(Object arg)
     {

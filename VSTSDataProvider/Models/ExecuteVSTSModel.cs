@@ -1,10 +1,84 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using VSTSDataProvider.Common;
 
 namespace VSTSDataProvider.Models;
 
-public class ExecuteVSTSModel
+public interface IVSTSModel
+{
+    string Path { get; }
+    string Query { get; }
+    UriBuilder TargetUriBuilder { get; }
+    Task<T> GetModel<T>( );
+}
+
+public abstract class BaseVSTSModel : IVSTSModel
+{
+    internal virtual string QuerySubOption => $@"
+        &continuationToken=03B{ItemsNum}
+        &expand=true
+        &returnldentityRef={ReturnIdentityRef}
+        &excludeFlags={ExcludeFlags}
+        &isRecursive={IsRecursive}";
+
+    internal string _vstsBaseUrl = @"https://aspentech-alm.visualstudio.com/AspenTech/_apis/testplan/";
+    public virtual string Path => $@"Plans/{TestPlanId}/Suites/{TestSuiteId}/TestCase";
+    public virtual string Query => "?";
+
+    public virtual UriBuilder TargetUriBuilder => new UriBuilder(_vstsBaseUrl + Path + Query);
+
+    internal string Cookie { get; }
+    internal int TestPlanId { get; }
+    internal int TestSuiteId { get; }
+    internal int ItemsNum { get; }
+    internal bool ReturnIdentityRef { get; }
+    public bool IncludePointDetails { get; }
+    internal int ExcludeFlags { get; }
+    internal bool IsRecursive { get; }
+
+    public BaseVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , bool includePointDetails = false , int excludeFlags = 0 , bool isRecursive = false)
+    {
+        Cookie = cookie;
+        TestPlanId = testPlanId;
+        TestSuiteId = testSuiteId;
+        ItemsNum = itemsNum;
+        ReturnIdentityRef = returnIdentityRef;
+        IncludePointDetails = includePointDetails;
+        ExcludeFlags = excludeFlags;
+        IsRecursive = isRecursive;
+    }
+
+    public virtual async Task<T> GetModel<T>( )
+    {
+        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.Uri , Cookie);
+        return DeserializeBy<T>(responseContent);
+    }
+
+    internal virtual T DeserializeBy<T>(string jsonMetaData)
+    {
+        try
+        {
+            // 反序列化 JSON 字符串
+            return JsonConvert.DeserializeObject<T>(jsonMetaData);
+        }
+        catch( JsonReaderException ex )
+        {
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}.\n\nLine {ex.LineNumber}, position {ex.LinePosition}\n\npath {ex.Path}");
+            return default(T);
+        }
+        catch( Exception ex )
+        {
+            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
+            return default(T);
+        }
+    }
+}
+
+
+
+public class ExecuteVSTSModel : BaseVSTSModel
 {
     private List<string> _queryColumnList = new List<string>()
     {
@@ -17,48 +91,22 @@ public class ExecuteVSTSModel
         "Aspentech.common.SubmitDate",
         "System.AreaPath",
     };
-    private string _querySubOption => $@"&continuationToken=03B{_itemsNum}&expand=true&returnldentityRef={_returnIdentityRef}&excludeFlags={_excludeFlags}&isRecursive={_isRecursive}";
 
-    private string _vstsBaseUrl = @"https://aspentech-alm.visualstudio.com/AspenTech/_apis/testplan/";
-    private string _path => $@"Plans/{_testPlanId}/Suites/{_testSuiteId}/TestCase";
-    private string _query => $@"witFields=" + string.Join("%2C" , _queryColumnList) + _querySubOption;
+    private string _querySubOption => base.QuerySubOption;
 
-    public UriBuilder targetUriBuilder => new UriBuilder(_vstsBaseUrl + _path + _query);
+    private string _vstsBaseUrl => base._vstsBaseUrl;
+    private string _path => base.Path;
+    public override string Query => $@"?witFields=" + string.Join("%2C" , _queryColumnList) + _querySubOption;
 
-    private int _testPlanId;
-    private int _testSuiteId;
-    private int _itemsNum;
-    private bool _returnIdentityRef;
-    private int _excludeFlags;
-    private bool _isRecursive;
-
-    public ExecuteVSTSModel(int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , int excludeFlags = 0 , bool isRecursive = false)
+    public ExecuteVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , int excludeFlags = 0 , bool isRecursive = false)
+            : base(cookie , testPlanId , testSuiteId , itemsNum , returnIdentityRef , false , excludeFlags , isRecursive)
     {
-        _testPlanId = testPlanId;
-        _testSuiteId = testSuiteId;
-        _itemsNum = itemsNum;
-        _returnIdentityRef = returnIdentityRef;
-        _excludeFlags = excludeFlags;
-        _isRecursive = isRecursive;
+
     }
 
-    private RootObject DeserializeBy(string jsonMetaData)
+    public Task<RootObject> GetModel( )
     {
-        try
-        {
-            // 反序列化 JSON 字符串
-            return JsonConvert.DeserializeObject<RootObject>(jsonMetaData);
-        }
-        catch( JsonReaderException ex )
-        {
-            Console.WriteLine($"Error deserializing JSON: {ex.Message}.\n\nLine {ex.LineNumber}, position {ex.LinePosition}\n\npath {ex.Path}");
-            return null;
-        }
-        catch( Exception ex )
-        {
-            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
-            return null;
-        }
+        return GetModel<RootObject>();
     }
 
     #region Json to Entity Class

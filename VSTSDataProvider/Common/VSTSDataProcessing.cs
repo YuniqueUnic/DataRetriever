@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Concurrent;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -80,28 +81,10 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
+    //TODO Concat Two Model to One.
     public async Task<bool> RunAsync( )
     {
-        var vstsJObject = await NetUtils.SendRequestWithCookieForJObj(_requestUri , _cookie);
-
-        if( vstsJObject["value"] is JObject values && values != null )
-        {
-            _totalCount = (int)(vstsJObject["count"] ?? -1);
-            _testPlan = NewVSTSObjectBase<TestPlan>(values[0]!["testPlan"]!);
-            _testSuite = NewVSTSObjectBase<TestSuite>(values[0]!["testSuite"]!);
-            //var parallelResult = Parallel.ForEach<JToken>(values , testCaseItem =>
-            //{
-            //    JObject m_TCDetail = testCaseItem["workItem"];
-            //    TestCase m_TestCase = new()
-            //    {
-            //        Name = m_TCDetail["name"] ,
-            //        ID = m_TCDetail["id"] ,
-            //        ProductAreaStr = m_TCDetail["workItemFields"] ,
-
-            //    };
-
-            //});
-        }
+        var vstsJObject = await NetUtils.SendRequestWithCookieForJObj(new Uri(_requestUri) , _cookie);
         return true;
     }
 

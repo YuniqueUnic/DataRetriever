@@ -11,7 +11,8 @@
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="MainWindow"
         Width="800"
-        Height="450">
+        Height="450"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
             <!--  带参数的 DataContent 设置方式  -->

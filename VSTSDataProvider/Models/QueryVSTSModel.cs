@@ -1,29 +1,29 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace VSTSDataProvider.Models;
 
-public class QueryVSTSModel
+public class QueryVSTSModel : BaseVSTSModel
 {
+    internal override string QuerySubOption => $@"
+             continuationToken=-2147483648;{ItemsNum}
+             &returnIdentityRef={ReturnIdentityRef}
+             &includePointDetails={IncludePointDetails}
+             &isRecursive={IsRecursive}";
 
-    public static RootObject DeserializeBy(string jsonMetaData)
+    public override string Query => $@"?" + QuerySubOption;
+
+
+    public QueryVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , bool includePointDetails = false , bool isRecursive = false)
+            : base(cookie , testPlanId , testSuiteId , itemsNum , returnIdentityRef , includePointDetails , 0 , isRecursive)
     {
-        try
-        {
-            // 反序列化 JSON 字符串
-            return JsonConvert.DeserializeObject<RootObject>(jsonMetaData);
-        }
-        catch( JsonReaderException ex )
-        {
-            Console.WriteLine($"Error deserializing JSON: {ex.Message}.\n\nLine {ex.LineNumber}, position {ex.LinePosition}\n\npath {ex.Path}");
-            return null;
-        }
-        catch( Exception ex )
-        {
-            Console.WriteLine($"Error deserializing JSON: {ex.Message}");
-            return null;
-        }
+
+    }
+
+    public Task<QueryVSTSModel.RootObject> GetModel( )
+    {
+        return base.GetModel<QueryVSTSModel.RootObject>();
     }
 
     #region Json to Entity Class

@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -158,9 +157,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             var fileData = await dataFile.ReadToEndAsync();
             int a = 0;
-            var responseJson = JsonConvert.DeserializeObject<string>(fileData);
-
-            int vb = 0;
         }
     }
 
