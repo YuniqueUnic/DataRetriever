@@ -115,7 +115,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
         public Project project { get; set; }
         public TestSuite testSuite { get; set; }
         public WorkItem workItem { get; set; }
-        public PointAssignment pointAssignments { get; set; }
+        public List<PointAssignment> pointAssignments { get; set; }
         public Links links { get; set; }
     }
 
@@ -145,7 +145,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
         public int id { get; set; }
         public string name { get; set; }
         [JsonProperty("workItemFields")]
-        public WorkItemField fields { get; set; }
+        public List<WorkItemField> fields { get; set; }
     }
 
     public class WorkItemField
@@ -153,7 +153,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
         [JsonProperty("System.Id")]
         public int id { get; set; }
         [JsonProperty("Aspentech.Common.CQID")]
-        public int CQId { get; set; }
+        public string CQId { get; set; }
         [JsonProperty("Aspentech.Common.ProductName")]
         public string productName { get; set; }
         [JsonProperty("Aspentech.Common.ProductArea")]

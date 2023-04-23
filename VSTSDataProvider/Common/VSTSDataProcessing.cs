@@ -21,7 +21,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     private TestSuite? _testSuite;
     private ConcurrentBag<TestCase> _testCases = new();
     private readonly HttpClient httpClient = new HttpClient();
-    private bool _testCasesLoadedOver = false;
+    private bool _testCasesLoadOver = false;
 
 
     public int TestSuiteID => _testSuiteID;
@@ -52,12 +52,12 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         }
     }
 
-    public bool IsTestCasesLoaded
+    public bool IsTestCasesLoadOver
     {
-        get => _testCasesLoadedOver;
+        get => _testCasesLoadOver;
         private set
         {
-            SetProperty(ref _testCasesLoadedOver , value);
+            SetProperty(ref _testCasesLoadOver , value);
         }
     }
 
@@ -68,13 +68,18 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
-    public VSTSDataProcessing SetRequestUri(string uri)
+    public VSTSDataProcessing ParseUriToId(string uri)
     {
-        _requestUri = uri;
+        var idStruct = TryGetTestPlanSuiteId(uri , out bool succeedMatch);
+
+        if( !succeedMatch ) { throw new System.ArgumentException($"Failed to parse {uri} to TestPlanSuiteID"); }
+
+        this._testPlanID = idStruct.PlanId;
+        this._testSuiteID = idStruct.SuiteId;
         return this;
     }
 
-    public VSTSDataProcessing SetTestPlanSuiteIDint(int planID , int suiteID)
+    public VSTSDataProcessing SetTestPlanSuiteID(int planID , int suiteID)
     {
         _testPlanID = planID;
         _testSuiteID = suiteID;
@@ -113,19 +118,19 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
             {
                 ID = v.workItem.id ,
                 Name = v.workItem.name ,
-                CQID = v.workItem.fields.CQId ,
-                IsAutomated = v.workItem.fields.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
-                OutcomeStr = queryVSTSModel.value.Find(queryModel => queryModel.id == v.workItem.id).results.outcome ,
-                ProductArea = v.workItem.fields.productArea ,
-                ScriptName = v.workItem.fields.scriptName ,
+                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                IsAutomated = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
+                OutcomeStr = queryVSTSModel.value.FirstOrDefault(queryModel => queryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
                 SelfTestPoint = new TestPoint()
                 {
-                    TestPointId = v.pointAssignments.configurationId ,
-                    Name = v.pointAssignments.configurationName ,
-                    displayName = v.pointAssignments.tester.displayName ,
-                    uniqueName = v.pointAssignments.tester.uniqueName ,
+                    TestPointId = v.pointAssignments.FirstOrDefault(point => point.configurationId != default(int))?.configurationId ,
+                    Name = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                    displayName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                    uniqueName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
                 } ,
-                TestToolStr = v.workItem.fields.testTool ,
+                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
                 ParentTestSuite = TestSuite ,
             };
         }));
@@ -134,7 +139,8 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         TestSuite.ParentTestPlan = TestPlan;
         TestSuite.ChildTestCases = TestCases;
 
-        return true;
+
+        return _testCasesLoadOver = true;
     }
 
     /// <summary> 

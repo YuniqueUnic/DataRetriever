@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace VSTSDataProvider.Models;
@@ -50,7 +49,7 @@ public class QueryVSTSModel : BaseVSTSModel
         public string name { get; set; }
         public string state { get; set; }
         public string visibility { get; set; }
-        public DateTime lastUpdateTime { get; set; }
+        public string lastUpdateTime { get; set; }
     }
 
     public class TestPlan
@@ -76,28 +75,24 @@ public class QueryVSTSModel : BaseVSTSModel
         public string descriptor { get; set; }
     }
 
+    public class LastResultDetails
+    {
+        public int duration { get; set; }
+        public string dateCompleted { get; set; }
+        public RunBy runBy { get; set; }
+    }
+
     public class RunBy
     {
         public string displayName { get; set; }
         public string id { get; set; }
     }
 
-    public class LastResultDetails
-    {
-        public int duration { get; set; }
-        public DateTime dateCompleted { get; set; }
-        public RunBy runBy { get; set; }
-    }
-
     public class Results
     {
         public LastResultDetails lastResultDetails { get; set; }
-        public int lastResultId { get; set; }
-        public string lastRunBuildNumber { get; set; }
         public string state { get; set; }
-        public string lastResultState { get; set; }
         public string outcome { get; set; }
-        public int lastTestRunId { get; set; }
     }
 
     public class Links
@@ -127,9 +122,9 @@ public class QueryVSTSModel : BaseVSTSModel
         public TestPlan testPlan { get; set; }
         public TestSuite testSuite { get; set; }
         public LastUpdatedBy lastUpdatedBy { get; set; }
-        public DateTime lastUpdatedDate { get; set; }
+        public string lastUpdatedDate { get; set; }
         public Results results { get; set; }
-        public DateTime lastResetToActive { get; set; }
+        public string lastResetToActive { get; set; }
         public bool isActive { get; set; }
         public Links links { get; set; }
         public TestCaseReference testCaseReference { get; set; }
