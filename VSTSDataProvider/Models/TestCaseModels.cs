@@ -11,12 +11,12 @@ public struct TestPlanSuiteId
     /// <summary>
     /// TestPlan ID。如果未设置，则为 -1。
     /// </summary>
-    public int? PlanId { get; } = -1;
+    public int PlanId { get; } = -1;
 
     /// <summary>
     /// TestSuite ID。如果未设置，则为 -1。
     /// </summary>
-    public int? SuiteId { get; } = -1;
+    public int SuiteId { get; } = -1;
 
     /// <summary>
     /// 初始化一个新的 TestPlanSuiteId 结构。
