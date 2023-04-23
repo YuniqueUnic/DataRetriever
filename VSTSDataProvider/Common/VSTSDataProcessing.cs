@@ -10,26 +10,28 @@ namespace VSTSDataProvider.Common;
 
 public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 {
+    #region Unless Code
+    private readonly HttpClient httpClient = new HttpClient();
     private static string vstsBaseUrl = @"https://aspentech-alm.visualstudio.com/AspenTech/_apis/testplan/";
+    private string? _requestUri;
+    public string? RequestUri => _requestUri;
+    #endregion Unless Code
+
+    private string? _cookie;
     private int _testPlanID;
     private int _testSuiteID;
-    private string? _requestUri;
-    private string? _cookie;
     private int _totalCount;
 
     private TestPlan? _testPlan;
     private TestSuite? _testSuite;
     private ConcurrentBag<TestCase> _testCases = new();
-    private readonly HttpClient httpClient = new HttpClient();
+
     private bool _testCasesLoadOver = false;
 
-
+    public string? Cooike => _cookie;
     public int TestSuiteID => _testSuiteID;
     public int TestPlanID => _testPlanID;
-    public string? RequestUri => _requestUri;
-    public string? Cooike => _cookie;
     public int TotalCount => _totalCount;
-
 
     public TestPlan TestPlan
     {
