@@ -45,7 +45,6 @@ public class TestPoint : ITestObject
 
 public class TestCase : ITestObject
 {
-    private ProductAreas _productArea { get; set; }
     private TestTools _testTools { get; set; }
     private OutcomeState _outcome { get; set; }
 
@@ -56,7 +55,7 @@ public class TestCase : ITestObject
     public string? ScriptName { get; set; }
     public TestPoint? SelfTestPoint { get; set; }
     public TestSuite? ParentTestSuite { get; set; }
-    public ProductAreas ProductArea => _productArea;
+    public string? ProductArea { get; set; }
     public TestTools? TestTool { get => _testTools; }
     public OutcomeState Outcome => _outcome;
 
@@ -72,14 +71,6 @@ public class TestCase : ITestObject
         set => _outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
     }
 
-    //有待完善
-    public string ProductAreaStr
-    {
-        get
-        {
-            return "";
-        }
-    }
 }
 public class TestSuite : ITestObject
 {
@@ -94,6 +85,7 @@ public class TestPlan : ITestObject
     public string? Name { get; set; }
     public int ID { get; set; }
     public TestSuite? ChildTestSuite { get; set; }
+
 }
 
 public interface ITestObject

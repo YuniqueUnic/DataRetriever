@@ -9,12 +9,7 @@ namespace VSTSDataProvider.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 {
-    public MainWindowViewModel( )
-    {
-        InitRelayCommand();
-    }
-
-    public MainWindowViewModel(Boolean showConsole)
+    public MainWindowViewModel(Boolean showConsole = false)
     {
         if( showConsole ) ConsoleRelated.ConsoleEx.OpenConsole();
         InitRelayCommand();

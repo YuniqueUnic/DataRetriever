@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -84,11 +84,60 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     //TODO Concat Two Model to One.
     public async Task<bool> RunAsync( )
     {
-        var vstsJObject = await NetUtils.SendRequestWithCookieForJObj(new Uri(_requestUri) , _cookie);
+        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
+        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
+
+        if( executeVSTSModel == null || queryVSTSModel == null ) { return false; }
+
+        if( executeVSTSModel.count != queryVSTSModel.count ) { return false; }
+
+        if( executeVSTSModel.value[0].testPlan.id != queryVSTSModel.value[0].testPlan.id ) return false;
+
+        TestPlan = new TestPlan
+        {
+            ID = executeVSTSModel.value[0].testPlan.id ,
+            Name = executeVSTSModel.value[0].testPlan.name
+        };
+
+        TestSuite = new TestSuite
+        {
+            ID = executeVSTSModel.value[0].testSuite.id ,
+            Name = executeVSTSModel.value[0].testSuite.name
+        };
+
+        _totalCount = executeVSTSModel.count;
+
+        TestCases = new ConcurrentBag<TestCase>(executeVSTSModel.value.Select(v =>
+        {
+            return new TestCase()
+            {
+                ID = v.workItem.id ,
+                Name = v.workItem.name ,
+                CQID = v.workItem.fields.CQId ,
+                IsAutomated = v.workItem.fields.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
+                OutcomeStr = queryVSTSModel.value.Find(queryModel => queryModel.id == v.workItem.id).results.outcome ,
+                ProductArea = v.workItem.fields.productArea ,
+                ScriptName = v.workItem.fields.scriptName ,
+                SelfTestPoint = new TestPoint()
+                {
+                    TestPointId = v.pointAssignments.configurationId ,
+                    Name = v.pointAssignments.configurationName ,
+                    displayName = v.pointAssignments.tester.displayName ,
+                    uniqueName = v.pointAssignments.tester.uniqueName ,
+                } ,
+                TestToolStr = v.workItem.fields.testTool ,
+                ParentTestSuite = TestSuite ,
+            };
+        }));
+
+        TestPlan.ChildTestSuite = TestSuite;
+        TestSuite.ParentTestPlan = TestPlan;
+        TestSuite.ChildTestCases = TestCases;
+
         return true;
     }
 
-    /// <summary>
+    /// <summary> 
     /// Creates an instance of a VSTS object that implements the ITestObject interface and initializes its properties using the specified JSON token.
     /// </summary>
     /// <typeparam name="T">The type of the VSTS object to create. Such as TestPlan, TestSuite, TestCase...</typeparam>

@@ -25,7 +25,6 @@ public enum TestTools
 
     [StringValue]
     UFT,
-
 }
 
 //还待完善,暂定

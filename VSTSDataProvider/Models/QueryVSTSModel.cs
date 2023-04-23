@@ -29,116 +29,116 @@ public class QueryVSTSModel : BaseVSTSModel
     #region Json to Entity Class
     public class Tester
     {
-        public string DisplayName { get; set; }
-        public string Url { get; set; }
+        public string displayName { get; set; }
+        public string url { get; set; }
         public Links _links { get; set; }
-        public string Id { get; set; }
-        public string UniqueName { get; set; }
-        public string ImageUrl { get; set; }
-        public string Descriptor { get; set; }
+        public string id { get; set; }
+        public string uniqueName { get; set; }
+        public string imageUrl { get; set; }
+        public string descriptor { get; set; }
     }
 
     public class Configuration
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
     }
 
     public class Project
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string State { get; set; }
-        public string Visibility { get; set; }
-        public DateTime LastUpdateTime { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
+        public string state { get; set; }
+        public string visibility { get; set; }
+        public DateTime lastUpdateTime { get; set; }
     }
 
     public class TestPlan
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
     }
 
     public class TestSuite
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
     }
 
     public class LastUpdatedBy
     {
-        public string DisplayName { get; set; }
-        public string Url { get; set; }
+        public string displayName { get; set; }
+        public string url { get; set; }
         public Links _links { get; set; }
-        public string Id { get; set; }
-        public string UniqueName { get; set; }
-        public string ImageUrl { get; set; }
-        public string Descriptor { get; set; }
+        public string id { get; set; }
+        public string uniqueName { get; set; }
+        public string imageUrl { get; set; }
+        public string descriptor { get; set; }
     }
 
     public class RunBy
     {
-        public string DisplayName { get; set; }
-        public string Id { get; set; }
+        public string displayName { get; set; }
+        public string id { get; set; }
     }
 
     public class LastResultDetails
     {
-        public int Duration { get; set; }
-        public DateTime DateCompleted { get; set; }
-        public RunBy RunBy { get; set; }
+        public int duration { get; set; }
+        public DateTime dateCompleted { get; set; }
+        public RunBy runBy { get; set; }
     }
 
     public class Results
     {
-        public LastResultDetails LastResultDetails { get; set; }
-        public int LastResultId { get; set; }
-        public string LastRunBuildNumber { get; set; }
-        public string State { get; set; }
-        public string LastResultState { get; set; }
-        public string Outcome { get; set; }
-        public int LastTestRunId { get; set; }
+        public LastResultDetails lastResultDetails { get; set; }
+        public int lastResultId { get; set; }
+        public string lastRunBuildNumber { get; set; }
+        public string state { get; set; }
+        public string lastResultState { get; set; }
+        public string outcome { get; set; }
+        public int lastTestRunId { get; set; }
     }
 
     public class Links
     {
-        public Avatar Avatar { get; set; }
+        public Avatar avatar { get; set; }
     }
 
     public class Avatar
     {
-        public string Href { get; set; }
+        public string href { get; set; }
     }
 
     public class TestCaseReference
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string State { get; set; }
+        public int id { get; set; }
+        public string name { get; set; }
+        public string state { get; set; }
     }
 
     public class Value
     {
-        public int Id { get; set; }
-        public Tester Tester { get; set; }
-        public Configuration Configuration { get; set; }
-        public bool IsAutomated { get; set; }
-        public Project Project { get; set; }
-        public TestPlan TestPlan { get; set; }
-        public TestSuite TestSuite { get; set; }
-        public LastUpdatedBy LastUpdatedBy { get; set; }
-        public DateTime LastUpdatedDate { get; set; }
-        public Results Results { get; set; }
-        public DateTime LastResetToActive { get; set; }
-        public bool IsActive { get; set; }
-        public Links Links { get; set; }
-        public TestCaseReference TestCaseReference { get; set; }
+        public int id { get; set; }
+        public Tester tester { get; set; }
+        public Configuration configuration { get; set; }
+        public bool isAutomated { get; set; }
+        public Project project { get; set; }
+        public TestPlan testPlan { get; set; }
+        public TestSuite testSuite { get; set; }
+        public LastUpdatedBy lastUpdatedBy { get; set; }
+        public DateTime lastUpdatedDate { get; set; }
+        public Results results { get; set; }
+        public DateTime lastResetToActive { get; set; }
+        public bool isActive { get; set; }
+        public Links links { get; set; }
+        public TestCaseReference testCaseReference { get; set; }
     }
 
     public class RootObject
     {
-        public List<Value> Value { get; set; }
-        public int Count { get; set; }
+        public List<Value> value { get; set; }
+        public int count { get; set; }
     }
     #endregion Json to Entity Class
 }

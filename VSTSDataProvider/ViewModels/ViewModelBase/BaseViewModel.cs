@@ -4,16 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace VSTSDataProvider.ViewModels.ViewModelBase;
 
-//public abstract class BaseViewModel : INotifyPropertyChanged
-//{
-//    public event PropertyChangedEventHandler PropertyChanged;
-
-//    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-//    {
-//        PropertyChanged?.Invoke(this , new PropertyChangedEventArgs(propertyName));
-//    }
-//}
-
 public abstract class BaseViewModel : INotifyPropertyChanged, INotifyPropertyChanging
 {
     public event PropertyChangingEventHandler PropertyChanging;

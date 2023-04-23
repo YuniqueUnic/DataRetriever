@@ -12,6 +12,7 @@
         Title="MainWindow"
         Width="800"
         Height="450"
+        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
@@ -185,9 +186,9 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <d:Window.DataContext>
+    <!--<d:Window.DataContext>
         <vm:MainWindowViewModel />
-    </d:Window.DataContext>
+    </d:Window.DataContext>-->
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
