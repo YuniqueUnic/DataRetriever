@@ -1,7 +1,5 @@
-using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VSTSDataProvider.Models;
@@ -10,13 +8,6 @@ namespace VSTSDataProvider.Common;
 
 public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 {
-    #region Unless Code
-    private readonly HttpClient httpClient = new HttpClient();
-    private static string vstsBaseUrl = @"https://aspentech-alm.visualstudio.com/AspenTech/_apis/testplan/";
-    private string? _requestUri;
-    public string? RequestUri => _requestUri;
-    #endregion Unless Code
-
     private string? _cookie;
     private int _testPlanID;
     private int _testSuiteID;
@@ -88,33 +79,51 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
-    //TODO Concat Two Model to One.
+    //TODO to show the concat progress
     public async Task<bool> RunAsync( )
     {
         var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
         var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
+        var newTCModels = MergeModelstoTestCasesBy(executeVSTSModel , queryVSTSModel , out bool succeedMerge);
 
-        if( executeVSTSModel == null || queryVSTSModel == null ) { return false; }
+        if( succeedMerge )
+        {
+            TestCases = newTCModels;
+            TestSuite = TestCases.First().ParentTestSuite;
+            TestPlan = TestSuite.ParentTestPlan;
+        }
 
-        if( executeVSTSModel.count != queryVSTSModel.count ) { return false; }
+        return _testCasesLoadOver = true;
+    }
 
-        if( executeVSTSModel.value[0].testPlan.id != queryVSTSModel.value[0].testPlan.id ) return false;
+    public ConcurrentBag<TestCase> MergeModelstoTestCasesBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
+    {
+        succeedMerge = false;
 
-        TestPlan = new TestPlan
+        var executeVSTSModel = exeModel;
+        var queryVSTSModel = querModel;
+
+        if( executeVSTSModel == null || queryVSTSModel == null ) { return null; }
+
+        if( executeVSTSModel.count != queryVSTSModel.count ) { return null; }
+
+        if( executeVSTSModel.value[0].testPlan.id != queryVSTSModel.value[0].testPlan.id ) return null;
+
+        TestPlan mTestPlan = new TestPlan
         {
             ID = executeVSTSModel.value[0].testPlan.id ,
             Name = executeVSTSModel.value[0].testPlan.name
         };
 
-        TestSuite = new TestSuite
+        TestSuite mTestSuite = new TestSuite
         {
             ID = executeVSTSModel.value[0].testSuite.id ,
             Name = executeVSTSModel.value[0].testSuite.name
         };
 
-        _totalCount = executeVSTSModel.count;
+        var _totalCount = executeVSTSModel.count;
 
-        TestCases = new ConcurrentBag<TestCase>(executeVSTSModel.value.Select(v =>
+        var TestCases = new ConcurrentBag<TestCase>(executeVSTSModel.value.Select(v =>
         {
             return new TestCase()
             {
@@ -127,38 +136,24 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
                 SelfTestPoint = new TestPoint()
                 {
-                    TestPointId = v.pointAssignments.FirstOrDefault(point => point.configurationId != default(int))?.configurationId ,
                     Name = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                    ID = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                    ConfigurationId = (int)v.pointAssignments.FirstOrDefault(point => point.configurationId >= default(int))?.configurationId ,
+                    lastUpdatedDate = queryVSTSModel.value.FirstOrDefault(queryModel => queryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
                     displayName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
                     uniqueName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
                 } ,
                 TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
-                ParentTestSuite = TestSuite ,
+                ParentTestSuite = mTestSuite ,
             };
         }));
 
-        TestPlan.ChildTestSuite = TestSuite;
-        TestSuite.ParentTestPlan = TestPlan;
-        TestSuite.ChildTestCases = TestCases;
+        mTestPlan.ChildTestSuite = mTestSuite;
+        mTestSuite.ParentTestPlan = mTestPlan;
+        mTestSuite.ChildTestCases = TestCases;
 
-
-        return _testCasesLoadOver = true;
-    }
-
-    /// <summary> 
-    /// Creates an instance of a VSTS object that implements the ITestObject interface and initializes its properties using the specified JSON token.
-    /// </summary>
-    /// <typeparam name="T">The type of the VSTS object to create. Such as TestPlan, TestSuite, TestCase...</typeparam>
-    /// <param name="targetJToken">The JSON token used to initialize the object's properties.</param>
-    /// <returns>An instance of the specified VSTS object with its properties initialized.</returns>
-    private static T NewVSTSObjectBase<T>(JToken targetJToken)
-        where T : ITestObject, new()
-    {
-        return new T
-        {
-            Name = (string)targetJToken["name"] ,
-            ID = (int)targetJToken["id"]
-        };
+        succeedMerge = true;
+        return TestCases;
     }
 
     /// <summary>

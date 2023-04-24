@@ -9,7 +9,6 @@ public static class DataObjectsHelper
         return Tobject.Equals(default(T));
     }
 
-
     public static bool IsZero(this int value)
     {
         return value.Equals(default);

@@ -9,7 +9,7 @@
         xmlns:msflib="clr-namespace:System;assembly=mscorlib"
         xmlns:vc="clr-namespace:VSTSDataProvider.Common"
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
-        Title="MainWindow"
+        Title="{Binding WindowTitle}"
         Width="800"
         Height="450"
         d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
@@ -26,59 +26,6 @@
             <vc:FontSizeScaleConverter x:Key="FontSizeScaleConverter" />
             <vc:DoubleValueScaleConverter x:Key="DoubleValueScaleConverter" />
             <vc:BoolenNullableToVisibility x:Key="BoolenNullableToVisibility" IsEnabled="True" />
-
-            <Style x:Key="TextBoxWithErrorTemplate" TargetType="{x:Type TextBox}">
-                <!--  定义常见的Padding、Margin，包括左侧10像素的空隙  -->
-                <Setter Property="Padding" Value="5,3,3,3" />
-                <Setter Property="Margin" Value="0,5,0,0" />
-
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type TextBox}">
-                            <DockPanel>
-                                <!--  绑定字段名  -->
-                                <TextBlock Margin="0,0,5,0"
-                                           VerticalAlignment="Center"
-                                           Text="{Binding Path=Tag}" />
-                                <Border Name="Border"
-                                        BorderBrush="Black"
-                                        BorderThickness="1">
-                                    <Grid>
-                                        <ScrollViewer Focusable="False">
-                                            <!--  绑定值  -->
-                                            <TextBox x:Name="TextBox_Main" Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </ScrollViewer>
-
-                                        <!--<Image x:Name="ValidationIcon"
-                                               Width="16"
-                                               Height="16"
-                                               Margin="0,0,5,0"
-                                               HorizontalAlignment="Right"
-                                               VerticalAlignment="Center"
-                                               Source="{Binding Path=ValidationIconSource}" />-->
-                                    </Grid>
-                                </Border>
-                            </DockPanel>
-                            <!--  显示错误信息  -->
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="Validation.HasError" Value="true">
-                                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0]}" />
-                                    <!--<Setter TargetName="ValidationIcon" Property="Source" Value="../Resources/Images/ErrorIcon.ico" />-->
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="#FFDC5A5A" />
-                                </Trigger>
-                                <!--  输入有效时使用成功提示图标  -->
-                                <Trigger Property="Validation.HasError" Value="false">
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="#FF2E86DE" />
-                                    <!--<Setter TargetName="ValidationIcon" Property="Source" Value="../Resources/Images/SuccessIcon.png" />-->
-                                </Trigger>
-                                <Trigger Property="IsFocused" Value="True">
-                                    <Setter TargetName="Border" Property="BorderBrush" Value="#ff2e86de" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />
@@ -183,6 +130,80 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
             </Style>
 
+            <ControlTemplate x:Key="TestCaseGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid AlternatingRowBackground="#4EC8E9BD"
+                          AlternationCount="2"
+                          AutoGenerateColumns="False"
+                          CanUserReorderColumns="True"
+                          CanUserResizeColumns="True"
+                          CanUserResizeRows="True"
+                          CanUserSortColumns="True"
+                          FontSize="13"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Padding" Value="4,4" />
+                            <Setter Property="FontWeight" Value="DemiBold" />
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="4,2" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.ID}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.Name}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.lastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.uniqueName}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="OTE_OfflineModelGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid AlternatingRowBackground="#4EC8E9BD"
+                          AlternationCount="3"
+                          AutoGenerateColumns="False"
+                          CanUserReorderColumns="True"
+                          CanUserResizeColumns="True"
+                          CanUserResizeRows="True"
+                          CanUserSortColumns="True"
+                          FontSize="13"
+                          ItemsSource="{Binding ItemSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Padding" Value="4,0" />
+                            <Setter Property="Background" Value="#B9DCE9E0" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="4,2" />
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding testStep}" Header="TestStep" />
+                        <DataGridTextColumn Binding="{Binding stepAction}" Header="StepAction" />
+                        <DataGridTextColumn Binding="{Binding stepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding assignTo}" Header="AssignTo" />
+                        <DataGridTextColumn Binding="{Binding outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding comment}" Header="Comment" />
+                        <DataGridTextColumn Binding="{Binding defects}" Header="Defects" />
+                        <DataGridTextColumn Binding="{Binding runBy}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
         </ResourceDictionary>
     </Window.Resources>
 
@@ -192,7 +213,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding MainWindowLoadedCommand}" CommandParameter="True" />
+            <i:InvokeCommandAction Command="{Binding MainWindowLoadedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -269,16 +290,12 @@
                   Grid.Column="2"
                   Margin="4">
                 <Border Margin="0,2"
-                        BorderBrush="Blue"
+                        BorderBrush="Cyan"
                         BorderThickness="1">
                     <DataGrid Name="VSTSDataGrid"
                               d:ItemsSource="{d:SampleData ItemCount=100}"
-                              AutoGenerateColumns="True"
-                              CanUserReorderColumns="True"
-                              CanUserResizeColumns="True"
-                              CanUserResizeRows="True"
-                              CanUserSortColumns="True"
-                              ItemsSource="{Binding VSTSDataCollection}" />
+                              Template="{StaticResource TestCaseGridTemplate}"
+                              ItemsSource="{Binding VstsDataCollectionView}" />
                 </Border>
             </Grid>
         </Grid>
@@ -307,10 +324,19 @@
                       Grid.Row="0"
                       Grid.Column="1"
                       Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
+                      Padding="4,0"
                       VerticalAlignment="Center"
                       VerticalContentAlignment="Center"
                       IsEditable="True"
-                      Text="{Binding ComboBoxText}" />
+                      IsTextSearchEnabled="True"
+                      TextSearch.TextPath="{Binding FilterCollectionsComboBox}"
+                      Text="{Binding FilterComboBoxText, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Triggers>
+                    <i:KeyTrigger Key="Return" ActiveOnFocus="True">
+                        <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
+                    </i:KeyTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
             <ProgressBar Name="GetProgressBar"
                          Grid.Row="0"
                          Grid.Column="1"

@@ -6,7 +6,15 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="TestData\TestPoint.json" />
+    <None Remove="TestData\WithFields.json" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TestData\TestPoint.json" />
+    <Resource Include="TestData\WithFields.json" />
   </ItemGroup>
 </Project>

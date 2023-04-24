@@ -5,55 +5,64 @@ using System.Threading.Tasks;
 using VSTSDataProvider.Common;
 
 namespace VSTSDataProvider.Models;
-
 public interface IVSTSModel
 {
-    string Path { get; }
-    string Query { get; }
     UriBuilder TargetUriBuilder { get; }
     Task<T> GetModel<T>( );
 }
 
 public abstract class BaseVSTSModel : IVSTSModel
 {
-    internal virtual string QuerySubOption => $@"
-        &continuationToken=03B{ItemsNum}
-        &expand=true
-        &returnldentityRef={ReturnIdentityRef}
-        &excludeFlags={ExcludeFlags}
-        &isRecursive={IsRecursive}";
+    internal string targetVSTSObject = "Custom by inherited Class";
+    internal string _vstsBaseUri => $"https://aspentech-alm.visualstudio.com//AspenTech/_apis/testplan/Plans/{TestPlanId}/Suites/{TestSuiteId}/" + targetVSTSObject;
 
-    internal string _vstsBaseUrl = @"https://aspentech-alm.visualstudio.com/AspenTech/_apis/testplan/";
-    public virtual string Path => $@"Plans/{TestPlanId}/Suites/{TestSuiteId}/TestCase";
-    public virtual string Query => "?";
+    internal string[] selectFields = new string[]
+    {
+        "Custom by inherited Class"
+    };
 
-    public virtual UriBuilder TargetUriBuilder => new UriBuilder(_vstsBaseUrl + Path + Query);
+    internal Dictionary<string , object> optionalParameters = new Dictionary<string , object>
+    {
+        {"Custom by inherited Class","ReWrite Var is essential"},
+    };
+    private bool disposedValue;
+
+    public virtual UriBuilder TargetUriBuilder => ParseToUriBuilder(_vstsBaseUri , selectFields , optionalParameters);
 
     internal string Cookie { get; }
     internal int TestPlanId { get; }
     internal int TestSuiteId { get; }
-    internal int ItemsNum { get; }
-    internal bool ReturnIdentityRef { get; }
-    public bool IncludePointDetails { get; }
-    internal int ExcludeFlags { get; }
-    internal bool IsRecursive { get; }
 
-    public BaseVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , bool includePointDetails = false , int excludeFlags = 0 , bool isRecursive = false)
+    public BaseVSTSModel(string cookie , int testPlanId , int testSuiteId)
     {
         Cookie = cookie;
         TestPlanId = testPlanId;
         TestSuiteId = testSuiteId;
-        ItemsNum = itemsNum;
-        ReturnIdentityRef = returnIdentityRef;
-        IncludePointDetails = includePointDetails;
-        ExcludeFlags = excludeFlags;
-        IsRecursive = isRecursive;
     }
 
     public virtual async Task<T> GetModel<T>( )
     {
-        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.Uri , Cookie);
+        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie);
         return DeserializeBy<T>(responseContent);
+    }
+
+    internal virtual UriBuilder ParseToUriBuilder(string url , string[] selectFields , Dictionary<string , object> optionalParameters)
+    {
+
+        // 构建查询参数
+        var queryParameters = System.Web.HttpUtility.ParseQueryString(string.Empty);
+        queryParameters["witFields"] = string.Join("," , selectFields);
+        foreach( var parameter in optionalParameters )
+        {
+            queryParameters[parameter.Key] = parameter.Value.ToString();
+        }
+        // 构建完整的 URI
+        var uriBuilder = new UriBuilder(url)
+        {
+            Query = queryParameters.ToString()
+        };
+        // 返回 UriBuilder
+        return uriBuilder;
     }
 
     internal virtual T DeserializeBy<T>(string jsonMetaData)
@@ -78,33 +87,40 @@ public abstract class BaseVSTSModel : IVSTSModel
 
 public class ExecuteVSTSModel : BaseVSTSModel
 {
-    private List<string> _queryColumnList = new List<string>()
+    internal new string targetVSTSObject = "TestCase";
+    internal new string[] selectFields = new string[]
     {
         "System.Id",
-        "Aspentech.Common.CQID",
         "Aspentech.Common.ProductName",
         "Aspentech.Common.ProductArea",
+        "Aspentech.Common.CQID",
         "Aspentech.TestCase.TestTool",
         "Aspentech.TestCase.ScriptName",
         "Aspentech.common.SubmitDate",
         "System.AreaPath",
+        "Aspentech.TestCase.StateofTest"
     };
 
-    private string _querySubOption => base.QuerySubOption;
-
-    private string _vstsBaseUrl => base._vstsBaseUrl;
-    private string _path => base.Path;
-    public override string Query => $@"?witFields=" + string.Join("%2C" , _queryColumnList) + _querySubOption;
-
-    public ExecuteVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , int excludeFlags = 0 , bool isRecursive = false)
-            : base(cookie , testPlanId , testSuiteId , itemsNum , returnIdentityRef , false , excludeFlags , isRecursive)
+    internal new Dictionary<string , object> optionalParameters = new Dictionary<string , object>
     {
+        { "continuationToken", $"0;1000" },
+        { "expand", "true" },
+        { "returnldentityRef", "true" },
+        { "excludeFlags", "0" },
+        { "isRecursive", "false" }
+    };
 
+    public ExecuteVSTSModel(string cookie , int testPlanId , int testSuiteId)
+            : base(cookie , testPlanId , testSuiteId)
+    {
+        base.targetVSTSObject = this.targetVSTSObject;
+        base.selectFields = this.selectFields;
+        base.optionalParameters = this.optionalParameters;
     }
 
-    public Task<RootObject> GetModel( )
+    public async Task<ExecuteVSTSModel.RootObject> GetModel( )
     {
-        return GetModel<RootObject>();
+        return await base.GetModel<ExecuteVSTSModel.RootObject>();
     }
 
     #region Json to Entity Class
@@ -121,7 +137,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
 
     public class TestPlan
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
     }
 
@@ -136,13 +152,13 @@ public class ExecuteVSTSModel : BaseVSTSModel
 
     public class TestSuite
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
     }
 
     public class WorkItem
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
         [JsonProperty("workItemFields")]
         public List<WorkItemField> fields { get; set; }
@@ -151,7 +167,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
     public class WorkItemField
     {
         [JsonProperty("System.Id")]
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         [JsonProperty("Aspentech.Common.CQID")]
         public string CQId { get; set; }
         [JsonProperty("Aspentech.Common.ProductName")]
@@ -170,10 +186,10 @@ public class ExecuteVSTSModel : BaseVSTSModel
 
     public class PointAssignment
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string configurationName { get; set; }
         public Tester tester { get; set; }
-        public int configurationId { get; set; }
+        public int configurationId { get; set; } = -1;
     }
 
     public class Tester
@@ -233,7 +249,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
 
     public class RootObject
     {
-        public int count { get; set; }
+        public int count { get; set; } = -1;
         public List<Value> value { get; set; }
     }
 

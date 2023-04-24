@@ -2,7 +2,7 @@
 
 namespace VSTSDataProvider.Models;
 
-public enum OutcomeState
+public enum OutcomeState : int
 {
     [StringValue("failed")]
     Failed,//failed
@@ -14,7 +14,7 @@ public enum OutcomeState
     Passed,//passed
 }
 
-public enum TestTools
+public enum TestTools : int
 {
 
     [StringValue]

@@ -5,25 +5,32 @@ namespace VSTSDataProvider.Models;
 
 public class QueryVSTSModel : BaseVSTSModel
 {
-    internal override string QuerySubOption => $@"
-             continuationToken=-2147483648;{ItemsNum}
-             &returnIdentityRef={ReturnIdentityRef}
-             &includePointDetails={IncludePointDetails}
-             &isRecursive={IsRecursive}";
 
-    public override string Query => $@"?" + QuerySubOption;
+    internal new string targetVSTSObject = "TestPoint";
 
+    internal new string[] selectFields = new string[] { };
 
-    public QueryVSTSModel(string cookie , int testPlanId , int testSuiteId , int itemsNum = 1000 , bool returnIdentityRef = false , bool includePointDetails = false , bool isRecursive = false)
-            : base(cookie , testPlanId , testSuiteId , itemsNum , returnIdentityRef , includePointDetails , 0 , isRecursive)
+    internal new Dictionary<string , object> optionalParameters = new Dictionary<string , object>
     {
+        { "continuationToken", $"0;1000" },
+        { "returnldentityRef", "true" },
+        { "includePointDetails", "true" },
+        { "isRecursive", "false" }
+    };
 
+    public QueryVSTSModel(string cookie , int testPlanId , int testSuiteId)
+            : base(cookie , testPlanId , testSuiteId)
+    {
+        base.targetVSTSObject = this.targetVSTSObject;
+        base.selectFields = this.selectFields;
+        base.optionalParameters = this.optionalParameters;
     }
 
-    public Task<QueryVSTSModel.RootObject> GetModel( )
+    public async Task<QueryVSTSModel.RootObject> GetModel( )
     {
-        return base.GetModel<QueryVSTSModel.RootObject>();
+        return await base.GetModel<QueryVSTSModel.RootObject>();
     }
+
 
     #region Json to Entity Class
     public class Tester
@@ -39,7 +46,7 @@ public class QueryVSTSModel : BaseVSTSModel
 
     public class Configuration
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
     }
 
@@ -54,13 +61,13 @@ public class QueryVSTSModel : BaseVSTSModel
 
     public class TestPlan
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
     }
 
     public class TestSuite
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
     }
 
@@ -107,14 +114,14 @@ public class QueryVSTSModel : BaseVSTSModel
 
     public class TestCaseReference
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public string name { get; set; }
         public string state { get; set; }
     }
 
     public class Value
     {
-        public int id { get; set; }
+        public int id { get; set; } = -1;
         public Tester tester { get; set; }
         public Configuration configuration { get; set; }
         public bool isAutomated { get; set; }
@@ -133,7 +140,7 @@ public class QueryVSTSModel : BaseVSTSModel
     public class RootObject
     {
         public List<Value> value { get; set; }
-        public int count { get; set; }
+        public int count { get; set; } = -1;
     }
     #endregion Json to Entity Class
 }
