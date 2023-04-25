@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
 
@@ -175,3 +179,37 @@ public class BoolenNullableToVisibility : MarkupExtension, IValueConverter
         }
     }
 }
+
+
+public class EnumerableToStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var enumerable = value as IEnumerable;
+        if (enumerable == null)
+        {
+            return null;
+        }
+
+        var stringBuilder = new StringBuilder();
+        foreach (var item in enumerable)
+        {
+            stringBuilder.Append(item.ToString());
+            stringBuilder.Append(",");
+        }
+
+        if (stringBuilder.Length > 0)
+        {
+            stringBuilder.Remove(stringBuilder.Length - 1, 1);
+        }
+
+        return stringBuilder.ToString();
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+
