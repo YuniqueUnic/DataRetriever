@@ -8,7 +8,7 @@ namespace VSTSDataProvider.Models;
 public interface IVSTSModel
 {
     UriBuilder TargetUriBuilder { get; }
-    Task<T> GetModel<T>( );
+    Task<T> GetModel<T>(Action action);
 }
 
 public abstract class BaseVSTSModel : IVSTSModel
@@ -40,9 +40,9 @@ public abstract class BaseVSTSModel : IVSTSModel
         TestSuiteId = testSuiteId;
     }
 
-    public virtual async Task<T> GetModel<T>( )
+    public virtual async Task<T> GetModel<T>(Action callBackAction)
     {
-        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie);
+        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
         return DeserializeBy<T>(responseContent);
     }
 
@@ -118,9 +118,9 @@ public class ExecuteVSTSModel : BaseVSTSModel
         base.optionalParameters = this.optionalParameters;
     }
 
-    public async Task<ExecuteVSTSModel.RootObject> GetModel( )
+    public async Task<ExecuteVSTSModel.RootObject> GetModel(Action action = null)
     {
-        return await base.GetModel<ExecuteVSTSModel.RootObject>();
+        return await base.GetModel<ExecuteVSTSModel.RootObject>(action);
     }
 
     #region Json to Entity Class

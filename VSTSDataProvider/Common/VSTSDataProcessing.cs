@@ -8,6 +8,9 @@ namespace VSTSDataProvider.Common;
 
 public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 {
+    private Models.QueryVSTSModel.RootObject _queryRootObject;
+    private Models.ExecuteVSTSModel.RootObject _exeRootObject;
+
     private string? _cookie;
     private int _testPlanID;
     private int _testSuiteID;
@@ -16,7 +19,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     private TestPlan? _testPlan;
     private TestSuite? _testSuite;
     private ConcurrentBag<TestCase> _testCases = new();
-    private ConcurrentBag<OTE_OfflineModel> _oteOfflineModels = new();
+    private ConcurrentBag<OTE_OfflineModel> _otesOfflineModel = new();
 
     private bool _testCasesLoadOver = false;
 
@@ -37,16 +40,16 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         private set => SetProperty(ref _testSuite , value);
     }
 
-    public ConcurrentBag<TestCase> TestCases
+    public ConcurrentBag<TestCase> TestCasesModel
     {
         get => _testCases;
         private set { SetProperty(ref _testCases , value); }
     }
 
-    public ConcurrentBag<OTE_OfflineModel> OTE_OfflineModels
+    public ConcurrentBag<OTE_OfflineModel> OTEs_OfflineModel
     {
-        get => _oteOfflineModels;
-        private set => SetProperty(ref _oteOfflineModels , value);
+        get => _otesOfflineModel;
+        private set => SetProperty(ref _otesOfflineModel , value);
     }
 
     public bool IsTestCasesLoadOver
@@ -79,48 +82,69 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
-    //TODO to show the concat progress
-    public async Task<bool> RunGET_TCSAsync( )
+    public bool SucceedLoadData( )
     {
-        return await GET_TestCasesModelAsync();
+        return CheckModels(_exeRootObject , _queryRootObject);
     }
 
-    //TODO to show the concat progress
-    public async Task<bool> RunGET_OTEAsync( )
-    {
-        return await GET_OTEsModelAsync();
-    }
-
-    private async Task<bool> GET_TestCasesModelAsync( )
+    public async Task<bool> PreLoadData( )
     {
         var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
         var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
-        var newTCModels = MergeModelstoTCsBy(executeVSTSModel , queryVSTSModel , out bool succeedMerge);
 
-        if( succeedMerge )
+        if( executeVSTSModel != null && queryVSTSModel != null )
         {
-            TestCases = newTCModels;
-            TestSuite = TestCases.First().ParentTestSuite;
-            TestPlan = TestSuite.ParentTestPlan;
+            _queryRootObject = queryVSTSModel;
+            _exeRootObject = executeVSTSModel;
+            return true;
         }
 
-        return _testCasesLoadOver = true;
+        return false;
     }
 
-    private async Task<bool> GET_OTEsModelAsync( )
+    //TODO to show the concat progress
+    public async Task<bool> GET_TCsAsync( )
     {
-        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
-        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
-        var newOTEModels = MergeModelstoOTEsBy(executeVSTSModel , queryVSTSModel , out bool succeedMerge);
+        if( _queryRootObject == null || _exeRootObject == null ) { return IsTestCasesLoadOver = false; }
 
-        if( succeedMerge )
+        ConcurrentBag<TestCase> newTCModels;
+
+        if( await PreLoadData() )
         {
-            OTE_OfflineModels = newOTEModels;
+            newTCModels = MergeModelstoTCsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
+
+            if( succeedMerge )
+            {
+                TestCasesModel = newTCModels;
+                TestSuite = TestCasesModel.First().ParentTestSuite;
+                TestPlan = TestSuite.ParentTestPlan;
+                return IsTestCasesLoadOver = true;
+            }
         }
 
-        return _testCasesLoadOver = true;
+        return IsTestCasesLoadOver = false;
+
     }
 
+    //TODO to show the concat progress
+    public async Task<bool> GET_OTEsAsync( )
+    {
+        if( _queryRootObject == null || _exeRootObject == null ) { return IsTestCasesLoadOver = false; }
+
+        ConcurrentBag<TestCase> newTCModels;
+
+        if( await PreLoadData() )
+        {
+            var newOTEModels = MergeModelstoOTEsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
+
+            if( succeedMerge )
+            {
+                OTEs_OfflineModel = newOTEModels;
+                return IsTestCasesLoadOver = true;
+            }
+        }
+        return IsTestCasesLoadOver = false;
+    }
 
     private bool CheckModels(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
     {

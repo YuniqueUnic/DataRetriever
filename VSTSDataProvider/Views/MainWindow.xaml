@@ -176,7 +176,7 @@
                     </DataGrid.CellStyle>
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
-                        <DataGridTextColumn Binding="{Binding ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
@@ -243,7 +243,7 @@
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
-                        <DataGridTextColumn Binding="{Binding ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
@@ -261,11 +261,12 @@
             <ControlTemplate x:Key="OTE_OfflineModelsGridTemplate" TargetType="{x:Type DataGrid}">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding title}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding testStep}" Header="TestStep" />
                         <DataGridTextColumn Binding="{Binding stepAction}" Header="StepAction" />
                         <DataGridTextColumn Binding="{Binding stepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding testPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding configuration}" Header="Configuration" />
                         <DataGridTextColumn Binding="{Binding assignTo}" Header="AssignTo" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
@@ -281,7 +282,7 @@
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
-                        <DataGridTextColumn Binding="{Binding ID}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
@@ -299,11 +300,12 @@
             <DataTemplate x:Key="OTE_OfflineModelsGridDataTemplate">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="ID" />
+                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding title}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding testStep}" Header="TestStep" />
                         <DataGridTextColumn Binding="{Binding stepAction}" Header="StepAction" />
                         <DataGridTextColumn Binding="{Binding stepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding testPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding configuration}" Header="Configuration" />
                         <DataGridTextColumn Binding="{Binding assignTo}" Header="AssignTo" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
@@ -456,7 +458,7 @@
                     Margin="0,0,4,0"
                     Command="{Binding GetDataButtonClickedCommand}"
                     Content="Get Data" />
-            <ComboBox Name="FilterComboBox"
+            <ComboBox Name="OTEsFilterComboBox"
                       Grid.Row="0"
                       Grid.Column="1"
                       Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
@@ -465,19 +467,39 @@
                       VerticalContentAlignment="Center"
                       IsEditable="True"
                       IsTextSearchEnabled="True"
-                      Text="{Binding FilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
-                      ItemsSource="{Binding FilterCollectionsComboBox}">
+                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibilityReverse}}"
+                      Text="{Binding OTEsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding OTEsFilterCollectionsComboBox}">
                 <i:Interaction.Triggers>
                     <i:KeyTrigger Key="Return" ActiveOnFocus="True">
                         <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
                     </i:KeyTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
+            <ComboBox Name="TCsFilterComboBox"
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
+                      Padding="4,0"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      IsEditable="True"
+                      IsTextSearchEnabled="True"
+                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
+                      Text="{Binding TCsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding TCsFilterCollectionsComboBox}">
+                <i:Interaction.Triggers>
+                    <i:KeyTrigger Key="Return" ActiveOnFocus="True">
+                        <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
+                    </i:KeyTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+
             <ProgressBar Name="GetProgressBar"
                          Grid.Row="0"
                          Grid.Column="1"
-                         Width="{Binding ElementName=FilterComboBox, Path=ActualWidth}"
-                         Height="{Binding ElementName=FilterComboBox, Path=ActualHeight}"
+                         Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"
+                         Height="{Binding ElementName=TCsFilterComboBox, Path=ActualHeight}"
                          VerticalAlignment="Center"
                          IsIndeterminate="True"
                          Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />

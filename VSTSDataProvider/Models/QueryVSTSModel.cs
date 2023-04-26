@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace VSTSDataProvider.Models;
@@ -26,9 +27,9 @@ public class QueryVSTSModel : BaseVSTSModel
         base.optionalParameters = this.optionalParameters;
     }
 
-    public async Task<QueryVSTSModel.RootObject> GetModel( )
+    public async Task<QueryVSTSModel.RootObject> GetModel(Action action = null)
     {
-        return await base.GetModel<QueryVSTSModel.RootObject>();
+        return await base.GetModel<QueryVSTSModel.RootObject>(action);
     }
 
 

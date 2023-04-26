@@ -46,8 +46,11 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private ConcurrentBag<Models.OTE_OfflineModel> _vstsDataCollectionOTEs;
     private ICollectionView _vstsDataCollectionViewTCs;
     private ICollectionView _vstsDataCollectionViewOTEs;
-    private string _filterComboBoxText;
-    private List<string> _filterCollectionsComboBox;
+    private string _tcsFilterComboBoxText;
+    private List<string> _tcsFilterCollectionsComboBox;
+
+    private string _otesFilterComboBoxText;
+    private List<string> _otesFilterCollectionsComboBox;
 
     public bool IsDetailsChecked
     {
@@ -114,13 +117,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             //if( !EqualityComparer<ConcurrentBag<Models.TestCase>>.Default.Equals(_vstsDataCollectionTCs , value) )
             //{
             //    VstsDataCollectionView = CollectionViewSource.GetDefaultView(value);
-            //    // The VstsDataCollectionView filter by the text of FilterComboBoxText
+            //    // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
             //    VstsDataCollectionView.Filter = (o) =>
             //    {
-            //        if( string.IsNullOrEmpty(FilterComboBoxText) ) return true;
+            //        if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
             //        var testCase = o as Models.TestCase;
             //        if( testCase == null ) return false;
-            //        return testCase.Contains(FilterComboBoxText);
+            //        return testCase.Contains(TCsFilterComboBoxText);
             //    };
 
             //    var filterSet = new HashSet<string>();
@@ -133,10 +136,25 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             //    var sortedFilterSet = new List<string>(filterSet);
             //    sortedFilterSet.Sort();
 
-            //    FilterCollectionsComboBox = sortedFilterSet;
+            //    TCsFilterCollectionsComboBox = sortedFilterSet;
             //}
             #endregion
-            RefreshComboBoxProperties<Models.TestCase>(value);
+            //RefreshComboBoxProperties<Models.TestCase>(value);
+            var results
+                = RefreshComboBoxProperties<Models.TestCase>(ref _vstsDataCollectionViewTCs , ref value , TCsFilterComboBoxText);
+            if( results.succeedRefreshIt == true )
+            {
+                VstsDataCollectionViewTCs = results.withFilterCollectionView;
+                TCsFilterCollectionsComboBox = results.withFilterTextList;
+
+                VstsDataCollectionViewTCs.Filter = (o) =>
+                {
+                    if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.TestCase;
+                    if( testCase == null ) return false;
+                    return testCase.Contains(TCsFilterComboBoxText);
+                };
+            }
             SetProperty(ref _vstsDataCollectionTCs , value);
         }
     }
@@ -146,40 +164,42 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         get => _vstsDataCollectionOTEs ?? new();
         set
         {
-            RefreshComboBoxProperties<Models.OTE_OfflineModel>(value);
+            var results
+                = RefreshComboBoxProperties<Models.OTE_OfflineModel>(ref _vstsDataCollectionViewOTEs , ref value , OTEsFilterComboBoxText);
+            if( results.succeedRefreshIt == true )
+            {
+                VstsDataCollectionViewOTEs = results.withFilterCollectionView;
+                OTEsFilterCollectionsComboBox = results.withFilterTextList;
+
+                VstsDataCollectionViewOTEs.Filter = (o) =>
+                {
+                    if( string.IsNullOrEmpty(OTEsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.OTE_OfflineModel;
+                    if( testCase == null ) return false;
+                    return testCase.Contains(OTEsFilterComboBoxText);
+                };
+            }
             SetProperty(ref _vstsDataCollectionOTEs , value);
         }
     }
 
-    private bool? RefreshComboBoxProperties<T>(ConcurrentBag<T> value) where T : class, Models.IResultsModel
+
+    private (bool? succeedRefreshIt, ICollectionView withFilterCollectionView, List<string> withFilterTextList) RefreshComboBoxProperties<T>
+            (ref ICollectionView targetCollectionView , ref ConcurrentBag<T> value , string targetComboBoxText)
+        where T : class, Models.IResultsModel
     {
-        bool? succeedRefresh = false;
-        if( !Object.Equals(IsDetailsChecked ? _vstsDataCollectionTCs : _vstsDataCollectionOTEs , value) )
+        if( !Object.Equals(targetCollectionView , value) )
         {
-            if( IsDetailsChecked )
-            {
-                VstsDataCollectionViewTCs = CollectionViewSource.GetDefaultView(value);
-                // The VstsDataCollectionView filter by the text of FilterComboBoxText
-                VstsDataCollectionViewTCs.Filter = (o) =>
-                {
-                    if( string.IsNullOrEmpty(FilterComboBoxText) ) return true;
-                    var testCase = o as T;
-                    if( testCase == null ) return false;
-                    return testCase.Contains(FilterComboBoxText);
-                };
-            }
-            else
-            {
-                VstsDataCollectionViewOTEs = CollectionViewSource.GetDefaultView(value);
-                // The VstsDataCollectionView filter by the text of FilterComboBoxText
-                VstsDataCollectionViewOTEs.Filter = (o) =>
-                {
-                    if( string.IsNullOrEmpty(FilterComboBoxText) ) return true;
-                    var testCase = o as T;
-                    if( testCase == null ) return false;
-                    return testCase.Contains(FilterComboBoxText);
-                };
-            }
+
+            var newCollectionView = CollectionViewSource.GetDefaultView(value);
+            // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
+            //newCollectionView.Filter = (o) =>
+            //{
+            //    if( string.IsNullOrEmpty(targetComboBoxText) ) return true;
+            //    var testCase = o as T;
+            //    if( testCase == null ) return false;
+            //    return testCase.Contains(targetComboBoxText);
+            //};
 
             var filterSet = new HashSet<string>();
 
@@ -191,15 +211,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             var sortedFilterSet = new List<string>(filterSet);
             sortedFilterSet.Sort();
 
-            FilterCollectionsComboBox = sortedFilterSet;
-            succeedRefresh = true;
+            return (true, newCollectionView, sortedFilterSet);
         }
         else
         {
             // The value has not changed.
-            succeedRefresh = null;
+            return (null, null, null);
         }
-        return succeedRefresh;
+
+        return (false, null, null);
     }
 
 
@@ -216,18 +236,33 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set => SetProperty(ref _vstsDataCollectionViewOTEs , value);
     }
 
-    //ComboBox FilterText
-    public string FilterComboBoxText
+    //TCs ComboBox FilterText
+    public string TCsFilterComboBoxText
     {
-        get => _filterComboBoxText;
-        set => SetProperty(ref _filterComboBoxText , value);
+        get => _tcsFilterComboBoxText;
+        set => SetProperty(ref _tcsFilterComboBoxText , value);
     }
 
-    public List<string> FilterCollectionsComboBox
+    public List<string> TCsFilterCollectionsComboBox
     {
-        get => _filterCollectionsComboBox;
-        set => SetProperty(ref _filterCollectionsComboBox , value);
+        get => _tcsFilterCollectionsComboBox;
+        set => SetProperty(ref _tcsFilterCollectionsComboBox , value);
     }
+
+    //OTEs ComboBox FilterText
+    public string OTEsFilterComboBoxText
+    {
+        get => _otesFilterComboBoxText;
+        set => SetProperty(ref _otesFilterComboBoxText , value);
+    }
+
+    public List<string> OTEsFilterCollectionsComboBox
+    {
+        get => _otesFilterCollectionsComboBox;
+        set => SetProperty(ref _otesFilterCollectionsComboBox , value);
+    }
+
+
 
     #endregion UI Binding - BindingProperties
 
@@ -284,13 +319,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         Models.ExecuteVSTSModel.RootObject exeResult;
         Models.QueryVSTSModel.RootObject queResult;
 
-        using( var dataFile = File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
+        using( var dataFile = System.IO.File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
         {
             var fileData = await dataFile.ReadToEndAsync();
             exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
         }
 
-        using( var dataFile = File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
+        using( var dataFile = System.IO.File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
         {
             var fileData = await dataFile.ReadToEndAsync();
             queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
@@ -316,17 +351,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private async Task ReleaseMethod_TCs( )
     {
         ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
-        // await Task.Delay(5000);
-        // ConsoleRelated.ConsoleEx.Log("Get 5000 done");
-        // Task.Delay(4000);
-        // ConsoleRelated.ConsoleEx.Log("Get 4000 done, New Task Run");
-        // Task.Run(async ( ) =>
-        // {
-        //     ConsoleRelated.ConsoleEx.Log("newTask.Run 0 start");
-        //     await Task.Delay(5000);
-        //     ConsoleRelated.ConsoleEx.Log("newTask.Run 5000 done");
-        // });
-        // ConsoleRelated.ConsoleEx.Log("Below Task Run");
+
         VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
         Models.TestPlanSuiteId m_IDGroup;
         bool m_succeedMatch = false;
@@ -346,14 +371,31 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
             mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
         }
+        var succeedGET = false;
 
-        var succeedGET = await mVSTSDataProvider.RunGET_TCSAsync();
+        if( IsDetailsChecked )
+        {
+            succeedGET = await mVSTSDataProvider.GET_TCsAsync();
+        }
+        else
+        {
+            succeedGET = await mVSTSDataProvider.GET_OTEsAsync();
+        }
+
         ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");
 
         if( succeedGET )
         {
             ConsoleRelated.ConsoleEx.Log("Start Loading VSTS Data...");
-            if( IsDetailsChecked ) { VSTSDataCollectionTCs = mVSTSDataProvider.TestCases; }
+
+            if( IsDetailsChecked )
+            {
+                VSTSDataCollectionTCs = mVSTSDataProvider.TestCasesModel;
+            }
+            else
+            {
+                VSTSDataCollectionOTEs = mVSTSDataProvider.OTEs_OfflineModel;
+            }
             ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
         }
     }
