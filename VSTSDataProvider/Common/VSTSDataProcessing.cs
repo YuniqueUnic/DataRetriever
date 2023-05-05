@@ -82,17 +82,14 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
-    public bool SucceedLoadData( )
-    {
-        return CheckModels(_exeRootObject , _queryRootObject);
-    }
+    public bool SucceedLoadData() => CheckModels(_exeRootObject, _queryRootObject);
 
-    public async Task<bool> PreLoadData( )
+    public async Task<bool> PreLoadData(System.Action action =null)
     {
-        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
-        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel();
+        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
+        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
 
-        if( executeVSTSModel != null && queryVSTSModel != null )
+        if( CheckModels(executeVSTSModel,queryVSTSModel) )
         {
             _queryRootObject = queryVSTSModel;
             _exeRootObject = executeVSTSModel;
@@ -103,47 +100,47 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     //TODO to show the concat progress
-    public async Task<bool> GET_TCsAsync( )
+    public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync()
     {
-        if( _queryRootObject == null || _exeRootObject == null ) { return IsTestCasesLoadOver = false; }
+        IsTestCasesLoadOver = false;
 
-        ConcurrentBag<TestCase> newTCModels;
-
-        if( await PreLoadData() )
+        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
         {
-            newTCModels = MergeModelstoTCsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
-
-            if( succeedMerge )
-            {
-                TestCasesModel = newTCModels;
-                TestSuite = TestCasesModel.First().ParentTestSuite;
-                TestPlan = TestSuite.ParentTestPlan;
-                return IsTestCasesLoadOver = true;
-            }
+            return null;
         }
 
-        return IsTestCasesLoadOver = false;
+        var newTCModels = MergeModelstoTCsBy(_exeRootObject, _queryRootObject, out bool succeedMerge);
 
+        if (succeedMerge)
+        {
+            TestCasesModel = newTCModels;
+            TestSuite = TestCasesModel.First().ParentTestSuite;
+            TestPlan = TestSuite.ParentTestPlan;
+            IsTestCasesLoadOver = true;
+        }
+
+        return TestCasesModel;
     }
 
     //TODO to show the concat progress
-    public async Task<bool> GET_OTEsAsync( )
+    public async Task<ConcurrentBag<Models.OTE_OfflineModel>> GET_OTEsAsync()
     {
-        if( _queryRootObject == null || _exeRootObject == null ) { return IsTestCasesLoadOver = false; }
+        IsTestCasesLoadOver = false;
 
-        ConcurrentBag<TestCase> newTCModels;
-
-        if( await PreLoadData() )
+        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
         {
-            var newOTEModels = MergeModelstoOTEsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
-
-            if( succeedMerge )
-            {
-                OTEs_OfflineModel = newOTEModels;
-                return IsTestCasesLoadOver = true;
-            }
+            return null;
         }
-        return IsTestCasesLoadOver = false;
+
+        var newOTEModels = MergeModelstoOTEsBy(_exeRootObject, _queryRootObject, out bool succeedMerge);
+
+        if (succeedMerge)
+        {
+            OTEs_OfflineModel = newOTEModels;
+            IsTestCasesLoadOver = true;
+
+        }
+        return OTEs_OfflineModel;
     }
 
     private bool CheckModels(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
@@ -219,13 +216,13 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         {
             return new OTE_OfflineModel()
             {
-                testCaseId = v.workItem.id ,
-                title = v.workItem.name ,
-                testPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
-                configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
-                assignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                TestCaseId = v.workItem.id ,
+                Title = v.workItem.name ,
+                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
                 OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
-                runBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
             };
         }));
 
@@ -234,11 +231,11 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     /// <summary>
-    /// ³¢ÊÔ´ÓÍêÕûµÄ URI ×Ö·û´®ÖÐ»ñÈ¡ TestPlan ºÍ TestSuite µÄ ID¡£
+    /// ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ URI ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ð»ï¿½È¡ TestPlan ï¿½ï¿½ TestSuite ï¿½ï¿½ IDï¿½ï¿½
     /// </summary>
-    /// <param name="completeUri">ÍêÕûµÄ URI ×Ö·û´®¡£</param>
-    /// <param name="succeedMatch">Èç¹û³É¹¦Æ¥Åä URI ×Ö·û´®£¬ÔòÎª true£»·ñÔòÎª false¡£</param>
-    /// <returns>Èç¹û³É¹¦Æ¥Åä URI ×Ö·û´®£¬Ôò·µ»Ø°üº¬ TestPlan ºÍ TestSuite ID µÄ TestPlanSuiteId ½á¹¹Ìå£»·ñÔò·µ»ØÄ¬ÈÏÖµ¡£</returns>
+    /// <param name="completeUri">ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ URI ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½</param>
+    /// <param name="succeedMatch">ï¿½ï¿½ï¿½ï¿½É¹ï¿½Æ¥ï¿½ï¿½ URI ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª trueï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª falseï¿½ï¿½</param>
+    /// <returns>ï¿½ï¿½ï¿½ï¿½É¹ï¿½Æ¥ï¿½ï¿½ URI ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»Ø°ï¿½ï¿½ï¿½ TestPlan ï¿½ï¿½ TestSuite ID ï¿½ï¿½ TestPlanSuiteId ï¿½á¹¹ï¿½å£»ï¿½ï¿½ï¿½ò·µ»ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½</returns>
     public static TestPlanSuiteId TryGetTestPlanSuiteId(string completeUri , out bool succeedMatch)
     {
         succeedMatch = false;

@@ -2,10 +2,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
+using VSTSDataProvider.Common;
+using VSTSDataProvider.Properties.Language;
 // using VSTSDataProvider.TestData;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 
@@ -28,6 +32,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         MainWindowLoadedCommand = new RelayCommand(MainWindowLoaded);
         GetDataButtonClickedCommand = new AsyncRelayCommand(GetVSTSDataTask , CanGetData);
         RefreshButtonClickedCommand = new AsyncRelayCommand(RefreshDataTableAsync , (o) => true);
+        ExportCommand = new RelayCommand(Export);
+        ImportCommand = new RelayCommand(Import);
+        EditCommand = new RelayCommand(Edit);
+        LanguageChangeCommand = new RelayCommand(LanguageChange);
     }
 
 
@@ -269,7 +277,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     #region UI Binding - RelayCommands
 
-    public RelayCommand MainWindowLoadedCommand { get; set; }
+    public RelayCommand MainWindowLoadedCommand { get; private set; }
 
     private void MainWindowLoaded( )
     {
@@ -277,7 +285,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     }
 
 
-    public AsyncRelayCommand GetDataButtonClickedCommand { get; set; }
+    public AsyncRelayCommand GetDataButtonClickedCommand { get; private set; }
 
     public bool CanGetData(object p)
     {
@@ -319,13 +327,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         Models.ExecuteVSTSModel.RootObject exeResult;
         Models.QueryVSTSModel.RootObject queResult;
 
-        using( var dataFile = System.IO.File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
         {
             var fileData = await dataFile.ReadToEndAsync();
             exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
         }
 
-        using( var dataFile = System.IO.File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
         {
             var fileData = await dataFile.ReadToEndAsync();
             queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
@@ -348,71 +356,65 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     }
 
 
-    private async Task ReleaseMethod_TCs( )
-    {
-        ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
+    //private async Task ReleaseMethod_TCs( )
+    //{
+    //    ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
 
-        VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
-        Models.TestPlanSuiteId m_IDGroup;
-        bool m_succeedMatch = false;
+    //    VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
+    //    Models.TestPlanSuiteId m_IDGroup;
+    //    bool m_succeedMatch = false;
 
-        if( isValidID(out m_IDGroup) )
-        {
-            mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
-        }
-        else
-        {
-            m_IDGroup = VSTSDataProvider.Common.VSTSDataProcessing.TryGetTestPlanSuiteId(CompleteUrl , out m_succeedMatch);
-            if( m_succeedMatch )
-            {
-                TestPlanID = m_IDGroup.PlanId.ToString();
-                TestSuiteID = m_IDGroup.SuiteId.ToString();
-            }
+    //    if( isValidID(out m_IDGroup) )
+    //    {
+    //        mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+    //    }
+    //    else
+    //    {
+    //        m_IDGroup = VSTSDataProvider.Common.VSTSDataProcessing.TryGetTestPlanSuiteId(CompleteUrl , out m_succeedMatch);
+    //        if( m_succeedMatch )
+    //        {
+    //            TestPlanID = m_IDGroup.PlanId.ToString();
+    //            TestSuiteID = m_IDGroup.SuiteId.ToString();
+    //        }
 
-            mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
-        }
-        var succeedGET = false;
+    //        mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+    //    }
 
-        if( IsDetailsChecked )
-        {
-            succeedGET = await mVSTSDataProvider.GET_TCsAsync();
-        }
-        else
-        {
-            succeedGET = await mVSTSDataProvider.GET_OTEsAsync();
-        }
+    //    var succeedLoadData = await mVSTSDataProvider.PreLoadData();
 
-        ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");
+    //    ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");
 
-        if( succeedGET )
-        {
-            ConsoleRelated.ConsoleEx.Log("Start Loading VSTS Data...");
+    //    if( succeedLoadData )
+    //    {
+    //        ConsoleRelated.ConsoleEx.Log("Start Loading VSTS Data...");
 
-            if( IsDetailsChecked )
-            {
-                VSTSDataCollectionTCs = mVSTSDataProvider.TestCasesModel;
-            }
-            else
-            {
-                VSTSDataCollectionOTEs = mVSTSDataProvider.OTEs_OfflineModel;
-            }
-            ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
-        }
-    }
+    //        if( IsDetailsChecked )
+    //        {
+    //            VSTSDataCollectionTCs = await mVSTSDataProvider.GET_TCsAsync();
+    //        }
+    //        else
+    //        {
+    //            VSTSDataCollectionOTEs = await mVSTSDataProvider.GET_OTEsAsync();
+    //        }
+
+    //        ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
+    //    }
+    //}
 
 
 
-    public AsyncRelayCommand RefreshButtonClickedCommand { get; set; }
-
+    public AsyncRelayCommand RefreshButtonClickedCommand { get; private set; }
 
     private async Task RefreshDataTableAsync(CancellationToken arg)
     {
         if( IsDetailsChecked )
         {
+            if( VstsDataCollectionViewTCs is null ) return;
             VstsDataCollectionViewTCs.Refresh();
         }
         else
         {
+            if( VstsDataCollectionViewOTEs is null ) return;
             VstsDataCollectionViewOTEs.Refresh();
         }
         //using( var dataFile = File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\Documents\LINQPad Queries\Data\Json\NewExcuateFile.json")) )
@@ -420,6 +422,73 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         //    var fileData = await dataFile.ReadToEndAsync();
         //}
     }
+
+
+    #region Menu Functions
+    public ICommand ExportCommand { get; private set; }
+    public ICommand ImportCommand { get; private set; }
+    public ICommand EditCommand { get; private set; }
+    public ICommand LanguageChangeCommand { get; private set; }
+
+    private async void Export( )
+    {
+        //         .SetSheetName(
+        //"TP:" + VSTSDataCollectionTCs.First(i => i is not null).ParentTestSuite.ParentTestPlan.ID +
+        // "-" +
+        //"TS:" + VSTSDataCollectionTCs.First(i => i is not null).ParentTestSuite.ID
+        // )
+        //导出逻辑代码
+        var succeedExport = await new ExcelOperator(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory))
+            .ExportAs(VSTSDataCollectionTCs);
+
+        //var succeedExport = await new ExcelOperator(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory))
+        //        .SetExcelType(MiniExcelLibs.ExcelType.XLSX)
+        //        .SetSheetName("HeloWorld")
+        //        .Export<OTE_OfflineModel>(await DebugMethod<OTE_OfflineModel>());
+
+    }
+
+    private void Import( )
+    {
+        // 导入逻辑代码
+
+    }
+
+    private void Edit( )
+    {
+        // 编辑逻辑代码
+
+    }
+    private void LanguageChange( )
+    {
+        // 更改界面语言逻辑代码
+        if( Resource.Language.Equals("English") )
+        {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+        }
+        else
+        {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh-CN");
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("zh-CN");
+        }
+        void RestartApplication( )
+        {
+            string fileName = Process.GetCurrentProcess().MainModule.FileName;
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = fileName ,
+                Arguments = string.Join(" " , Environment.GetCommandLineArgs().Skip(1)) ,
+                UseShellExecute = true ,
+                Verb = "runas"
+            });
+
+            System.Windows.Application.Current.Shutdown();
+        }
+        RestartApplication();
+    }
+    #endregion Menu Function
+
 
 
     #endregion UI Binding - RelayCommands

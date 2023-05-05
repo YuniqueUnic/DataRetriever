@@ -7,6 +7,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider"
         xmlns:msflib="clr-namespace:System;assembly=mscorlib"
+        xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
         xmlns:vc="clr-namespace:VSTSDataProvider.Common"
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="{Binding WindowTitle}"
@@ -240,7 +241,9 @@
 
 
             <ControlTemplate x:Key="TestCaseGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          IsReadOnly="true"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
                         <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
@@ -259,20 +262,22 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="OTE_OfflineModelsGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          IsReadOnly="true"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="TestCaseId" />
-                        <DataGridTextColumn Binding="{Binding title}" Header="Title" />
-                        <DataGridTextColumn Binding="{Binding testStep}" Header="TestStep" />
-                        <DataGridTextColumn Binding="{Binding stepAction}" Header="StepAction" />
-                        <DataGridTextColumn Binding="{Binding stepExpected}" Header="StepExpected" />
-                        <DataGridTextColumn Binding="{Binding testPointId}" Header="TestPointId" />
-                        <DataGridTextColumn Binding="{Binding configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding assignTo}" Header="AssignTo" />
+                        <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding TestStep}" Header="TestStep" />
+                        <DataGridTextColumn Binding="{Binding StepAction}" Header="StepAction" />
+                        <DataGridTextColumn Binding="{Binding StepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding AssignTo}" Header="AssignTo" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
-                        <DataGridTextColumn Binding="{Binding comment}" Header="Comment" />
-                        <DataGridTextColumn Binding="{Binding defects}" Header="Defects" />
-                        <DataGridTextColumn Binding="{Binding runBy}" Header="RunBy" />
+                        <DataGridTextColumn Binding="{Binding Comment}" Header="Comment" />
+                        <DataGridTextColumn Binding="{Binding Defects}" Header="Defects" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>
@@ -300,18 +305,18 @@
             <DataTemplate x:Key="OTE_OfflineModelsGridDataTemplate">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding testCaseId}" Header="TestCaseId" />
-                        <DataGridTextColumn Binding="{Binding title}" Header="Title" />
-                        <DataGridTextColumn Binding="{Binding testStep}" Header="TestStep" />
-                        <DataGridTextColumn Binding="{Binding stepAction}" Header="StepAction" />
-                        <DataGridTextColumn Binding="{Binding stepExpected}" Header="StepExpected" />
-                        <DataGridTextColumn Binding="{Binding testPointId}" Header="TestPointId" />
-                        <DataGridTextColumn Binding="{Binding configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding assignTo}" Header="AssignTo" />
+                        <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding TestStep}" Header="TestStep" />
+                        <DataGridTextColumn Binding="{Binding StepAction}" Header="StepAction" />
+                        <DataGridTextColumn Binding="{Binding StepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding AssignTo}" Header="AssignTo" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
-                        <DataGridTextColumn Binding="{Binding comment}" Header="Comment" />
-                        <DataGridTextColumn Binding="{Binding defects}" Header="Defects" />
-                        <DataGridTextColumn Binding="{Binding runBy}" Header="RunBy" />
+                        <DataGridTextColumn Binding="{Binding Comment}" Header="Comment" />
+                        <DataGridTextColumn Binding="{Binding Defects}" Header="Defects" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
                     </DataGrid.Columns>
                 </DataGrid>
             </DataTemplate>
@@ -363,6 +368,7 @@
                     <RowDefinition Height="3*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0"
+                            Margin="0,4,0,0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
@@ -371,32 +377,32 @@
                                  Margin="4,0"
                                  GroupName="DataGridTypeRadioGroup"
                                  IsChecked="{Binding IsDetailsChecked}"
-                                 Content="Details" />
+                                 Content="{x:Static prop:Resource.Detail}" />
                     <RadioButton Name="OTEsRadioButton"
                                  Grid.Row="0"
                                  Margin="4,0"
                                  GroupName="DataGridTypeRadioGroup"
-                                 Content="OTE" />
+                                 Content="{x:Static prop:Resource.OTE}" />
                 </StackPanel>
                 <TextBox Name="TestPlanTextBox"
                          Style="{StaticResource TextBoxShortWithLabel}"
                          Grid.Row="1"
                          Margin="0,4"
                          d:Text="Test Plan"
-                         Tag="Test Plan"
+                         Tag="{x:Static prop:Resource.TestPlan}"
                          Text="{Binding TestPlanID, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Name="TestSuiteTextBox"
                          Style="{StaticResource TextBoxShortWithLabel}"
                          Grid.Row="2"
                          Margin="0,4"
                          d:Text="Test Suite"
-                         Tag="Test Suite"
+                         Tag="{x:Static prop:Resource.TestSuite}"
                          Text="{Binding TestSuiteID, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Name="CompleteURLTextBox"
                          Style="{StaticResource TextBoxLongWithLabel}"
                          Grid.Row="3"
                          Margin="0,4"
-                         Tag="Complete Url"
+                         Tag="{x:Static prop:Resource.CompleteUrl}"
                          TextWrapping="Wrap"
                          Text="{Binding CompleteUrl, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Name="CookieTextBox"
@@ -404,7 +410,7 @@
                          Grid.Row="4"
                          Margin="0,4"
                          d:Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie."
-                         Tag="Cookie"
+                         Tag="{x:Static prop:Resource.Cookie}"
                          TextWrapping="Wrap"
                          Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
@@ -424,6 +430,13 @@
                 <Grid Name="TableGrid"
                       Grid.Row="0"
                       Grid.Column="2">
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{x:Static prop:Resource.Copy}" Command="ApplicationCommands.Copy" />
+                            <MenuItem Header="{x:Static prop:Resource.Cut}" Command="ApplicationCommands.Cut" />
+                            <MenuItem Header="{x:Static prop:Resource.Paste}" Command="ApplicationCommands.Paste" />
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <DataGrid Name="OTEsDataGrid"
                               d:ItemsSource="{d:SampleData ItemCount=100}"
                               Template="{StaticResource OTE_OfflineModelsGridTemplate}"
@@ -447,6 +460,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -457,7 +471,7 @@
                     Grid.Column="0"
                     Margin="0,0,4,0"
                     Command="{Binding GetDataButtonClickedCommand}"
-                    Content="Get Data" />
+                    Content="{x:Static prop:Resource.GetData}" />
             <ComboBox Name="OTEsFilterComboBox"
                       Grid.Row="0"
                       Grid.Column="1"
@@ -494,11 +508,10 @@
                     </i:KeyTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
-
-            <ProgressBar Name="GetProgressBar"
+            <!--  Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"  -->
+            <ProgressBar Name="GetVSTSDataProgressBar"
                          Grid.Row="0"
                          Grid.Column="1"
-                         Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"
                          Height="{Binding ElementName=TCsFilterComboBox, Path=ActualHeight}"
                          VerticalAlignment="Center"
                          IsIndeterminate="True"
@@ -510,7 +523,17 @@
                     Margin="4,0,0,0"
                     ToolTip="Refresh the table."
                     Command="{Binding RefreshButtonClickedCommand}"
-                    Content="Refresh" />
+                    Content="{x:Static prop:Resource.Refresh}" />
+            <Menu Grid.Row="0" Grid.Column="3">
+                <MenuItem FontStyle="Oblique"
+                          FontWeight="ExtraBold"
+                          Header="...">
+                    <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
+                    <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
+                    <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
+                    <MenuItem Header="{x:Static prop:Resource.Language}" Command="{Binding LanguageChangeCommand}" />
+                </MenuItem>
+            </Menu>
         </Grid>
     </Grid>
 </Window>

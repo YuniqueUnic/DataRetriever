@@ -1,3 +1,4 @@
+using MiniExcelLibs.Attributes;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -52,23 +53,27 @@ public class TestCase : ITestObject, IResultsModel
     private TestTools? _testTools { get; set; }
     private OutcomeState? _outcome { get; set; }
 
-    public string? Name { get; set; }
     public int ID { get; set; } = -1;
+    public string? Name { get; set; }
     public string? CQID { get; set; }
     public bool? IsAutomated { get; set; }
     public string? ScriptName { get; set; }
+    [ExcelIgnore]
     public TestPoint? SelfTestPoint { get; set; }
+    [ExcelIgnore]
     public TestSuite? ParentTestSuite { get; set; }
     public string? ProductArea { get; set; }
     public TestTools? TestTool { get => _testTools; }
     public OutcomeState? Outcome => _outcome;
 
+    [ExcelIgnore]
     public string? TestToolStr
     {
         get => _testTools.GetStringValue();
         set => _testTools = value.SetEnumValueIgnoreCase<TestTools>();
     }
 
+    [ExcelIgnore]
     public string? OutcomeStr
     {
         get => _outcome.GetStringValue();
@@ -191,20 +196,22 @@ public class OTE_OfflineModel : IResultsModel
 {
     private OutcomeState? _outcome { get; set; }
 
-    public int testCaseId { get; set; } = -1;
-    public string? title { get; set; }
-    public string? testStep { get; private set; } = string.Empty;
-    public string? stepAction { get; private set; } = string.Empty;
-    public string? stepExpected { get; private set; } = string.Empty;
-    public int testPointId { get; set; } = -1;
-    public string? configuration { get; set; }
-    public string? assignTo { get; set; }
-    public string? comment { get; private set; } = string.Empty;
-    public string? defects { get; private set; } = string.Empty;
-    public string? runBy { get; set; }
+
+    public int TestCaseId { get; set; } = -1;
+    public string? Title { get; set; }
+    public string? TestStep { get; private set; } = string.Empty;
+    public string? StepAction { get; private set; } = string.Empty;
+    public string? StepExpected { get; private set; } = string.Empty;
+    public int TestPointId { get; set; } = -1;
+    public string? Configuration { get; set; }
+    public string? AssignTo { get; set; }
+    public string? Comment { get; private set; } = string.Empty;
+    public string? Defects { get; private set; } = string.Empty;
+    public string? RunBy { get; set; }
 
     public OutcomeState? Outcome => _outcome;
 
+    [ExcelIgnore]
     public string? OutcomeStr
     {
         get => _outcome.GetStringValue();
@@ -292,7 +299,7 @@ public class OTE_OfflineModel : IResultsModel
     }
 }
 
-interface IResultsModel
+public interface IResultsModel
 {
     public abstract bool Contains(string value);
     public abstract HashSet<string> AllToHashSet( );

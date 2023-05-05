@@ -1,10 +1,8 @@
 ﻿<Application x:Class="VSTSDataProvider.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:VSTSDataProvider"
-             >
-    <Application.Resources>
-             <!-- StartupUri="/Views/MainWindow.xaml" -->
-         
-    </Application.Resources>
+             xmlns:local="clr-namespace:VSTSDataProvider">
+    <!--  StartupUri="/Views/MainWindow.xaml"  -->
+    <Application.Resources />
+
 </Application>
