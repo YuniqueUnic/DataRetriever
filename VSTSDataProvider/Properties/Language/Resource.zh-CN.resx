@@ -151,7 +151,7 @@
     <value>English</value>
   </data>
   <data name="OTE" xml:space="preserve">
-    <value>OTE格式</value>
+    <value>OTE</value>
     <comment>OTE_Excel 格式</comment>
   </data>
   <data name="Paste" xml:space="preserve">
@@ -161,10 +161,22 @@
     <value>刷新</value>
     <comment>刷新表格</comment>
   </data>
+  <data name="SaveFileFailed" xml:space="preserve">
+    <value>保存失败</value>
+  </data>
+  <data name="SaveFileSuccessfully" xml:space="preserve">
+    <value>保存成功</value>
+  </data>
   <data name="TestPlan" xml:space="preserve">
     <value>Test Plan</value>
   </data>
   <data name="TestSuite" xml:space="preserve">
     <value>TestSuite</value>
+  </data>
+  <data name="SaveFileDialogTitle" xml:space="preserve">
+    <value>保存文件</value>
+  </data>
+  <data name="OpenFileDialogTitle" xml:space="preserve">
+    <value>打开文件</value>
   </data>
 </root>

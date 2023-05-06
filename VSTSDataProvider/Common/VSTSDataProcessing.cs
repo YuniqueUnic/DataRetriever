@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,8 +19,9 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     private TestPlan? _testPlan;
     private TestSuite? _testSuite;
-    private ConcurrentBag<TestCase> _testCases = new();
-    private ConcurrentBag<OTE_OfflineModel> _otesOfflineModel = new();
+    private ConcurrentBag<TestCase> _testCaseModels = new();
+    private ConcurrentBag<DetailModel> _detailModels = new();
+    private ConcurrentBag<OTE_OfflineModel> _otesOfflineModels = new();
 
     private bool _testCasesLoadOver = false;
 
@@ -40,16 +42,23 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         private set => SetProperty(ref _testSuite , value);
     }
 
-    public ConcurrentBag<TestCase> TestCasesModel
+    [Obsolete("Recommend using DetailModel.")]
+    public ConcurrentBag<TestCase> TestCasesModels
     {
-        get => _testCases;
-        private set { SetProperty(ref _testCases , value); }
+        get => _testCaseModels;
+        private set { SetProperty(ref _testCaseModels , value); }
     }
 
-    public ConcurrentBag<OTE_OfflineModel> OTEs_OfflineModel
+    public ConcurrentBag<DetailModel> DetailModels
     {
-        get => _otesOfflineModel;
-        private set => SetProperty(ref _otesOfflineModel , value);
+        get => _detailModels;
+        private set => SetProperty(ref _detailModels , value);
+    }
+
+    public ConcurrentBag<OTE_OfflineModel> OTEs_OfflineModels
+    {
+        get => _otesOfflineModels;
+        private set => SetProperty(ref _otesOfflineModels , value);
     }
 
     public bool IsTestCasesLoadOver
@@ -82,14 +91,14 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return this;
     }
 
-    public bool SucceedLoadData() => CheckModels(_exeRootObject, _queryRootObject);
+    public bool SucceedLoadData( ) => CheckModels(_exeRootObject , _queryRootObject);
 
-    public async Task<bool> PreLoadData(System.Action action =null)
+    public async Task<bool> PreLoadData(System.Action action = null)
     {
         var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
         var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
 
-        if( CheckModels(executeVSTSModel,queryVSTSModel) )
+        if( CheckModels(executeVSTSModel , queryVSTSModel) )
         {
             _queryRootObject = queryVSTSModel;
             _exeRootObject = executeVSTSModel;
@@ -100,48 +109,71 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     //TODO to show the concat progress
-    public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync()
+    [Obsolete("Recommend using DetailModel.")]
+    public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync( )
     {
         IsTestCasesLoadOver = false;
 
-        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
         {
             return null;
         }
 
-        var newTCModels = MergeModelstoTCsBy(_exeRootObject, _queryRootObject, out bool succeedMerge);
+        var newTCModels = MergeModelstoTCsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
 
-        if (succeedMerge)
+        if( succeedMerge )
         {
-            TestCasesModel = newTCModels;
-            TestSuite = TestCasesModel.First().ParentTestSuite;
+            TestCasesModels = newTCModels;
+            TestSuite = TestCasesModels.First().ParentTestSuite;
             TestPlan = TestSuite.ParentTestPlan;
             IsTestCasesLoadOver = true;
         }
 
-        return TestCasesModel;
+        return TestCasesModels;
     }
 
     //TODO to show the concat progress
-    public async Task<ConcurrentBag<Models.OTE_OfflineModel>> GET_OTEsAsync()
+    public async Task<ConcurrentBag<Models.DetailModel>> GET_DetailsAsync( )
     {
         IsTestCasesLoadOver = false;
 
-        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
         {
             return null;
         }
 
-        var newOTEModels = MergeModelstoOTEsBy(_exeRootObject, _queryRootObject, out bool succeedMerge);
+        var newDetailModels = MergeModelstoDetailsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
 
-        if (succeedMerge)
+        if( succeedMerge )
         {
-            OTEs_OfflineModel = newOTEModels;
+            DetailModels = newDetailModels;
             IsTestCasesLoadOver = true;
 
         }
-        return OTEs_OfflineModel;
+        return DetailModels;
     }
+
+    //TODO to show the concat progress
+    public async Task<ConcurrentBag<Models.OTE_OfflineModel>> GET_OTEsAsync( )
+    {
+        IsTestCasesLoadOver = false;
+
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
+        {
+            return null;
+        }
+
+        var newOTEModels = MergeModelstoOTEsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
+
+        if( succeedMerge )
+        {
+            OTEs_OfflineModels = newOTEModels;
+            IsTestCasesLoadOver = true;
+
+        }
+        return OTEs_OfflineModels;
+    }
+
 
     private bool CheckModels(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
     {
@@ -154,6 +186,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return true;
     }
 
+    [Obsolete("Recommend using DetailModel.")]
     public ConcurrentBag<TestCase> MergeModelstoTCsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
@@ -206,6 +239,37 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return TestCases;
     }
 
+    public ConcurrentBag<DetailModel> MergeModelstoDetailsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
+    {
+        succeedMerge = false;
+
+        if( !CheckModels(exeModel , querModel) ) return null;
+
+        var DetailModels = new ConcurrentBag<DetailModel>(exeModel.value.Select(v =>
+        {
+            return new DetailModel()
+            {
+                TestPlanId = exeModel.value[0].testPlan.id ,
+                TestSuiteId = exeModel.value[0].testSuite.id ,
+                ID = v.workItem.id ,
+                Name = v.workItem.name ,
+                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
+                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
+                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
+                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                IsAutomated = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
+            };
+        }));
+
+        succeedMerge = true;
+        return DetailModels;
+    }
+
     public ConcurrentBag<OTE_OfflineModel> MergeModelstoOTEsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
@@ -230,12 +294,16 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return OTEModels;
     }
 
+
     /// <summary>
-    /// ���Դ������� URI �ַ����л�ȡ TestPlan �� TestSuite �� ID��
+    /// Extracts TestPlan and TestSuite IDs from a given URI string.
     /// </summary>
-    /// <param name="completeUri">������ URI �ַ�����</param>
-    /// <param name="succeedMatch">����ɹ�ƥ�� URI �ַ�������Ϊ true������Ϊ false��</param>
-    /// <returns>����ɹ�ƥ�� URI �ַ������򷵻ذ��� TestPlan �� TestSuite ID �� TestPlanSuiteId �ṹ�壻���򷵻�Ĭ��ֵ��</returns>
+    /// <param name="completeUri">The complete URI string to match against.</param>
+    /// <param name="succeedMatch">A boolean value indicating whether the match succeeded or not.</param>
+    /// <returns>
+    /// If the match succeeds, returns a TestPlanSuiteId structure with the extracted TestPlan and TestSuite IDs.
+    /// Otherwise, returns a TestPlanSuiteId structure with default values.
+    /// </returns>
     public static TestPlanSuiteId TryGetTestPlanSuiteId(string completeUri , out bool succeedMatch)
     {
         succeedMatch = false;

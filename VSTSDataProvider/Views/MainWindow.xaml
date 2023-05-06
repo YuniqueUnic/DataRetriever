@@ -131,6 +131,7 @@
 
             <Style x:Key="BaseButtonStyle" TargetType="Button">
                 <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Padding" Value="4" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
             </Style>
@@ -239,7 +240,7 @@
                 </Setter>
             </Style>
 
-
+            <!--  [Obsolete("Recommend using DetailModel.")]  -->
             <ControlTemplate x:Key="TestCaseGridTemplate" TargetType="{x:Type DataGrid}">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}"
                           IsReadOnly="true"
@@ -257,6 +258,30 @@
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.Name}" Header="Configuration" />
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.lastUpdatedDate}" Header="LastUpdatedDate" />
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.uniqueName}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="DetailModelsGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          IsReadOnly="true"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DataGrid.Columns>
+                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
+                        <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
+                        <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
+                        <DataGridTextColumn Binding="{Binding IsAutomated}" Header="IsAutomated" />
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>
@@ -283,6 +308,7 @@
             </ControlTemplate>
 
             <!--  Try to use DataGridTemplateSelector to Switch different DataType  -->
+            <!--  [Obsolete("Recommend using DetailModel.")]  -->
             <DataTemplate x:Key="TestCaseGridDataTemplate">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
@@ -298,6 +324,28 @@
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.Name}" Header="Configuration" />
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.lastUpdatedDate}" Header="LastUpdatedDate" />
                         <DataGridTextColumn Binding="{Binding SelfTestPoint.uniqueName}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="DetailsGridDataTemplate">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DataGrid.Columns>
+                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
+                        <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
+                        <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
+                        <DataGridTextColumn Binding="{Binding IsAutomated}" Header="IsAutomated" />
                     </DataGrid.Columns>
                 </DataGrid>
             </DataTemplate>
@@ -442,11 +490,16 @@
                               Template="{StaticResource OTE_OfflineModelsGridTemplate}"
                               Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibilityReverse}}"
                               ItemsSource="{Binding VstsDataCollectionViewOTEs}" />
-                    <DataGrid Name="TCsDataGrid"
+                    <!--<DataGrid Name="TCsDataGrid"
                               d:ItemsSource="{d:SampleData ItemCount=100}"
                               Template="{StaticResource TestCaseGridTemplate}"
                               Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
-                              ItemsSource="{Binding VstsDataCollectionViewTCs}" />
+                              ItemsSource="{Binding VstsDataCollectionViewTCs}" />-->
+                    <DataGrid Name="DetailsDataGrid"
+                              d:ItemsSource="{d:SampleData ItemCount=100}"
+                              Template="{StaticResource DetailModelsGridTemplate}"
+                              Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
+                              ItemsSource="{Binding VstsDataCollectionViewDetails}" />
                 </Grid>
             </Border>
         </Grid>
@@ -490,7 +543,7 @@
                     </i:KeyTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
-            <ComboBox Name="TCsFilterComboBox"
+            <!--<ComboBox Name="TCsFilterComboBox"
                       Grid.Row="0"
                       Grid.Column="1"
                       Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
@@ -507,12 +560,30 @@
                         <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
                     </i:KeyTrigger>
                 </i:Interaction.Triggers>
+            </ComboBox>-->
+            <ComboBox Name="DetailsFilterComboBox"
+                      Grid.Row="0"
+                      Grid.Column="1"
+                      Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
+                      Padding="4,0"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      IsEditable="True"
+                      IsTextSearchEnabled="True"
+                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
+                      Text="{Binding DetailsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding DetailsFilterCollectionsComboBox}">
+                <i:Interaction.Triggers>
+                    <i:KeyTrigger Key="Return" ActiveOnFocus="True">
+                        <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
+                    </i:KeyTrigger>
+                </i:Interaction.Triggers>
             </ComboBox>
             <!--  Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"  -->
             <ProgressBar Name="GetVSTSDataProgressBar"
                          Grid.Row="0"
                          Grid.Column="1"
-                         Height="{Binding ElementName=TCsFilterComboBox, Path=ActualHeight}"
+                         Height="{Binding ElementName=DetailsFilterComboBox, Path=ActualHeight}"
                          VerticalAlignment="Center"
                          IsIndeterminate="True"
                          Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />
@@ -525,13 +596,18 @@
                     Command="{Binding RefreshButtonClickedCommand}"
                     Content="{x:Static prop:Resource.Refresh}" />
             <Menu Grid.Row="0" Grid.Column="3">
-                <MenuItem FontStyle="Oblique"
+                <MenuItem Padding="4"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          FontStyle="Oblique"
                           FontWeight="ExtraBold"
                           Header="...">
                     <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
                     <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
                     <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Language}" Command="{Binding LanguageChangeCommand}" />
+                    <MenuItem Header="{x:Static prop:Resource.Language}"
+                              Command="{Binding LanguageChangeCommand}"
+                              CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
                 </MenuItem>
             </Menu>
         </Grid>

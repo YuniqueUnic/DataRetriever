@@ -50,8 +50,8 @@ public class TestPoint : ITestObject
 
 public class TestCase : ITestObject, IResultsModel
 {
-    private TestTools? _testTools { get; set; }
-    private OutcomeState? _outcome { get; set; }
+    //private TestTools? _testTools { get; set; }
+    //private OutcomeState? _outcome { get; set; }
 
     public int ID { get; set; } = -1;
     public string? Name { get; set; }
@@ -63,21 +63,21 @@ public class TestCase : ITestObject, IResultsModel
     [ExcelIgnore]
     public TestSuite? ParentTestSuite { get; set; }
     public string? ProductArea { get; set; }
-    public TestTools? TestTool { get => _testTools; }
-    public OutcomeState? Outcome => _outcome;
+    public TestTools TestTool { get; set; }
+    public OutcomeState Outcome { get; set; }
 
     [ExcelIgnore]
     public string? TestToolStr
     {
-        get => _testTools.GetStringValue();
-        set => _testTools = value.SetEnumValueIgnoreCase<TestTools>();
+        get => TestTool.GetStringValue();
+        set => TestTool = value.SetEnumValueIgnoreCase<TestTools>();
     }
 
     [ExcelIgnore]
     public string? OutcomeStr
     {
-        get => _outcome.GetStringValue();
-        set => _outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
+        get => Outcome.GetStringValue();
+        set => Outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
     }
 
     public bool Contains(string value)
@@ -192,9 +192,122 @@ public interface ITestObject
 }
 
 
+public class DetailModel : IResultsModel
+{
+    public int TestPlanId { get; set; } = -1;
+    public int TestSuiteId { get; set; } = -1;
+    public int ID { get; set; } = -1;
+    public string? Name { get; set; }
+    public string? CQID { get; set; }
+    public string? ProductArea { get; set; }
+    public string? ScriptName { get; set; }
+    public TestTools TestTool { get; set; }
+    public OutcomeState Outcome { get; set; }
+    public int TestPointId { get; set; } = -1;
+    public string? Configuration { get; set; }
+    public string? LastUpdatedDate { get; set; }
+    public string? RunBy { get; set; }
+    public bool? IsAutomated { get; set; }
+
+    [ExcelIgnore]
+    public string? TestToolStr
+    {
+        get => TestTool.GetStringValue();
+        set => TestTool = value.SetEnumValueIgnoreCase<TestTools>();
+    }
+
+    [ExcelIgnore]
+    public string? OutcomeStr
+    {
+        get => Outcome.GetStringValue();
+        set => Outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
+    }
+
+
+    public bool Contains(string value)
+    {
+        // search for the value in all public properties and fields of the object
+        foreach( var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance) )
+        {
+            var propertyValue = property.GetValue(this)?.ToString();
+            if( propertyValue != null && propertyValue.Contains(value) )
+            {
+                return true;
+            }
+        }
+
+        foreach( var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance) )
+        {
+            var fieldValue = field.GetValue(this)?.ToString();
+            if( fieldValue != null && fieldValue.Contains(value) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    public HashSet<string> AllToHashSet( )
+    {
+        var hashSet = new HashSet<string>();
+
+        foreach( var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance) )
+        {
+            var propertyValue = property.GetValue(this)?.ToString();
+            if( propertyValue != null )
+            {
+                hashSet.Add(propertyValue);
+            }
+
+            if( typeof(IEnumerable).IsAssignableFrom(property.PropertyType) )
+            {
+                var enumerable = property.GetValue(this) as IEnumerable;
+                if( enumerable != null )
+                {
+                    foreach( var testCase in enumerable.OfType<TestCase>() )
+                    {
+                        hashSet.UnionWith(testCase.AllToHashSet());
+                    }
+                }
+            }
+            else if( property.PropertyType.IsClass && property.PropertyType != typeof(object) )
+            {
+                var nestedTestCase = property.GetValue(this) as TestCase;
+                if( nestedTestCase != null )
+                {
+                    hashSet.UnionWith(nestedTestCase.AllToHashSet());
+                }
+            }
+        }
+
+        foreach( var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance) )
+        {
+            var fieldValue = field.GetValue(this)?.ToString();
+            if( fieldValue != null )
+            {
+                hashSet.Add(fieldValue);
+            }
+
+            if( typeof(IEnumerable).IsAssignableFrom(field.FieldType) )
+            {
+                var enumerable = field.GetValue(this) as IEnumerable;
+                if( enumerable != null )
+                {
+                    foreach( var testCase in enumerable.OfType<TestCase>() )
+                    {
+                        hashSet.UnionWith(testCase.AllToHashSet());
+                    }
+                }
+            }
+        }
+
+        return hashSet;
+    }
+}
+
 public class OTE_OfflineModel : IResultsModel
 {
-    private OutcomeState? _outcome { get; set; }
+    //private OutcomeState? _outcome { get; set; }
 
 
     public int TestCaseId { get; set; } = -1;
@@ -209,13 +322,13 @@ public class OTE_OfflineModel : IResultsModel
     public string? Defects { get; private set; } = string.Empty;
     public string? RunBy { get; set; }
 
-    public OutcomeState? Outcome => _outcome;
+    public OutcomeState Outcome { get; set; }
 
     [ExcelIgnore]
     public string? OutcomeStr
     {
-        get => _outcome.GetStringValue();
-        set => _outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
+        get => Outcome.GetStringValue();
+        set => Outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
     }
 
     public bool Contains(string value)

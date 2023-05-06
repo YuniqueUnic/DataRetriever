@@ -1,35 +1,65 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Data;
-using System.Diagnostics.CodeAnalysis;
+﻿using MiniExcelLibs;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using VSTSDataProvider.Common.Helpers;
+using VSTSDataProvider.Models;
 
 namespace VSTSDataProvider.Common;
 
+public record class ExcelOperatorResult
+{
+    public bool SucceedDone;
+    public string? FullPath;
+    public string? Info;
+    public IEnumerable<IResultsModel>? resultModels;
+}
 
 public class ExcelOperator
 {
+    public static ExcelType ParseExcelType(string fileNameWithExtension)
+    {
+        return Path.GetExtension(fileNameWithExtension) switch
+        {
+            ".xlsx" => MiniExcelLibs.ExcelType.XLSX,
+            ".csv" => MiniExcelLibs.ExcelType.CSV,
+            _ => MiniExcelLibs.ExcelType.UNKNOWN
+        };
+    }
 
-    private string _filePath;
+    private string _directoryPath;
     private string _fileName;
     private string _FullPath => EnsureDefaultFields();
 
     private string? _sheetName;
     private MiniExcelLibs.ExcelType? _excelType;
 
-    public ExcelOperator(string filePath)
+    public ExcelOperator(string directoryPath)
     {
-        _filePath = filePath;
+        _directoryPath = directoryPath;
     }
 
-    public ExcelOperator(string fileName , string filePath)
+    public ExcelOperator(string fileName , string directoryPath)
     {
-        _filePath = filePath;
+        _fileName = fileName;
+        _directoryPath = directoryPath;
+    }
+
+    public ExcelOperator setFileName(string fileName)
+    {
+        _fileName = fileName;
+        return this;
     }
 
     public ExcelOperator SetSheetName(string sheetName)
     {
+        if( sheetName.Length >= 30 )
+        {
+            sheetName.Substring(0 , 30);
+        }
+
         _sheetName = sheetName;
         return this;
     }
@@ -42,16 +72,16 @@ public class ExcelOperator
 
     private string EnsureDefaultFields( )
     {
-        if( string.IsNullOrEmpty(_filePath) || !Directory.Exists(_filePath) )
+        if( string.IsNullOrEmpty(_directoryPath) || !Directory.Exists(_directoryPath) )
         {
-            _filePath = Environment.CurrentDirectory;
+            _directoryPath = Environment.CurrentDirectory;
         }
 
         if( string.IsNullOrEmpty(_fileName) )
         {
             _fileName = $"Exported {Guid.NewGuid()}";
 
-            while( File.Exists(Path.Combine(_filePath + _fileName)) )
+            while( File.Exists(System.IO.Path.Combine(_directoryPath + _fileName)) )
             {
                 _fileName = $"Exported {Guid.NewGuid()}";
             }
@@ -62,221 +92,79 @@ public class ExcelOperator
             _excelType = MiniExcelLibs.ExcelType.XLSX;
         }
 
-        return Path.Combine(_filePath , _fileName + "." + _excelType.ToString());
+        return System.IO.Path.Combine(_directoryPath , _fileName);
     }
 
-    public async Task<bool> Export<TObject>(ConcurrentBag<TObject> TargetObj)
-    where TObject : class, Models.IResultsModel
+    public async Task<ExcelOperatorResult> ExportAsync<TObject>(TObject TargetObj)
     {
-        if( TargetObj == null ) { return false; }
+        var result = new ExcelOperatorResult()
+        {
+            SucceedDone = false ,
+            FullPath = _FullPath ,
+            Info = "NullReferenceException" ,
+        };
+
+        if( TargetObj == null ) { return result; }
 
         try
         {
             await MiniExcelLibs.MiniExcel.SaveAsAsync(_FullPath , TargetObj ,
-                sheetName: _sheetName ?? "TestCases" , excelType: _excelType ?? MiniExcelLibs.ExcelType.XLSX);
+                sheetName: _sheetName ?? "Sheet1" , excelType: _excelType ?? MiniExcelLibs.ExcelType.XLSX);
+            result.SucceedDone = true;
         }
-        catch( Exception )
+        catch( Exception e )
         {
-            return false;
+            result.Info = e.Message;
+            return result;
             throw;
         }
 
-        return true;
+        return result;
     }
 
-    public async Task<bool> ExportAs<TObject>(TObject TargetObj)
+    public async Task<ExcelOperatorResult> ImportAsyncBy<TModel>(string filefullpath)
+        where TModel : class, Models.IResultsModel, new()
     {
-        if( TargetObj == null ) { return false; }
-
-        try
+        var result = new ExcelOperatorResult()
         {
-            await MiniExcelLibs.MiniExcel.SaveAsAsync(_FullPath , TargetObj ,
-                sheetName: _sheetName ?? "TestCases" , excelType: _excelType ?? MiniExcelLibs.ExcelType.XLSX);
+            SucceedDone = false ,
+            FullPath = _FullPath ,
+            Info = "NullReferenceException" ,
+            resultModels = null ,
+        };
+
+        if( filefullpath.IsNullOrWhiteSpaceOrEmpty() ) return result;
+
+        if( !File.Exists(filefullpath) )
+        {
+            result.Info = $"{filefullpath} not exists.";
+            return result;
         }
-        catch( Exception )
+
+        using( var stream = File.OpenRead(filefullpath) )
         {
-            return false;
-            throw;
-        }
-
-        return true;
-    }
-}
-
-
-public class ExcelOperatorHelper : IDataReader
-{
-    private bool disposedValue;
-
-    public object this[int i] => throw new NotImplementedException();
-
-    public object this[string name] => throw new NotImplementedException();
-
-    public int Depth => throw new NotImplementedException();
-
-    public bool IsClosed => throw new NotImplementedException();
-
-    public int RecordsAffected => throw new NotImplementedException();
-
-    public int FieldCount => throw new NotImplementedException();
-
-    public void Close( )
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool GetBoolean(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public byte GetByte(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public long GetBytes(int i , long fieldOffset , byte[]? buffer , int bufferoffset , int length)
-    {
-        throw new NotImplementedException();
-    }
-
-    public char GetChar(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public long GetChars(int i , long fieldoffset , char[]? buffer , int bufferoffset , int length)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IDataReader GetData(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetDataTypeName(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public DateTime GetDateTime(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public decimal GetDecimal(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public double GetDouble(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)]
-    public Type GetFieldType(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public float GetFloat(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Guid GetGuid(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public short GetInt16(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int GetInt32(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public long GetInt64(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetName(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int GetOrdinal(string name)
-    {
-        throw new NotImplementedException();
-    }
-
-    public DataTable? GetSchemaTable( )
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetString(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public object GetValue(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int GetValues(object[] values)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsDBNull(int i)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool NextResult( )
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Read( )
-    {
-        throw new NotImplementedException();
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if( !disposedValue )
-        {
-            if( disposing )
+            try
             {
-                // TODO: 释放托管状态(托管对象)
+                result.resultModels = (await stream.QueryAsync<TModel>(excelType: _excelType ?? ExcelType.XLSX)).ToList<TModel>();
+                result.Info = $"Import data from {filefullpath} successfully.";
+                result.SucceedDone = true;
+            }
+            catch( Exception e )
+            {
+                result.Info = e.Message;
+                throw;
             }
 
-            // TODO: 释放未托管的资源(未托管的对象)并重写终结器
-            // TODO: 将大型字段设置为 null
-            disposedValue = true;
+            return result;
         }
     }
 
-    // // TODO: 仅当“Dispose(bool disposing)”拥有用于释放未托管资源的代码时才替代终结器
-    // ~ExcelOperatorHelper()
-    // {
-    //     // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
-    //     Dispose(disposing: false);
-    // }
-
-    public void Dispose( )
+    public async Task<ExcelOperatorResult> ImportAsync<TModel>( )
+       where TModel : class, Models.IResultsModel, new()
     {
-        // 不要更改此代码。请将清理代码放入“Dispose(bool disposing)”方法中
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        return await ImportAsyncBy<TModel>(_FullPath);
     }
+
 }
+
+

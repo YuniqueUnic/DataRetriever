@@ -119,16 +119,19 @@
   </resheader>
   <data name="CompleteUrl" xml:space="preserve">
     <value>Complete Url</value>
-    <comment>完整的 url 路径</comment>
+    <comment>完整网址</comment>
   </data>
   <data name="Cookie" xml:space="preserve">
     <value>Cookie</value>
+    <comment>Cookie</comment>
   </data>
   <data name="Copy" xml:space="preserve">
     <value>Copy</value>
+    <comment>复制</comment>
   </data>
   <data name="Cut" xml:space="preserve">
     <value>Cut</value>
+    <comment>剪切</comment>
   </data>
   <data name="Detail" xml:space="preserve">
     <value>Detail</value>
@@ -136,9 +139,11 @@
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edit</value>
+    <comment>编辑</comment>
   </data>
   <data name="Export" xml:space="preserve">
     <value>Export</value>
+    <comment>导出</comment>
   </data>
   <data name="GetData" xml:space="preserve">
     <value>Get Data</value>
@@ -146,25 +151,43 @@
   </data>
   <data name="Import" xml:space="preserve">
     <value>Import</value>
+    <comment>导入</comment>
   </data>
   <data name="Language" xml:space="preserve">
     <value>中文</value>
   </data>
   <data name="OTE" xml:space="preserve">
     <value>OTE</value>
-    <comment>OTE_Excel 格式</comment>
+    <comment>OTE</comment>
   </data>
   <data name="Paste" xml:space="preserve">
     <value>Paste</value>
+    <comment>粘贴</comment>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Refresh</value>
-    <comment>刷新表格</comment>
+    <comment>刷新</comment>
+  </data>
+  <data name="SaveFileFailed" xml:space="preserve">
+    <value>Save File Failed</value>
+    <comment>保存失败</comment>
+  </data>
+  <data name="SaveFileSuccessfully" xml:space="preserve">
+    <value>Save File Successfully</value>
+    <comment>保存成功</comment>
   </data>
   <data name="TestPlan" xml:space="preserve">
     <value>Test Plan</value>
   </data>
   <data name="TestSuite" xml:space="preserve">
     <value>TestSuite</value>
+  </data>
+  <data name="SaveFileDialogTitle" xml:space="preserve">
+    <value>Save File</value>
+    <comment>保存文件</comment>
+  </data>
+  <data name="OpenFileDialogTitle" xml:space="preserve">
+    <value>Open File</value>
+    <comment>打开文件</comment>
   </data>
 </root>

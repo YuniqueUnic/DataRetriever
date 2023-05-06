@@ -1,11 +1,14 @@
+using Microsoft.Win32;
+using MiniExcelLibs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using VSTSDataProvider.Common;
@@ -50,12 +53,104 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private string? _cookie;
     private bool? _progressBarShowing;
 
+    #region Obsolete TCModels
+
+    [Obsolete("Recommend using DetailModel.")]
     private ConcurrentBag<Models.TestCase> _vstsDataCollectionTCs;
-    private ConcurrentBag<Models.OTE_OfflineModel> _vstsDataCollectionOTEs;
+
+    [Obsolete("Recommend using DetailModel.")]
     private ICollectionView _vstsDataCollectionViewTCs;
-    private ICollectionView _vstsDataCollectionViewOTEs;
+
+    [Obsolete("Recommend using DetailModel.")]
     private string _tcsFilterComboBoxText;
+
+    [Obsolete("Recommend using DetailModel.")]
     private List<string> _tcsFilterCollectionsComboBox;
+
+    [Obsolete("Recommend using DetailModel.")]
+    public ConcurrentBag<Models.TestCase> VSTSDataCollectionTCs
+    {
+        get => _vstsDataCollectionTCs ?? new();
+        set
+        {
+            #region Obsolete Code
+            //if( !EqualityComparer<ConcurrentBag<Models.TestCase>>.Default.Equals(_vstsDataCollectionTCs , value) )
+            //{
+            //    VstsDataCollectionView = CollectionViewSource.GetDefaultView(value);
+            //    // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
+            //    VstsDataCollectionView.Filter = (o) =>
+            //    {
+            //        if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
+            //        var testCase = o as Models.TestCase;
+            //        if( testCase == null ) return false;
+            //        return testCase.Contains(TCsFilterComboBoxText);
+            //    };
+
+            //    var filterSet = new HashSet<string>();
+
+            //    foreach( var testCase in value )
+            //    {
+            //        filterSet.UnionWith(testCase.AllToHashSet());
+            //    };
+
+            //    var sortedFilterSet = new List<string>(filterSet);
+            //    sortedFilterSet.Sort();
+
+            //    TCsFilterCollectionsComboBox = sortedFilterSet;
+            //}
+            #endregion
+            //RefreshComboBoxProperties<Models.TestCase>(value);
+            var results
+                = RefreshComboBoxProperties<Models.TestCase>(ref _vstsDataCollectionViewTCs , ref value , TCsFilterComboBoxText);
+            if( results.succeedRefreshIt == true )
+            {
+                VstsDataCollectionViewTCs = results.withFilterCollectionView;
+                TCsFilterCollectionsComboBox = results.withFilterTextList;
+
+                VstsDataCollectionViewTCs.Filter = (o) =>
+                {
+                    if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.TestCase;
+                    if( testCase == null ) return false;
+                    return testCase.Contains(TCsFilterComboBoxText);
+                };
+            }
+            SetProperty(ref _vstsDataCollectionTCs , value);
+        }
+    }
+
+    //DataGrid DataCollectionView
+    [Obsolete("Recommend using DetailModel.")]
+    public ICollectionView VstsDataCollectionViewTCs
+    {
+        get => _vstsDataCollectionViewTCs;
+        set => SetProperty(ref _vstsDataCollectionViewTCs , value);
+    }
+
+    //TCs ComboBox FilterText
+    [Obsolete("Recommend using DetailModel.")]
+    public string TCsFilterComboBoxText
+    {
+        get => _tcsFilterComboBoxText;
+        set => SetProperty(ref _tcsFilterComboBoxText , value);
+    }
+
+    [Obsolete("Recommend using DetailModel.")]
+    public List<string> TCsFilterCollectionsComboBox
+    {
+        get => _tcsFilterCollectionsComboBox;
+        set => SetProperty(ref _tcsFilterCollectionsComboBox , value);
+    }
+
+    #endregion Obsolete TCModels
+
+    private ConcurrentBag<Models.DetailModel> _vstsDataCollectionDetails;
+    private ConcurrentBag<Models.OTE_OfflineModel> _vstsDataCollectionOTEs;
+    private ICollectionView _vstsDataCollectionViewDetails;
+    private ICollectionView _vstsDataCollectionViewOTEs;
+
+    private string _detailsFilterComboBoxText;
+    private List<string> _detailsFilterCollectionsComboBox;
 
     private string _otesFilterComboBoxText;
     private List<string> _otesFilterCollectionsComboBox;
@@ -115,55 +210,28 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-
-    public ConcurrentBag<Models.TestCase> VSTSDataCollectionTCs
+    public ConcurrentBag<Models.DetailModel> VSTSDataCollectionDetails
     {
-        get => _vstsDataCollectionTCs ?? new();
+        get => _vstsDataCollectionDetails ?? new();
         set
         {
-            #region Obsolete Code
-            //if( !EqualityComparer<ConcurrentBag<Models.TestCase>>.Default.Equals(_vstsDataCollectionTCs , value) )
-            //{
-            //    VstsDataCollectionView = CollectionViewSource.GetDefaultView(value);
-            //    // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
-            //    VstsDataCollectionView.Filter = (o) =>
-            //    {
-            //        if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
-            //        var testCase = o as Models.TestCase;
-            //        if( testCase == null ) return false;
-            //        return testCase.Contains(TCsFilterComboBoxText);
-            //    };
 
-            //    var filterSet = new HashSet<string>();
-
-            //    foreach( var testCase in value )
-            //    {
-            //        filterSet.UnionWith(testCase.AllToHashSet());
-            //    };
-
-            //    var sortedFilterSet = new List<string>(filterSet);
-            //    sortedFilterSet.Sort();
-
-            //    TCsFilterCollectionsComboBox = sortedFilterSet;
-            //}
-            #endregion
-            //RefreshComboBoxProperties<Models.TestCase>(value);
             var results
-                = RefreshComboBoxProperties<Models.TestCase>(ref _vstsDataCollectionViewTCs , ref value , TCsFilterComboBoxText);
+                = RefreshComboBoxProperties<Models.DetailModel>(ref _vstsDataCollectionViewTCs , ref value , DetailsFilterComboBoxText);
             if( results.succeedRefreshIt == true )
             {
-                VstsDataCollectionViewTCs = results.withFilterCollectionView;
-                TCsFilterCollectionsComboBox = results.withFilterTextList;
+                VstsDataCollectionViewDetails = results.withFilterCollectionView;
+                DetailsFilterCollectionsComboBox = results.withFilterTextList;
 
-                VstsDataCollectionViewTCs.Filter = (o) =>
+                VstsDataCollectionViewDetails.Filter = (o) =>
                 {
-                    if( string.IsNullOrEmpty(TCsFilterComboBoxText) ) return true;
-                    var testCase = o as Models.TestCase;
+                    if( string.IsNullOrEmpty(DetailsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.DetailModel;
                     if( testCase == null ) return false;
-                    return testCase.Contains(TCsFilterComboBoxText);
+                    return testCase.Contains(DetailsFilterComboBoxText);
                 };
             }
-            SetProperty(ref _vstsDataCollectionTCs , value);
+            SetProperty(ref _vstsDataCollectionDetails , value);
         }
     }
 
@@ -190,7 +258,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             SetProperty(ref _vstsDataCollectionOTEs , value);
         }
     }
-
 
     private (bool? succeedRefreshIt, ICollectionView withFilterCollectionView, List<string> withFilterTextList) RefreshComboBoxProperties<T>
             (ref ICollectionView targetCollectionView , ref ConcurrentBag<T> value , string targetComboBoxText)
@@ -230,12 +297,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         return (false, null, null);
     }
 
-
-    //DataGrid DataCollectionView
-    public ICollectionView VstsDataCollectionViewTCs
+    public ICollectionView VstsDataCollectionViewDetails
     {
-        get => _vstsDataCollectionViewTCs;
-        set => SetProperty(ref _vstsDataCollectionViewTCs , value);
+        get => _vstsDataCollectionViewDetails;
+        set => SetProperty(ref _vstsDataCollectionViewDetails , value);
     }
 
     public ICollectionView VstsDataCollectionViewOTEs
@@ -244,17 +309,17 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set => SetProperty(ref _vstsDataCollectionViewOTEs , value);
     }
 
-    //TCs ComboBox FilterText
-    public string TCsFilterComboBoxText
+    //Details ComboBox FilterText
+    public string DetailsFilterComboBoxText
     {
-        get => _tcsFilterComboBoxText;
-        set => SetProperty(ref _tcsFilterComboBoxText , value);
+        get => _detailsFilterComboBoxText;
+        set => SetProperty(ref _detailsFilterComboBoxText , value);
     }
 
-    public List<string> TCsFilterCollectionsComboBox
+    public List<string> DetailsFilterCollectionsComboBox
     {
-        get => _tcsFilterCollectionsComboBox;
-        set => SetProperty(ref _tcsFilterCollectionsComboBox , value);
+        get => _detailsFilterCollectionsComboBox;
+        set => SetProperty(ref _detailsFilterCollectionsComboBox , value);
     }
 
     //OTEs ComboBox FilterText
@@ -312,7 +377,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         //await ReleaseMethod_TCs();
         if( IsDetailsChecked )
         {
-            VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
         }
         else
         {
@@ -320,7 +386,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
 
     }
-
 
     private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
     {
@@ -347,6 +412,11 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         else if( typeof(T) == typeof(Models.TestCase) )
         {
             ConcurrentBag<Models.TestCase> newTCsModel = new TestData.TestVSTSClass().MergeModelstoTCs(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.DetailModel) )
+        {
+            ConcurrentBag<Models.DetailModel> newTCsModel = new TestData.TestVSTSClass().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
             return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
         }
         else
@@ -390,7 +460,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     //        if( IsDetailsChecked )
     //        {
-    //            VSTSDataCollectionTCs = await mVSTSDataProvider.GET_TCsAsync();
+    //            VSTSDataCollectionDetails = await mVSTSDataProvider.GET_DetailsAsync();
     //        }
     //        else
     //        {
@@ -409,8 +479,11 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     {
         if( IsDetailsChecked )
         {
-            if( VstsDataCollectionViewTCs is null ) return;
-            VstsDataCollectionViewTCs.Refresh();
+            //if( VstsDataCollectionViewTCs is null ) return;
+            //VstsDataCollectionViewTCs.Refresh();            
+
+            if( VstsDataCollectionViewDetails is null ) return;
+            VstsDataCollectionViewDetails.Refresh();
         }
         else
         {
@@ -432,25 +505,126 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async void Export( )
     {
-        //         .SetSheetName(
-        //"TP:" + VSTSDataCollectionTCs.First(i => i is not null).ParentTestSuite.ParentTestPlan.ID +
-        // "-" +
-        //"TS:" + VSTSDataCollectionTCs.First(i => i is not null).ParentTestSuite.ID
-        // )
-        //导出逻辑代码
-        var succeedExport = await new ExcelOperator(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory))
-            .ExportAs(VSTSDataCollectionTCs);
+        // create a SaveFileDialog Instance
+        SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-        //var succeedExport = await new ExcelOperator(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory))
-        //        .SetExcelType(MiniExcelLibs.ExcelType.XLSX)
-        //        .SetSheetName("HeloWorld")
-        //        .Export<OTE_OfflineModel>(await DebugMethod<OTE_OfflineModel>());
+        // set the default Title and File name
+        saveFileDialog.Title = Resource.SaveFileDialogTitle;
+        saveFileDialog.FileName = (IsDetailsChecked ? "Detail_" : "OTE_") + $"{Guid.NewGuid()}";
+
+        // set the file Filter
+        saveFileDialog.Filter = "Excel (*.xlsx)|*.xlsx|CSV (*.csv)|*.csv|All (*.*)|*.*";
+
+        // show the dialog and get the result
+        bool? result = saveFileDialog.ShowDialog();
+
+        if( result == true )
+        {
+            // get the selected or input file name after clicking the save button
+            string fileName = saveFileDialog.SafeFileName;
+            string directoryPath = saveFileDialog.FileName.Replace(fileName , "");
+
+            // According to the file extension to determine the ExcelType
+            ExcelType excelType = ExcelOperator.ParseExcelType(fileName);
+
+            // export as Excel
+            var exportResult = await new ExcelOperator(directoryPath)
+                .SetSheetName(IsDetailsChecked ? Resource.Detail : Resource.OTE)
+                .setFileName(fileName)
+                .SetExcelType(excelType)
+                .ExportAsync(IsDetailsChecked ? VstsDataCollectionViewDetails : VstsDataCollectionViewOTEs);
+
+            if( exportResult.SucceedDone )
+            {
+                // MessageBox show the successfully saving information, 
+                var userSelection = MessageBox.Show(
+                     $"Saved Path: {saveFileDialog.FileName}\n\n" +
+                     $"Click Yes to open the directory of it." ,
+                     Resource.SaveFileSuccessfully ,
+                     MessageBoxButton.YesNo ,
+                     MessageBoxImage.Information);
+
+                // and if user click ok to open the directory of saved file.
+                if( userSelection == MessageBoxResult.Yes )
+                {
+                    try
+                    {
+                        Process.Start("explorer.exe" , $"/select,\"{exportResult.FullPath}\"");
+                    }
+                    catch( Exception ex )
+                    {
+                        // exception dealing
+                    }
+                }
+
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"{Resource.SaveFileFailed}\n\n" +
+                    $"Fail Reason: {exportResult.Info}" ,
+                    Resource.SaveFileFailed ,
+                    MessageBoxButton.OK ,
+                    MessageBoxImage.Error);
+            }
+        }
 
     }
 
-    private void Import( )
+    private async void Import( )
     {
-        // 导入逻辑代码
+        // create an OpenFileDialog Instance
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+
+        // set the default Title and File name
+        openFileDialog.Title = Resource.OpenFileDialogTitle;
+        openFileDialog.FileName = "";
+
+        // set the file Filter
+        openFileDialog.Filter = "Excel (*.xlsx)|*.xlsx|CSV (*.csv)|*.csv|All (*.*)|*.*";
+
+        // show the dialog and get the result
+        bool? result = openFileDialog.ShowDialog();
+
+        if( result == true )
+        {
+            // get the selected or input file name after clicking the save button
+            string fileName = openFileDialog.SafeFileName;
+            string directoryPath = openFileDialog.FileName.Replace(fileName , "");
+            string fileExtension = Path.GetExtension(fileName);
+
+            ExcelType excelType = ExcelOperator.ParseExcelType(fileName);
+
+            ExcelOperatorResult importResult;
+            // ImportFile
+            if( IsDetailsChecked )
+            {
+                importResult = await new ExcelOperator(fileName , directoryPath)
+                               .SetExcelType(excelType)
+                               .ImportAsync<Models.DetailModel>();
+            }
+            else
+            {
+                importResult = await new ExcelOperator(fileName , directoryPath)
+                               .SetExcelType(excelType)
+                               .ImportAsync<Models.OTE_OfflineModel>();
+            }
+
+
+            if( importResult.SucceedDone == true )
+            {
+                if( IsDetailsChecked )
+                {
+                    VSTSDataCollectionDetails = new ConcurrentBag<Models.DetailModel>((IEnumerable<Models.DetailModel>)importResult.resultModels);
+                }
+                else
+                {
+                    VSTSDataCollectionOTEs = new ConcurrentBag<Models.OTE_OfflineModel>((IEnumerable<Models.OTE_OfflineModel>)importResult.resultModels);
+                }
+            }
+
+        }
+
 
     }
 
@@ -459,34 +633,39 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         // 编辑逻辑代码
 
     }
-    private void LanguageChange( )
+
+    private void LanguageChange(object param)
     {
         // 更改界面语言逻辑代码
-        if( Resource.Language.Equals("English") )
+        if( param.Equals("English") )
         {
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            RestartApplication("en-US");
         }
         else
         {
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh-CN");
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("zh-CN");
+            RestartApplication("zh-CN");
         }
-        void RestartApplication( )
+
+        void RestartApplication(string culture)
         {
             string fileName = Process.GetCurrentProcess().MainModule.FileName;
+
+            string[] args = new[] {
+                "-lang",culture,
+            };
+
             Process.Start(new ProcessStartInfo
             {
                 FileName = fileName ,
-                Arguments = string.Join(" " , Environment.GetCommandLineArgs().Skip(1)) ,
-                UseShellExecute = true ,
+                Arguments = string.Join(" " , args) ,
+                UseShellExecute = false ,
                 Verb = "runas"
             });
 
             System.Windows.Application.Current.Shutdown();
         }
-        RestartApplication();
     }
+
     #endregion Menu Function
 
 

@@ -151,6 +151,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Open File 的本地化字符串。
+        /// </summary>
+        public static string OpenFileDialogTitle {
+            get {
+                return ResourceManager.GetString("OpenFileDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 OTE 的本地化字符串。
         /// </summary>
         public static string OTE {
@@ -174,6 +183,33 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Refresh {
             get {
                 return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Save File 的本地化字符串。
+        /// </summary>
+        public static string SaveFileDialogTitle {
+            get {
+                return ResourceManager.GetString("SaveFileDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Save File Failed 的本地化字符串。
+        /// </summary>
+        public static string SaveFileFailed {
+            get {
+                return ResourceManager.GetString("SaveFileFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Save File Successfully 的本地化字符串。
+        /// </summary>
+        public static string SaveFileSuccessfully {
+            get {
+                return ResourceManager.GetString("SaveFileSuccessfully", resourceCulture);
             }
         }
         
