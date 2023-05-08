@@ -1,0 +1,35 @@
+﻿<Window x:Class="VSTSDataProvider.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:ctor="clr-namespace:VSTSDataProvider.Common"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:VSTSDataProvider.Views"
+        xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+        xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
+        Title="About"
+        Width="800"
+        Height="450"
+        d:DataContext="{d:DesignInstance {x:Type vm:AboutViewModel}}"
+        WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <ResourceDictionary />
+    </Window.Resources>
+    <Grid Margin="12">
+        <ScrollViewer>
+            <RichTextBox x:Name="AboutContentRichTextBox"
+                         BorderBrush="Transparent"
+                         FontSize="14"
+                         IsDocumentEnabled="True"
+                         IsReadOnlyCaretVisible="True">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding AboutContentRichTextBox_LoadedCommand}" CommandParameter="{Binding ElementName=AboutContentRichTextBox}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RichTextBox>
+        </ScrollViewer>
+    </Grid>
+</Window>

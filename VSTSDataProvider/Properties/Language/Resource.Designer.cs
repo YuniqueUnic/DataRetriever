@@ -61,6 +61,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 About 的本地化字符串。
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Complete Url 的本地化字符串。
         /// </summary>
         public static string CompleteUrl {
@@ -88,6 +97,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 CopyrightOwner 的本地化字符串。
+        /// </summary>
+        public static string CopyrightOwnerText {
+            get {
+                return ResourceManager.GetString("CopyrightOwnerText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Cut 的本地化字符串。
         /// </summary>
         public static string Cut {
@@ -111,6 +129,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Edit Mode 的本地化字符串。
+        /// </summary>
+        public static string EditTab {
+            get {
+                return ResourceManager.GetString("EditTab", resourceCulture);
             }
         }
         
@@ -147,6 +174,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 License: 的本地化字符串。
+        /// </summary>
+        public static string LicenseText {
+            get {
+                return ResourceManager.GetString("LicenseText", resourceCulture);
             }
         }
         
@@ -214,6 +250,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Special thanks: 的本地化字符串。
+        /// </summary>
+        public static string SpecialThanksText {
+            get {
+                return ResourceManager.GetString("SpecialThanksText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Test Plan 的本地化字符串。
         /// </summary>
         public static string TestPlan {
@@ -228,6 +273,33 @@ namespace VSTSDataProvider.Properties.Language {
         public static string TestSuite {
             get {
                 return ResourceManager.GetString("TestSuite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 This software uses open source libraries: 的本地化字符串。
+        /// </summary>
+        public static string UsedLibraries {
+            get {
+                return ResourceManager.GetString("UsedLibraries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 This software uses the following third-party components: 的本地化字符串。
+        /// </summary>
+        public static string UsedThirdPartCompentsText {
+            get {
+                return ResourceManager.GetString("UsedThirdPartCompentsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Basic Mode 的本地化字符串。
+        /// </summary>
+        public static string VSTSTab {
+            get {
+                return ResourceManager.GetString("VSTSTab", resourceCulture);
             }
         }
     }

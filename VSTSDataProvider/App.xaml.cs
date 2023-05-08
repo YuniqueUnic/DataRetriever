@@ -22,6 +22,7 @@ public partial class App : Application
 
         // Set the Console Display based on the command line arguments
         IsShowMainWindowWithConsole(args);
+
     }
 
     private static void CurrentCultureChange(string[] args)
@@ -83,7 +84,6 @@ public partial class App : Application
 
         // Create the MainWindow and set the ViewModel
         var mainWindow = new MainWindow();
-
         mainWindow.DataContext = viewModel;
         mainWindow.Show();
     }

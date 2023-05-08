@@ -15,12 +15,12 @@ using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
 // using VSTSDataProvider.TestData;
 using VSTSDataProvider.ViewModels.ViewModelBase;
+using VSTSDataProvider.Views;
 
 namespace VSTSDataProvider.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 {
-
     public string WindowTitle { get; set; } = "VSTS Data Provider";
 
     public MainWindowViewModel(Boolean showConsole = false)
@@ -39,6 +39,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         ImportCommand = new RelayCommand(Import);
         EditCommand = new RelayCommand(Edit);
         LanguageChangeCommand = new RelayCommand(LanguageChange);
+        AboutCommand = new RelayCommand(About);
     }
 
 
@@ -502,6 +503,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ICommand ImportCommand { get; private set; }
     public ICommand EditCommand { get; private set; }
     public ICommand LanguageChangeCommand { get; private set; }
+    public ICommand AboutCommand { get; private set; }
 
     private async void Export( )
     {
@@ -665,6 +667,19 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             System.Windows.Application.Current.Shutdown();
         }
     }
+
+    #region About Command
+
+    //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
+    private void About(object owerWindow)
+    {
+        var AboutWindowDialog = new AboutWindow();
+        AboutWindowDialog.DataContext = new AboutViewModel();
+        AboutWindowDialog.Owner = owerWindow as Window;
+        AboutWindowDialog.Show();
+    }
+
+    #endregion About Command
 
     #endregion Menu Function
 

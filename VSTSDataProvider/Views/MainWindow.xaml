@@ -10,6 +10,7 @@
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
         xmlns:vc="clr-namespace:VSTSDataProvider.Common"
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
+        x:Name="MainWindowCurrentInstance"
         Title="{Binding WindowTitle}"
         Width="800"
         Height="450"
@@ -608,6 +609,9 @@
                     <MenuItem Header="{x:Static prop:Resource.Language}"
                               Command="{Binding LanguageChangeCommand}"
                               CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
+                    <MenuItem Header="{x:Static prop:Resource.About}"
+                              Command="{Binding AboutCommand}"
+                              CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
                 </MenuItem>
             </Menu>
         </Grid>

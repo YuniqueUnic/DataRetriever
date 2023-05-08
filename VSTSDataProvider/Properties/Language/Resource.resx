@@ -190,4 +190,29 @@
     <value>Open File</value>
     <comment>打开文件</comment>
   </data>
+  <data name="VSTSTab" xml:space="preserve">
+    <value>Basic Mode</value>
+  </data>
+  <data name="EditTab" xml:space="preserve">
+    <value>Edit Mode</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+    <comment>关于</comment>
+  </data>
+  <data name="UsedLibraries" xml:space="preserve">
+    <value>This software uses open source libraries:</value>
+  </data>
+  <data name="CopyrightOwnerText" xml:space="preserve">
+    <value>CopyrightOwner</value>
+  </data>
+  <data name="LicenseText" xml:space="preserve">
+    <value>License:</value>
+  </data>
+  <data name="UsedThirdPartCompentsText" xml:space="preserve">
+    <value>This software uses the following third-party components:</value>
+  </data>
+  <data name="SpecialThanksText" xml:space="preserve">
+    <value>Special thanks:</value>
+  </data>
 </root>

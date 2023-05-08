@@ -179,4 +179,28 @@
   <data name="OpenFileDialogTitle" xml:space="preserve">
     <value>打开文件</value>
   </data>
+  <data name="EditTab" xml:space="preserve">
+    <value>编辑模式</value>
+  </data>
+  <data name="VSTSTab" xml:space="preserve">
+    <value>基本模式</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="UsedLibraries" xml:space="preserve">
+    <value>本软件使用了以下开源库：</value>
+  </data>
+  <data name="CopyrightOwnerText" xml:space="preserve">
+    <value>版权所有</value>
+  </data>
+  <data name="LicenseText" xml:space="preserve">
+    <value>许可证：</value>
+  </data>
+  <data name="UsedThirdPartCompentsText" xml:space="preserve">
+    <value>本软件使用了以下第三方组件:</value>
+  </data>
+  <data name="SpecialThanksText" xml:space="preserve">
+    <value>特别鸣谢：</value>
+  </data>
 </root>
