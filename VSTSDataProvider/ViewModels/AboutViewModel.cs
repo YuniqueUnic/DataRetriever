@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 
 namespace VSTSDataProvider.ViewModels;
-
-
 
 public class AboutViewModel : ViewModelBase.BaseViewModel
 {
@@ -18,6 +18,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     {
         GetSoftwareAssemblyInfos();
         AboutContentRichTextBox_LoadedCommand = new RelayCommand(AboutContentRichTextBox_Loaded);
+        OKButtonClickedCommand = new RelayCommand(ClosethisWindow);
     }
 
     private void GetSoftwareAssemblyInfos( )
@@ -51,14 +52,20 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     }
 
     public ICommand AboutContentRichTextBox_LoadedCommand { get; set; }
+    public ICommand OKButtonClickedCommand { get; set; }
 
     //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
-    public void AboutContentRichTextBox_Loaded(object sender)
+    private void AboutContentRichTextBox_Loaded(object sender)
     {
         RichTextBox richTextBox = (RichTextBox)sender;
         FlowDocument flowDocument = GenerateLicenseInfoDocument();
         richTextBox.Document = flowDocument;
     }
+
+    //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
+    private void ClosethisWindow(object window) => (window as Window)!.Close();
+
+    #region FlowDocumentContent
 
     private string _softwareName = nameof(_softwareName);
     private string _softwareVersion = nameof(_softwareVersion);
@@ -66,23 +73,22 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     private string _releaseDate = nameof(_releaseDate);
     private List<Models.OpenSourceProjectInfos> _openSourceLibraries = new List<Models.OpenSourceProjectInfos>
     {
-        new Models.OpenSourceProjectInfos { Name = "开源库名称1", Version = "开源库版本号1", License = "开源库许可证1", Url = "http://baidu.com" },
-        new Models.OpenSourceProjectInfos { Name = "开源库名称2", Version = "开源库版本号2", License = "开源库许可证2", Url = "http://google.com" },
-        new Models.OpenSourceProjectInfos { Name = "开源库名称3", Version = "开源库版本号3", License = "开源库许可证3", Url = "http://sohu.com" }
+        new Models.OpenSourceProjectInfos { Name = "Microsoft.Xaml.Behaviors.Wpf", Version = "1.1.39", License = "MIT", Url = "https://github.com/Microsoft/XamlBehaviorsWpf" },
+        new Models.OpenSourceProjectInfos { Name = "MiniExcel", Version = "1.30.3", License = "Apache-2.0", Url = "https://github.com/mini-software/MiniExcel" },
+        new Models.OpenSourceProjectInfos { Name = "Newtonsoft.Json", Version = "13.0.3", License = "MIT", Url = "https://www.newtonsoft.com/json" }
     };
     private List<Models.OpenSourceProjectInfos> _thirdPartyComponents = new List<Models.OpenSourceProjectInfos>
     {
-        new Models.OpenSourceProjectInfos { Name = "第三方组件名称1", Version = "第三方组件版本号1", License = "第三方组件许可证1", Url = "http://xiaomi.com" },
-        new Models.OpenSourceProjectInfos { Name = "第三方组件名称2", Version = "第三方组件版本号2", License = "第三方组件许可证2", Url = "http://huawei.com" },
-        new Models.OpenSourceProjectInfos { Name = "第三方组件名称3", Version = "第三方组件版本号3", License = "第三方组件许可证3", Url = "http://meizu.com" }
+        new Models.OpenSourceProjectInfos { Name = "ICON", Version = "", License = "", Url = "https://icons8.com/" },
+        //new Models.OpenSourceProjectInfos { Name = "第三方组件名称2", Version = "第三方组件版本号2", License = "第三方组件许可证2", Url = "http://Bing.com" },
+        //new Models.OpenSourceProjectInfos { Name = "第三方组件名称3", Version = "第三方组件版本号3", License = "第三方组件许可证3", Url = "http://Google.com" }
     };
 
     private List<Models.OpenSourceProjectInfos> _specialThanks = new List<Models.OpenSourceProjectInfos>
-        {
-            new Models.OpenSourceProjectInfos { Name = "特别鸣谢1", Version = "", License = "", Url = "http://4399.com" },
-            new Models.OpenSourceProjectInfos { Name = "特别鸣谢2", Version = "", License = "", Url = "http://7k7k.com" },
-            new Models.OpenSourceProjectInfos { Name = "特别鸣谢3", Version = "", License = "", Url = "http://facebook.com" },
-        };
+    {
+            new Models.OpenSourceProjectInfos { Name = "HYSYS", Version = "", License = "", Url = "https://www.aspentech.com/en/products/engineering/aspen-hysys/?src=web-apaccn" },
+            new Models.OpenSourceProjectInfos { Name = "AspenTech", Version = "", License = "", Url = "https://www.aspentech.cn/" },
+    };
 
 
 
@@ -152,6 +158,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
 
     #region Rewrite to AboutContentRichTextBox_Loaded()
 
+    #region Some great infos
     // In WPF, the Document property of RichTextBox is read-only, so we cannot directly bind a FlowDocument to it.
     // Instead, we can set the FlowDocument to the Document property of RichTextBox using code-behind in the Loaded event handler.
     //private void AboutContentRichTextBox_Loaded(object sender , RoutedEventArgs e)
@@ -227,6 +234,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     //        #endregion
     //    }
     //}
+    #endregion Some great infos
 
     #endregion Rewrite to AboutContentRichTextBox_Loaded()
 
@@ -240,7 +248,8 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         AddParagraph(flowDocument , new Run($"{Properties.Language.Resource.UsedThirdPartCompentsText}"));
         AddList(flowDocument , ThirdPartyComponents);
         AddParagraph(flowDocument , new Run($"{Properties.Language.Resource.SpecialThanksText}"));
-        AddList(flowDocument , SpecialThanks , true);
+        AddList(flowDocument , SpecialThanks);
+        AddExtraInfosList(flowDocument , null);
         return flowDocument;
     }
 
@@ -251,7 +260,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         flowDocument.Blocks.Add(paragraph);
     }
 
-    private void AddList(FlowDocument flowDocument , List<Models.OpenSourceProjectInfos> items , bool isOnlyNameWithUri = false)
+    private void AddList(FlowDocument flowDocument , List<Models.OpenSourceProjectInfos> items)
     {
         List list = new List();
         foreach( Models.OpenSourceProjectInfos item in items )
@@ -260,19 +269,19 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
 
             if( !string.IsNullOrEmpty(item.Url) )
             {
-                Hyperlink hyperlink = new Hyperlink(new Run($"{item.Name} v{item.Version}"));
+                Hyperlink hyperlink = new Hyperlink(new Run($"{item.Name} " + (item.Version.IsNullOrWhiteSpaceOrEmpty() ? "" : $"v{item.Version}")));
                 hyperlink.NavigateUri = new Uri(item.Url); // set the hyperlink target
                 hyperlink.RequestNavigate += Hyperlink_RequestNavigate; // add event handler
                 listItem.Blocks.Add(new Paragraph(hyperlink));
             }
             else
             {
-                listItem.Blocks.Add(new Paragraph(new Run($"{item.Name} v{item.Version}")));
+                listItem.Blocks.Add(new Paragraph(new Run($"{item.Name} " + (item.Version.IsNullOrWhiteSpaceOrEmpty() ? "" : $"v{item.Version}"))));
             }
 
             if( !string.IsNullOrEmpty(item.License) )
             {
-                listItem.Blocks.Add(new Paragraph(new Italic(new Run($"{Properties.Language.Resource.LicenseText}{item.License}"))));
+                listItem.Blocks.Add(new Paragraph(new Italic(new Run($"{Properties.Language.Resource.LicenseText} {item.License}"))));
             }
 
             list.ListItems.Add(listItem);
@@ -309,7 +318,13 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         e.Handled = true;
     }
 
+    //TODO: Add update/usage/etc infos
+    private void AddExtraInfosList(FlowDocument flowDocument , List<Models.OpenSourceProjectInfos> items)
+    {
+        AddParagraph(flowDocument , new Run($"{Properties.Language.Resource.AboutSlogan}"));
+    }
 
+    #region Get OpenSourceProject Infos Methods
     private void AddNuGetPackageInfoToList(string packageName)
     {
         // retrieve assembly information for the package
@@ -412,6 +427,11 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     //        _openSourceLibraries.Add(packageInfo);
     //    }
     //}
+
+    #endregion Get OpenSourceProject Infos Methods
+
+    #endregion FlowDocumentContent
+
 
 
 }

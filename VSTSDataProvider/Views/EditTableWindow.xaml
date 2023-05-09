@@ -4,13 +4,46 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider.Views"
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+        xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="EditTableWindow"
         Width="800"
         Height="450">
-    <TabControl TabStripPlacement="Left">
-        <TabItem Header="{x:Static prop:Resource.VSTSTab}" />
-        <TabItem Header="{x:Static prop:Resource.EditTab}" />
-    </TabControl>
+    <Window.Resources>
+        <ResourceDictionary>
+
+            <DataTemplate x:Key="VSTSPageContent" DataType="{x:Type local:VSTSPage}">
+                <local:VSTSPage />
+            </DataTemplate>
+
+            <DataTemplate x:Key="EditPageContent" DataType="{x:Type local:EditPage}">
+                <local:EditPage />
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"
+                              MinWidth="32"
+                              MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.5'}" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              Width="164" />
+        <GridSplitter Grid.Row="0"
+                      Grid.Column="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="#2000" />
+        <Grid Grid.Row="0" Grid.Column="2">
+            <ContentControl x:Name="PageContentControl" ContentTemplate="{StaticResource EditPageContent}" />
+        </Grid>
+    </Grid>
 </Window>

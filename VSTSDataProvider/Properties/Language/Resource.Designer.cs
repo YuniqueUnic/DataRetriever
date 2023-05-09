@@ -70,6 +70,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Grow towards the sun, be free and easy. 的本地化字符串。
+        /// </summary>
+        public static string AboutSlogan {
+            get {
+                return ResourceManager.GetString("AboutSlogan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Complete Url 的本地化字符串。
         /// </summary>
         public static string CompleteUrl {
@@ -183,6 +192,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string LicenseText {
             get {
                 return ResourceManager.GetString("LicenseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 OK 的本地化字符串。
+        /// </summary>
+        public static string OKText {
+            get {
+                return ResourceManager.GetString("OKText", resourceCulture);
             }
         }
         

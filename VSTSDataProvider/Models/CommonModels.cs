@@ -6,8 +6,8 @@ class CommonModels
 
 public class OpenSourceProjectInfos
 {
-    public string? Name { get; set; }
-    public string? Version { get; set; }
-    public string? License { get; set; }
-    public string? Url { get; set; }
+    public string? Name { get; set; } = string.Empty;
+    public string? Version { get; set; } = string.Empty;
+    public string? License { get; set; } = string.Empty;
+    public string? Url { get; set; } = string.Empty;
 }

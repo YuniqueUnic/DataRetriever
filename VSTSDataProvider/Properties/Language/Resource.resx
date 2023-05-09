@@ -215,4 +215,10 @@
   <data name="SpecialThanksText" xml:space="preserve">
     <value>Special thanks:</value>
   </data>
+  <data name="OKText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="AboutSlogan" xml:space="preserve">
+    <value>Grow towards the sun, be free and easy.</value>
+  </data>
 </root>

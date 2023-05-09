@@ -8,7 +8,6 @@
         xmlns:local="clr-namespace:VSTSDataProvider"
         xmlns:msflib="clr-namespace:System;assembly=mscorlib"
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
-        xmlns:vc="clr-namespace:VSTSDataProvider.Common"
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         x:Name="MainWindowCurrentInstance"
         Title="{Binding WindowTitle}"
@@ -24,14 +23,6 @@
                     <msflib:Boolean>True</msflib:Boolean>
                 </ObjectDataProvider.ConstructorParameters>
             </ObjectDataProvider>-->
-
-            <vc:FontSizeScaleConverter x:Key="FontSizeScaleConverter" />
-            <vc:DoubleValueScaleConverter x:Key="DoubleValueScaleConverter" />
-            <vc:BoolenNullableToVisibility x:Key="BoolenNullableToVisibility" IsEnabled="True" />
-            <vc:BoolenNullableToVisibility x:Key="BoolenNullableToVisibilityReverse"
-                                           IsEnabled="True"
-                                           Reverse="True" />
-
 
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />
@@ -62,7 +53,7 @@
                                                  VerticalScrollBarVisibility="Auto"
                                                  Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <TextBox.FontSize>
-                                                <Binding Converter="{StaticResource FontSizeScaleConverter}"
+                                                <Binding Converter="{StaticResource DoubleValueScaleConverter}"
                                                          ElementName="TitleLabel"
                                                          Path="FontSize" />
                                             </TextBox.FontSize>
@@ -103,7 +94,7 @@
                                                  TextWrapping="{TemplateBinding TextWrapping}"
                                                  Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <TextBox.FontSize>
-                                                <Binding Converter="{StaticResource FontSizeScaleConverter}"
+                                                <Binding Converter="{StaticResource DoubleValueScaleConverter}"
                                                          ConverterParameter="1.5"
                                                          ElementName="TitleLabel"
                                                          Path="FontSize" />
@@ -194,119 +185,7 @@
                 </DataGrid>
             </ControlTemplate>
 
-            <Style x:Key="BaseDataGridStyle" TargetType="{x:Type DataGrid}">
-                <Setter Property="AutoGenerateColumns" Value="False" />
-                <Setter Property="CanUserReorderColumns" Value="True" />
-                <Setter Property="CanUserResizeColumns" Value="True" />
-                <Setter Property="CanUserResizeRows" Value="True" />
-                <Setter Property="CanUserSortColumns" Value="True" />
-                <Setter Property="FontSize" Value="13" />
-                <Setter Property="RowStyle">
-                    <Setter.Value>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="Black" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Outcome}" Value="Passed">
-                                    <Setter Property="Background" Value="#C8E6C9" />
-                                    <Setter Property="Foreground" Value="Black" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Outcome}" Value="Active">
-                                    <Setter Property="Background" Value="#B3E5FC" />
-                                    <Setter Property="Foreground" Value="Black" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Outcome}" Value="Failed">
-                                    <Setter Property="Background" Value="#FFCDD2" />
-                                    <Setter Property="Foreground" Value="Black" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ColumnHeaderStyle">
-                    <Setter.Value>
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Padding" Value="4,4" />
-                            <Setter Property="FontWeight" Value="DemiBold" />
-                            <Setter Property="FontSize" Value="14" />
-                        </Style>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="CellStyle">
-                    <Setter.Value>
-                        <Style TargetType="DataGridCell">
-                            <Setter Property="Padding" Value="4,2" />
-                        </Style>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <!--  [Obsolete("Recommend using DetailModel.")]  -->
-            <ControlTemplate x:Key="TestCaseGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}"
-                          IsReadOnly="true"
-                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
-                    <DataGrid.Columns>
-                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
-                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
-                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
-                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
-                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
-                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
-                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
-                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
-                        <DataGridTextColumn Binding="{Binding SelfTestPoint.ID}" Header="TestPointId" />
-                        <DataGridTextColumn Binding="{Binding SelfTestPoint.Name}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding SelfTestPoint.lastUpdatedDate}" Header="LastUpdatedDate" />
-                        <DataGridTextColumn Binding="{Binding SelfTestPoint.uniqueName}" Header="RunBy" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ControlTemplate>
-
-            <ControlTemplate x:Key="DetailModelsGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}"
-                          IsReadOnly="true"
-                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
-                    <DataGrid.Columns>
-                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
-                        <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
-                        <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
-                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
-                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
-                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
-                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
-                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
-                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
-                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
-                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
-                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
-                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
-                        <DataGridTextColumn Binding="{Binding IsAutomated}" Header="IsAutomated" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ControlTemplate>
-
-            <ControlTemplate x:Key="OTE_OfflineModelsGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}"
-                          IsReadOnly="true"
-                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
-                        <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
-                        <DataGridTextColumn Binding="{Binding TestStep}" Header="TestStep" />
-                        <DataGridTextColumn Binding="{Binding StepAction}" Header="StepAction" />
-                        <DataGridTextColumn Binding="{Binding StepExpected}" Header="StepExpected" />
-                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
-                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding AssignTo}" Header="AssignTo" />
-                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
-                        <DataGridTextColumn Binding="{Binding Comment}" Header="Comment" />
-                        <DataGridTextColumn Binding="{Binding Defects}" Header="Defects" />
-                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </ControlTemplate>
+            <!--  Move BaseDataGridStyle/DetailModelsGridTemplate/OTE_OfflineModelsGridTemplate to App.xaml  -->
 
             <!--  Try to use DataGridTemplateSelector to Switch different DataType  -->
             <!--  [Obsolete("Recommend using DetailModel.")]  -->
@@ -370,9 +249,9 @@
                 </DataGrid>
             </DataTemplate>
 
-            <vc:DataGridTemplateSelector x:Key="DataGridTemplateSelector"
+            <!--<cvtr:DataGridTemplateSelector x:Key="DataGridTemplateSelector"
                                          OTEsModelTemplate="{StaticResource OTE_OfflineModelsGridDataTemplate}"
-                                         TCseTemplate="{StaticResource TestCaseGridDataTemplate}" />
+                                         TCseTemplate="{StaticResource TestCaseGridDataTemplate}" />-->
         </ResourceDictionary>
     </Window.Resources>
 

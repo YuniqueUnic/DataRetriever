@@ -180,7 +180,7 @@ public class ExecuteVSTSModel : BaseVSTSModel
         public string scriptName { get; set; }
         [JsonProperty("System.AreaPath")]
         public string areaPath { get; set; }
-        [JsonProperty("System.TestCase.StateofTest")]
+        [JsonProperty("Aspentech.TestCase.StateofTest")]
         public string stateofAutomation { get; set; }
     }
 

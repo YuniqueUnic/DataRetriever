@@ -36,10 +36,7 @@ public class ExcelOperator
     private string? _sheetName;
     private MiniExcelLibs.ExcelType? _excelType;
 
-    public ExcelOperator(string directoryPath)
-    {
-        _directoryPath = directoryPath;
-    }
+    public ExcelOperator(string directoryPath) => _directoryPath = directoryPath;
 
     public ExcelOperator(string fileName , string directoryPath)
     {

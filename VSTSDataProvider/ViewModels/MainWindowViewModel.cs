@@ -633,7 +633,9 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private void Edit( )
     {
         // ±à¼­Âß¼­´úÂë
-
+        var EditWindow = new EditTableWindow();
+        EditWindow.DataContext = this;
+        EditWindow.Show();
     }
 
     private void LanguageChange(object param)

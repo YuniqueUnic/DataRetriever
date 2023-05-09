@@ -18,6 +18,11 @@
         <ResourceDictionary />
     </Window.Resources>
     <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <ScrollViewer>
             <RichTextBox x:Name="AboutContentRichTextBox"
                          BorderBrush="Transparent"
@@ -31,5 +36,22 @@
                 </i:Interaction.Triggers>
             </RichTextBox>
         </ScrollViewer>
+        <Line Grid.Row="1"
+              Margin="0,6,0,0"
+              Stretch="UniformToFill"
+              Stroke="#4000"
+              StrokeThickness="1.25"
+              X1="0"
+              X2="1" />
+        <Button x:Name="CloseButton"
+                Grid.Row="2"
+                Width="75"
+                Height="23"
+                Margin="0,6,0,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Command="{Binding OKButtonClickedCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Content="{x:Static prop:Resource.OKText}" />
     </Grid>
 </Window>

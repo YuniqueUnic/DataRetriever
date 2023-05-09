@@ -203,4 +203,10 @@
   <data name="SpecialThanksText" xml:space="preserve">
     <value>特别鸣谢：</value>
   </data>
+  <data name="OKText" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="AboutSlogan" xml:space="preserve">
+    <value>向阳而生，自由自在.</value>
+  </data>
 </root>
