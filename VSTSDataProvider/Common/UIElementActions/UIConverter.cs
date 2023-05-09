@@ -209,3 +209,33 @@ public class EnumerableToStringConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+
+public class KeyNameExtraToStringConverter : MarkupExtension, IValueConverter
+{
+    public string DefaultText { get; set; }
+    public string ShowText { get; set; }
+
+    public KeyNameExtraToStringConverter( )
+    {
+        DefaultText = string.Empty;
+        ShowText = string.Empty;
+    }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
+
+    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        if( value is null || parameter is null ) throw new NullReferenceException();
+
+        return value.ToString().Contains(parameter.ToString()) ? ShowText : DefaultText;
+    }
+
+    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
