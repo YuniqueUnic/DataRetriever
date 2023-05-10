@@ -79,6 +79,60 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Align Center 的本地化字符串。
+        /// </summary>
+        public static string AlignCenter {
+            get {
+                return ResourceManager.GetString("AlignCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Align Justify 的本地化字符串。
+        /// </summary>
+        public static string AlignJustify {
+            get {
+                return ResourceManager.GetString("AlignJustify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Align Left 的本地化字符串。
+        /// </summary>
+        public static string AlignLeft {
+            get {
+                return ResourceManager.GetString("AlignLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Align Right 的本地化字符串。
+        /// </summary>
+        public static string AlignRight {
+            get {
+                return ResourceManager.GetString("AlignRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Bold 的本地化字符串。
+        /// </summary>
+        public static string Bold {
+            get {
+                return ResourceManager.GetString("Bold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Bullets 的本地化字符串。
+        /// </summary>
+        public static string Bullets {
+            get {
+                return ResourceManager.GetString("Bullets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Complete Url 的本地化字符串。
         /// </summary>
         public static string CompleteUrl {
@@ -120,6 +174,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Cut {
             get {
                 return ResourceManager.GetString("Cut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Decrease Indent 的本地化字符串。
+        /// </summary>
+        public static string DecreaseIndent {
+            get {
+                return ResourceManager.GetString("DecreaseIndent", resourceCulture);
             }
         }
         
@@ -169,11 +232,38 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Grow Font 的本地化字符串。
+        /// </summary>
+        public static string GrowFont {
+            get {
+                return ResourceManager.GetString("GrowFont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Import 的本地化字符串。
         /// </summary>
         public static string Import {
             get {
                 return ResourceManager.GetString("Import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Increase Indent 的本地化字符串。
+        /// </summary>
+        public static string IncreaseIndent {
+            get {
+                return ResourceManager.GetString("IncreaseIndent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Italic 的本地化字符串。
+        /// </summary>
+        public static string Italic {
+            get {
+                return ResourceManager.GetString("Italic", resourceCulture);
             }
         }
         
@@ -192,6 +282,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string LicenseText {
             get {
                 return ResourceManager.GetString("LicenseText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Numbering 的本地化字符串。
+        /// </summary>
+        public static string Numbering {
+            get {
+                return ResourceManager.GetString("Numbering", resourceCulture);
             }
         }
         
@@ -232,6 +331,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Redo 的本地化字符串。
+        /// </summary>
+        public static string Redo {
+            get {
+                return ResourceManager.GetString("Redo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Refresh 的本地化字符串。
         /// </summary>
         public static string Refresh {
@@ -268,6 +376,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Shrink Font 的本地化字符串。
+        /// </summary>
+        public static string ShrinkFont {
+            get {
+                return ResourceManager.GetString("ShrinkFont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Special thanks: 的本地化字符串。
         /// </summary>
         public static string SpecialThanksText {
@@ -291,6 +408,24 @@ namespace VSTSDataProvider.Properties.Language {
         public static string TestSuite {
             get {
                 return ResourceManager.GetString("TestSuite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Underline 的本地化字符串。
+        /// </summary>
+        public static string Underline {
+            get {
+                return ResourceManager.GetString("Underline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Undo 的本地化字符串。
+        /// </summary>
+        public static string Undo {
+            get {
+                return ResourceManager.GetString("Undo", resourceCulture);
             }
         }
         

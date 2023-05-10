@@ -17,7 +17,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     public AboutViewModel( )
     {
         GetSoftwareAssemblyInfos();
-        AboutContentRichTextBox_LoadedCommand = new RelayCommand(AboutContentRichTextBox_Loaded);
+        AboutContentFlowDocumentReader_LoadedCommand = new RelayCommand(AboutContentFlowDocumentReader_Loaded);
         OKButtonClickedCommand = new RelayCommand(ClosethisWindow);
     }
 
@@ -51,15 +51,15 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         _releaseDate = releaseDate;
     }
 
-    public ICommand AboutContentRichTextBox_LoadedCommand { get; set; }
+    public ICommand AboutContentFlowDocumentReader_LoadedCommand { get; set; }
     public ICommand OKButtonClickedCommand { get; set; }
 
     //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
-    private void AboutContentRichTextBox_Loaded(object sender)
+    private void AboutContentFlowDocumentReader_Loaded(object sender)
     {
-        RichTextBox richTextBox = (RichTextBox)sender;
+        FlowDocumentReader flowDocumentReader = (FlowDocumentReader)sender;
         FlowDocument flowDocument = GenerateLicenseInfoDocument();
-        richTextBox.Document = flowDocument;
+        flowDocumentReader.Document = flowDocument;
     }
 
     //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
@@ -250,6 +250,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         AddParagraph(flowDocument , new Run($"{Properties.Language.Resource.SpecialThanksText}"));
         AddList(flowDocument , SpecialThanks);
         AddExtraInfosList(flowDocument , null);
+
         return flowDocument;
     }
 

@@ -23,19 +23,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer>
-            <RichTextBox x:Name="AboutContentRichTextBox"
-                         BorderBrush="Transparent"
-                         FontSize="14"
-                         IsDocumentEnabled="True"
-                         IsReadOnlyCaretVisible="True">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Loaded">
-                        <i:InvokeCommandAction Command="{Binding AboutContentRichTextBox_LoadedCommand}" CommandParameter="{Binding ElementName=AboutContentRichTextBox}" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RichTextBox>
-        </ScrollViewer>
+        <FlowDocumentReader x:Name="AboutContentRichFlowDocumentReader"
+                            BorderBrush="Transparent"
+                            FontSize="14">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Loaded">
+                    <i:InvokeCommandAction Command="{Binding AboutContentFlowDocumentReader_LoadedCommand}" CommandParameter="{Binding ElementName=AboutContentRichFlowDocumentReader}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </FlowDocumentReader>
         <Line Grid.Row="1"
               Margin="0,6,0,0"
               Stretch="UniformToFill"

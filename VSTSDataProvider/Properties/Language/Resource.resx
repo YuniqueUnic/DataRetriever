@@ -221,4 +221,49 @@
   <data name="AboutSlogan" xml:space="preserve">
     <value>Grow towards the sun, be free and easy.</value>
   </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="Bold" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="Italic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="Underline" xml:space="preserve">
+    <value>Underline</value>
+  </data>
+  <data name="GrowFont" xml:space="preserve">
+    <value>Grow Font</value>
+  </data>
+  <data name="ShrinkFont" xml:space="preserve">
+    <value>Shrink Font</value>
+  </data>
+  <data name="Bullets" xml:space="preserve">
+    <value>Bullets</value>
+  </data>
+  <data name="Numbering" xml:space="preserve">
+    <value>Numbering</value>
+  </data>
+  <data name="AlignLeft" xml:space="preserve">
+    <value>Align Left</value>
+  </data>
+  <data name="AlignCenter" xml:space="preserve">
+    <value>Align Center</value>
+  </data>
+  <data name="AlignRight" xml:space="preserve">
+    <value>Align Right</value>
+  </data>
+  <data name="AlignJustify" xml:space="preserve">
+    <value>Align Justify</value>
+  </data>
+  <data name="IncreaseIndent" xml:space="preserve">
+    <value>Increase Indent</value>
+  </data>
+  <data name="DecreaseIndent" xml:space="preserve">
+    <value>Decrease Indent</value>
+  </data>
 </root>

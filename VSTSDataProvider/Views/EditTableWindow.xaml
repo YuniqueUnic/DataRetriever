@@ -31,17 +31,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="164"
-                                  MinWidth="32"
+                                  MinWidth="42"
                                   MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.5'}" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
             <Grid Name="LeftFuncGrid"
                   Grid.Row="0"
                   Grid.Column="0"
@@ -54,6 +52,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" Grid.Column="0">
                     <Grid.RowDefinitions>
@@ -130,7 +129,28 @@
                              TextWrapping="Wrap"
                              Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
-
+                <Grid Name="LeftBottomFuncGrid"
+                      Grid.Row="2"
+                      Grid.Column="0"
+                      Margin="0,0,0,4">
+                    <Menu Margin="0,4,0,0" VerticalContentAlignment="Center">
+                        <MenuItem VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  FontStyle="Oblique"
+                                  FontWeight="SemiBold"
+                                  Header="···">
+                            <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
+                            <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
+                            <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
+                            <MenuItem Header="{x:Static prop:Resource.Language}"
+                                      Command="{Binding LanguageChangeCommand}"
+                                      CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
+                            <MenuItem Header="{x:Static prop:Resource.About}"
+                                      Command="{Binding AboutCommand}"
+                                      CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
+                        </MenuItem>
+                    </Menu>
+                </Grid>
             </Grid>
             <GridSplitter Grid.Row="0"
                           Grid.Column="1"
@@ -140,99 +160,24 @@
             <Grid Name="MainContentGrid"
                   Grid.Row="0"
                   Grid.Column="2">
-                <ContentControl x:Name="PageContentControl" ContentTemplate="{StaticResource EditPageContent}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentControl x:Name="PageContentControl"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                d:ContentTemplate="{StaticResource EditPageContent}"
+                                ContentTemplate="{StaticResource VSTSPageContent}" />
+                <ProgressBar Name="GetVSTSDataProgressBar"
+                             Grid.Row="1"
+                             Grid.Column="0"
+                             Height="12"
+                             Margin="4"
+                             VerticalAlignment="Center"
+                             IsIndeterminate="True"
+                             Visibility="{Binding ProgressShowing, Converter={StaticResource BoolenNullableToVisibility}}" />
             </Grid>
-        </Grid>
-        <Grid x:Name="BottomFuncGrid"
-              Grid.Row="1"
-              Grid.Column="0"
-              Margin="4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Button Name="GetDataButton"
-                    Style="{StaticResource BaseButtonStyle}"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Margin="0,0,4,0"
-                    Command="{Binding GetDataButtonClickedCommand}"
-                    Content="{x:Static prop:Resource.GetData}" />
-            <ComboBox Name="OTEsFilterComboBox"
-                      Grid.Row="0"
-                      Grid.Column="1"
-                      Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
-                      Padding="4,0"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      IsEditable="True"
-                      IsTextSearchEnabled="True"
-                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibilityReverse}}"
-                      Text="{Binding OTEsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
-                      ItemsSource="{Binding OTEsFilterCollectionsComboBox}">
-                <i:Interaction.Triggers>
-                    <i:KeyTrigger Key="Return" ActiveOnFocus="True">
-                        <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
-                    </i:KeyTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-            <ComboBox Name="DetailsFilterComboBox"
-                      Grid.Row="0"
-                      Grid.Column="1"
-                      Height="{Binding ElementName=GetDataButton, Path=ActualHeight}"
-                      Padding="4,0"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center"
-                      IsEditable="True"
-                      IsTextSearchEnabled="True"
-                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
-                      Text="{Binding DetailsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
-                      ItemsSource="{Binding DetailsFilterCollectionsComboBox}">
-                <i:Interaction.Triggers>
-                    <i:KeyTrigger Key="Return" ActiveOnFocus="True">
-                        <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
-                    </i:KeyTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-            <!--  Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"  -->
-            <ProgressBar Name="GetVSTSDataProgressBar"
-                         Grid.Row="0"
-                         Grid.Column="1"
-                         Height="{Binding ElementName=DetailsFilterComboBox, Path=ActualHeight}"
-                         VerticalAlignment="Center"
-                         IsIndeterminate="True"
-                         Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />
-            <Button Name="RefreshButton"
-                    Style="{StaticResource BaseButtonStyle}"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Margin="4,0,0,0"
-                    ToolTip="Refresh the table."
-                    Command="{Binding RefreshButtonClickedCommand}"
-                    Content="{x:Static prop:Resource.Refresh}" />
-            <Menu Grid.Row="0" Grid.Column="3">
-                <MenuItem Padding="4"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                          FontStyle="Oblique"
-                          FontWeight="ExtraBold"
-                          Header="...">
-                    <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Language}"
-                              Command="{Binding LanguageChangeCommand}"
-                              CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
-                    <MenuItem Header="{x:Static prop:Resource.About}"
-                              Command="{Binding AboutCommand}"
-                              CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
-                </MenuItem>
-            </Menu>
         </Grid>
     </Grid>
 </Window>

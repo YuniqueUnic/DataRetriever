@@ -7,11 +7,100 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+             d:Background="White"
              d:DesignHeight="450"
              d:DesignWidth="800">
 
     <UserControl.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary>
+
+            <Style x:Key="BaseRichTextBoxStyle" TargetType="{x:Type RichTextBox}">
+                <Setter Property="Padding" Value="0,8" />
+                <Setter Property="AutoWordSelection" Value="True" />
+                <Setter Property="AcceptsTab" Value="True" />
+            </Style>
+
+            <ControlTemplate x:Key="EditFuncToolBarTemplate" TargetType="ToolBar">
+                <ToolBar Name="EditFuncoolBar"
+                         Height="26"
+                         DockPanel.Dock="{TemplateBinding DockPanel.Dock}"
+                         ItemsSource="{TemplateBinding ItemsSource}">
+                    <ToolBar.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Width" Value="24" />
+                            <Setter Property="CommandTarget" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Tag}" />
+                        </Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Setter Property="Width" Value="20" />
+                        </Style>
+                    </ToolBar.Resources>
+                    <ToolBar.Header>
+                        <Viewbox MaxWidth="54">
+                            <TextBlock Margin="0"
+                                       Padding="0"
+                                       Foreground="Blue"
+                                       FontSize="12"
+                                       Text="{TemplateBinding Header}" />
+                        </Viewbox>
+                    </ToolBar.Header>
+                    <Button ToolTip="{x:Static prop:Resource.Cut}" Command="ApplicationCommands.Cut">
+                        <Image Source="\Images\EditCut.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Copy}" Command="ApplicationCommands.Copy">
+                        <Image Source="\Images\EditCopy.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Paste}" Command="ApplicationCommands.Paste">
+                        <Image Source="\Images\EditPaste.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Undo}" Command="ApplicationCommands.Undo">
+                        <Image Source="\Images\EditUndo.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Redo}" Command="ApplicationCommands.Redo">
+                        <Image Source="\Images\EditRedo.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Bold}" Command="EditingCommands.ToggleBold">
+                        <Image Source="\Images\BoldText.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Italic}" Command="EditingCommands.ToggleItalic">
+                        <Image Source="\Images\ItalicText.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Underline}" Command="EditingCommands.ToggleUnderline">
+                        <Image Source="\Images\UnderlineText.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.GrowFont}" Command="EditingCommands.IncreaseFontSize">
+                        <Image Source="\Images\CharacterGrowFont.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.ShrinkFont}" Command="EditingCommands.DecreaseFontSize">
+                        <Image Source="\Images\CharacterShrinkFont.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Bullets}" Command="EditingCommands.ToggleBullets">
+                        <Image Source="\Images\ListBullets.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.Numbering}" Command="EditingCommands.ToggleNumbering">
+                        <Image Source="\Images/ListNumbering.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.AlignLeft}" Command="EditingCommands.AlignLeft">
+                        <Image Source="\Images\ParagraphLeftJustify.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.AlignCenter}" Command="EditingCommands.AlignCenter">
+                        <Image Source="\Images\ParagraphCenterJustify.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.AlignRight}" Command="EditingCommands.AlignRight">
+                        <Image Source="\Images\ParagraphRightJustify.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.AlignJustify}" Command="EditingCommands.AlignJustify">
+                        <Image Source="\Images\ParagraphFullJustify.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.IncreaseIndent}" Command="EditingCommands.IncreaseIndentation">
+                        <Image Source="\Images\ParagraphIncreaseIndentation.png" />
+                    </Button>
+                    <Button ToolTip="{x:Static prop:Resource.DecreaseIndent}" Command="EditingCommands.DecreaseIndentation">
+                        <Image Source="\Images\ParagraphDecreaseIndentation.png" />
+                    </Button>
+                </ToolBar>
+            </ControlTemplate>
+
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <Grid Margin="4">
@@ -41,13 +130,47 @@
                       Background="#2000" />
         <Grid Grid.Row="2" Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
+            <Grid Grid.Row="0"
+                  Grid.Column="0"
+                  MinWidth="32">
+                <DockPanel Name="LeftDockPanel" Margin="2,0">
+                    <!--  This tool bar contains all the editing buttons.  -->
+                    <ToolBar DockPanel.Dock="Top"
+                             Header="LeftEditGrid"
+                             Tag="{Binding ElementName=LeftRTB}"
+                             Template="{StaticResource EditFuncToolBarTemplate}" />
+                    <!--
+                        By default pressing tab moves focus to the next control.
+                        Setting AcceptsTab to true allows the RichTextBox to accept tab characters.
+                    -->
+                    <RichTextBox Name="LeftRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
+                </DockPanel>
+            </Grid>
+            <GridSplitter Grid.Row="0"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="#2000" />
+            <Grid Grid.Row="0"
+                  Grid.Column="2"
+                  MinWidth="32">
+                <DockPanel Name="RightDockPanel" Margin="2,0">
+                    <!--  This tool bar contains all the editing buttons.  -->
+                    <ToolBar DockPanel.Dock="Top"
+                             Header="RightEditGrid"
+                             Tag="{Binding ElementName=RightRTB}"
+                             Template="{StaticResource EditFuncToolBarTemplate}" />
+                    <!--
+                        By default pressing tab moves focus to the next control.
+                        Setting AcceptsTab to true allows the RichTextBox to accept tab characters.
+                    -->
+                    <RichTextBox Name="RightRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
+                </DockPanel>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

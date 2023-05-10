@@ -209,4 +209,49 @@
   <data name="AboutSlogan" xml:space="preserve">
     <value>向阳而生，自由自在.</value>
   </data>
+  <data name="Undo" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>重做</value>
+  </data>
+  <data name="Bold" xml:space="preserve">
+    <value>加粗</value>
+  </data>
+  <data name="Italic" xml:space="preserve">
+    <value>斜体</value>
+  </data>
+  <data name="Underline" xml:space="preserve">
+    <value>下划线</value>
+  </data>
+  <data name="GrowFont" xml:space="preserve">
+    <value>增大字体</value>
+  </data>
+  <data name="ShrinkFont" xml:space="preserve">
+    <value>减小字体</value>
+  </data>
+  <data name="Bullets" xml:space="preserve">
+    <value>符号列表</value>
+  </data>
+  <data name="Numbering" xml:space="preserve">
+    <value>数字列表</value>
+  </data>
+  <data name="AlignLeft" xml:space="preserve">
+    <value>左对齐</value>
+  </data>
+  <data name="AlignCenter" xml:space="preserve">
+    <value>居中</value>
+  </data>
+  <data name="AlignRight" xml:space="preserve">
+    <value>右对齐</value>
+  </data>
+  <data name="AlignJustify" xml:space="preserve">
+    <value>拉伸对齐</value>
+  </data>
+  <data name="IncreaseIndent" xml:space="preserve">
+    <value>右缩进</value>
+  </data>
+  <data name="DecreaseIndent" xml:space="preserve">
+    <value>左缩进</value>
+  </data>
 </root>
