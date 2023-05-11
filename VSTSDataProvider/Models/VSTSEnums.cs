@@ -4,6 +4,9 @@ namespace VSTSDataProvider.Models;
 
 public enum OutcomeState : int
 {
+    [StringValue("")]
+    Null,
+
     [StringValue("failed")]
     Failed,//failed
 
@@ -16,6 +19,8 @@ public enum OutcomeState : int
 
 public enum TestTools : int
 {
+    [StringValue("")]
+    Null,
 
     [StringValue]
     SilkTest,

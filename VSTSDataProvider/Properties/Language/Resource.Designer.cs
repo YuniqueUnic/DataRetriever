@@ -133,6 +133,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Cancel 的本地化字符串。
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Complete Url 的本地化字符串。
         /// </summary>
         public static string CompleteUrl {
@@ -286,6 +295,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Menu 的本地化字符串。
+        /// </summary>
+        public static string Menu {
+            get {
+                return ResourceManager.GetString("Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Numbering 的本地化字符串。
         /// </summary>
         public static string Numbering {
@@ -345,6 +363,24 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Refresh {
             get {
                 return ResourceManager.GetString("Refresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Reset 的本地化字符串。
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Save 的本地化字符串。
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         

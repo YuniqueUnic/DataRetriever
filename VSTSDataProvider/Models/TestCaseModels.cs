@@ -56,7 +56,7 @@ public class TestCase : ITestObject, IResultsModel
     public int ID { get; set; } = -1;
     public string? Name { get; set; }
     public string? CQID { get; set; }
-    public bool? IsAutomated { get; set; }
+    public string? StateofAutomation { get; set; }
     public string? ScriptName { get; set; }
     [ExcelIgnore]
     public TestPoint? SelfTestPoint { get; set; }
@@ -207,7 +207,7 @@ public class DetailModel : IResultsModel
     public string? Configuration { get; set; }
     public string? LastUpdatedDate { get; set; }
     public string? RunBy { get; set; }
-    public bool? IsAutomated { get; set; }
+    public string? StateofAutomation { get; set; }
 
     [ExcelIgnore]
     public string? TestToolStr

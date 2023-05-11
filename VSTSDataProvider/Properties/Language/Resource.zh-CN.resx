@@ -254,4 +254,16 @@
   <data name="DecreaseIndent" xml:space="preserve">
     <value>左缩进</value>
   </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Menu" xml:space="preserve">
+    <value>菜单</value>
+  </data>
 </root>

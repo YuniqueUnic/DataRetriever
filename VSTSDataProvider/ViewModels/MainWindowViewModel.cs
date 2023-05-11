@@ -429,47 +429,47 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     //private async Task ReleaseMethod_TCs( )
     //{
-    //    ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
+    //   ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
 
-    //    VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
-    //    Models.TestPlanSuiteId m_IDGroup;
-    //    bool m_succeedMatch = false;
+    //   VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
+    //   Models.TestPlanSuiteId m_IDGroup;
+    //   bool m_succeedMatch = false;
 
-    //    if( isValidID(out m_IDGroup) )
-    //    {
-    //        mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
-    //    }
-    //    else
-    //    {
-    //        m_IDGroup = VSTSDataProvider.Common.VSTSDataProcessing.TryGetTestPlanSuiteId(CompleteUrl , out m_succeedMatch);
-    //        if( m_succeedMatch )
-    //        {
-    //            TestPlanID = m_IDGroup.PlanId.ToString();
-    //            TestSuiteID = m_IDGroup.SuiteId.ToString();
-    //        }
+    //   if( isValidID(out m_IDGroup) )
+    //   {
+    //       mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+    //   }
+    //   else
+    //   {
+    //       m_IDGroup = VSTSDataProvider.Common.VSTSDataProcessing.TryGetTestPlanSuiteId(CompleteUrl , out m_succeedMatch);
+    //       if( m_succeedMatch )
+    //       {
+    //           TestPlanID = m_IDGroup.PlanId.ToString();
+    //           TestSuiteID = m_IDGroup.SuiteId.ToString();
+    //       }
 
-    //        mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
-    //    }
+    //       mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+    //   }
 
-    //    var succeedLoadData = await mVSTSDataProvider.PreLoadData();
+    //   var succeedLoadData = await mVSTSDataProvider.PreLoadData();
 
-    //    ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");
+    //   ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");
 
-    //    if( succeedLoadData )
-    //    {
-    //        ConsoleRelated.ConsoleEx.Log("Start Loading VSTS Data...");
+    //   if( succeedLoadData )
+    //   {
+    //       ConsoleRelated.ConsoleEx.Log("Start Loading VSTS Data...");
 
-    //        if( IsDetailsChecked )
-    //        {
-    //            VSTSDataCollectionDetails = await mVSTSDataProvider.GET_DetailsAsync();
-    //        }
-    //        else
-    //        {
-    //            VSTSDataCollectionOTEs = await mVSTSDataProvider.GET_OTEsAsync();
-    //        }
+    //       if( IsDetailsChecked )
+    //       {
+    //           VSTSDataCollectionDetails = await mVSTSDataProvider.GET_DetailsAsync();
+    //       }
+    //       else
+    //       {
+    //           VSTSDataCollectionOTEs = await mVSTSDataProvider.GET_OTEsAsync();
+    //       }
 
-    //        ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
-    //    }
+    //       ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
+    //   }
     //}
 
 
@@ -632,15 +632,20 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private void Edit( )
     {
-        // ±à¼­Âß¼­´úÂë
         var EditWindow = new EditTableWindow();
         EditWindow.DataContext = this;
         EditWindow.Show();
+
+        //MessageBox.Show(
+        //            $"The function is still under development, please wait patiently, thank you...\n\n" ,
+        //            $"Function is not ready" ,
+        //            MessageBoxButton.OK ,
+        //            MessageBoxImage.Exclamation);
     }
 
     private void LanguageChange(object param)
     {
-        // ¸ü¸Ä½çÃæÓïÑÔÂß¼­´úÂë
+        // ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
         if( param.Equals("English") )
         {
             RestartApplication("en-US");
@@ -662,7 +667,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             {
                 FileName = fileName ,
                 Arguments = string.Join(" " , args) ,
-                UseShellExecute = false ,
+                UseShellExecute = true ,
                 Verb = "runas"
             });
 
@@ -672,7 +677,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     #region About Command
 
-    //TODO: Î¥±³ÁË MVVM µÄÔ­Ôò, ÒÔºóÓÃ behavior ÖØ¹¹
+    //TODO: Î¥ï¿½ï¿½ï¿½ï¿½ MVVM ï¿½ï¿½Ô­ï¿½ï¿½, ï¿½Ôºï¿½ï¿½ï¿½ behavior ï¿½Ø¹ï¿½
     private void About(object owerWindow)
     {
         var AboutWindowDialog = new AboutWindow();

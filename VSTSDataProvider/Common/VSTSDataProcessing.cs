@@ -212,7 +212,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 ID = v.workItem.id ,
                 Name = v.workItem.name ,
                 CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
-                IsAutomated = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
+                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
                 OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
                 ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
                 ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
@@ -262,7 +262,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
                 LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
                 RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
-                IsAutomated = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation.Contains("Automated" , System.StringComparison.OrdinalIgnoreCase) ,
+                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
             };
         }));
 

@@ -35,7 +35,7 @@
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="164"
-                                  MinWidth="42"
+                                  MinWidth="38"
                                   MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.5'}" />
                 <ColumnDefinition Width="5" />
                 <ColumnDefinition Width="*" />
@@ -106,7 +106,7 @@
                 <!--  TODO: Try to custom this part  -->
                 <!--  VSTS mode: Keep it as followed style  -->
                 <!--  Edit mode: Change it to look up the specified TestCase Item to Edit its properties.  -->
-                <Grid Name="AlternativeLeftFuncGrid"
+                <!--<Grid Name="AlternativeLeftFuncGrid"
                       Grid.Row="1"
                       Grid.Column="0">
                     <Grid.RowDefinitions>
@@ -128,29 +128,82 @@
                              Tag="{x:Static prop:Resource.Cookie}"
                              TextWrapping="Wrap"
                              Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
-                </Grid>
-                <Grid Name="LeftBottomFuncGrid"
-                      Grid.Row="2"
-                      Grid.Column="0"
-                      Margin="0,0,0,4">
-                    <Menu Margin="0,4,0,0" VerticalContentAlignment="Center">
+                </Grid>-->
+                <local:LeftAlternativeTextBoxPage Grid.Row="1"
+                                                  Grid.Column="0"
+                                                  DataContext="{Binding}" />
+                <DockPanel Name="LeftBottomFuncGrid"
+                           Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,0,0,4"
+                           LastChildFill="True">
+                    <!--<Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>-->
+                    <Menu Grid.Row="0"
+                          Grid.Column="0"
+                          VerticalContentAlignment="Center"
+                          DockPanel.Dock="Left">
                         <MenuItem VerticalAlignment="Center"
                                   VerticalContentAlignment="Center"
                                   FontStyle="Oblique"
-                                  FontWeight="SemiBold"
-                                  Header="···">
-                            <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
-                            <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
-                            <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
+                                  FontWeight="SemiBold">
+                            <MenuItem.Header>
+                                <TextBlock Margin="0"
+                                           Padding="0"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           FontStyle="Normal"
+                                           FontWeight="Regular"
+                                           Text="{x:Static prop:Resource.Menu}" />
+                            </MenuItem.Header>
+                            <MenuItem.Icon>
+                                <Image Width="18"
+                                       Cursor="Hand"
+                                       Stretch="Uniform"
+                                       Source="/Images/Menu.png" />
+                            </MenuItem.Icon>
+                            <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Download.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Add.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/ListNumbering.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{x:Static prop:Resource.Language}"
                                       Command="{Binding LanguageChangeCommand}"
-                                      CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
+                                      CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Translate.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                             <MenuItem Header="{x:Static prop:Resource.About}"
                                       Command="{Binding AboutCommand}"
-                                      CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
+                                      CommandParameter="{Binding ElementName=MainWindowCurrentInstance}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/ItalicText.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
                         </MenuItem>
                     </Menu>
-                </Grid>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="0,0,4,0"
+                               VerticalAlignment="Center"
+                               d:Text="Sum: 100"
+                               DockPanel.Dock="Right"
+                               Text="{Binding VSTSDataCollectionDetails.Count, StringFormat='Sum: {0}'}" />
+                    <Label IsEnabled="False" />
+                </DockPanel>
             </Grid>
             <GridSplitter Grid.Row="0"
                           Grid.Column="1"
@@ -167,8 +220,8 @@
                 <ContentControl x:Name="PageContentControl"
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                d:ContentTemplate="{StaticResource EditPageContent}"
-                                ContentTemplate="{StaticResource VSTSPageContent}" />
+                                d:ContentTemplate="{StaticResource VSTSPageContent}"
+                                ContentTemplate="{StaticResource EditPageContent}" />
                 <ProgressBar Name="GetVSTSDataProgressBar"
                              Grid.Row="1"
                              Grid.Column="0"

@@ -183,7 +183,7 @@
                         <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
                         <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
                         <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
-                        <DataGridTextColumn Binding="{Binding IsAutomated}" Header="IsAutomated" />
+                        <DataGridTextColumn Binding="{Binding StateofAutomation}" Header="State of Automation" />
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>
