@@ -239,3 +239,30 @@ public class KeyNameExtraToStringConverter : MarkupExtension, IValueConverter
         throw new NotImplementedException();
     }
 }
+
+
+
+public class StringMatchToVisibilityConverter : IValueConverter
+{
+
+    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        if( value is string strValue )
+        {
+            if( string.IsNullOrWhiteSpace(parameter as string) )
+            {
+                return string.IsNullOrWhiteSpace(strValue) ? Visibility.Visible : Visibility.Collapsed;
+            }
+            else
+            {
+                return strValue.Equals(parameter as string) ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        return Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

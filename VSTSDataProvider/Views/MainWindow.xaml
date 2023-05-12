@@ -361,6 +361,7 @@
                          Grid.Column="1"
                          Height="{Binding ElementName=DetailsFilterComboBox, Path=ActualHeight}"
                          VerticalAlignment="Center"
+                         d:Visibility="Collapsed"
                          IsIndeterminate="True"
                          Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />
             <Button Name="RefreshButton"

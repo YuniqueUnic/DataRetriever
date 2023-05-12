@@ -104,11 +104,27 @@
                 </ToolBar>
             </ControlTemplate>
 
-            <ContextMenu x:Key="RichTextBoxActionContextMenu">
-                <MenuItem Header="{x:Static prop:Resource.Save}" Command="Copy" />
-                <MenuItem Header="{x:Static prop:Resource.Reset}" Command="Cut" />
-                <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="Paste" />
-            </ContextMenu>
+            <ControlTemplate x:Key="RichTextActionMenu" TargetType="{x:Type Menu}">
+                <Menu VerticalAlignment="Center">
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <StackPanel Margin="0" Orientation="Horizontal">
+                                <Image Width="12"
+                                       Margin="0,0,4,0"
+                                       Source="\Images\Menu.png" />
+                                <TextBlock MaxWidth="120"
+                                           Margin="0"
+                                           Padding="0"
+                                           VerticalAlignment="Center"
+                                           Text="{TemplateBinding Tag}" />
+                            </StackPanel>
+                        </MenuItem.Header>
+                        <MenuItem Header="{x:Static prop:Resource.Save}" Command="{Binding ExportCommand}" />
+                        <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding EditCommand}" />
+                        <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="{Binding AboutCommand}" />
+                    </MenuItem>
+                </Menu>
+            </ControlTemplate>
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -145,16 +161,12 @@
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Center"
                    LastChildFill="True">
-            <TextBlock Margin="16,0,4,0"
-                       VerticalAlignment="Center"
-                       ContextMenu="{StaticResource RichTextBoxActionContextMenu}"
-                       DockPanel.Dock="Left"
-                       Text="LeftEditGrid" />
-            <TextBlock Margin="4,0,16,0"
-                       VerticalAlignment="Center"
-                       ContextMenu="{StaticResource RichTextBoxActionContextMenu}"
-                       DockPanel.Dock="Right"
-                       Text="RightEditGrid" />
+            <Menu DockPanel.Dock="Left"
+                  Tag="LeftEditGrid"
+                  Template="{StaticResource RichTextActionMenu}" />
+            <Menu DockPanel.Dock="Right"
+                  Tag="{Binding CompleteUrl}"
+                  Template="{StaticResource RichTextActionMenu}" />
             <ToolBar Grid.Row="2"
                      Grid.Column="0"
                      Template="{StaticResource EditFuncToolBarTemplate}" />

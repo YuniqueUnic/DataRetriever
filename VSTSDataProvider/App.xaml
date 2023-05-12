@@ -12,6 +12,7 @@
             <cvtr:BoolenNullableToVisibility x:Key="BoolenNullableToVisibilityReverse"
                                              IsEnabled="True"
                                              Reverse="True" />
+            <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityConverter" />
 
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />

@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
              d:Background="White"
@@ -15,15 +16,57 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <DockPanel Name="TopFunctionDockPanel">
-            <StackPanel Margin="4,2"
-                        VerticalAlignment="Center"
-                        DockPanel.Dock="Top"
-                        Orientation="Horizontal">
-                <Button Content="👁" />
-            </StackPanel>
-            <Grid>
-                <ListView d:ItemsSource="{d:DesignData IsDesignTimeCreatable=True, Source={d:SampleData ItemCount=100}}" />
+            <Grid Margin="0,2"
+                  VerticalAlignment="Center"
+                  DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Name="ShowDataGridButton"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Command="{Binding AboutCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👁" />
+                        <TextBlock Margin="4,0" Text="Show" />
+                    </StackPanel>
+                </Button>
+                <ComboBox Name="DetailsFilterComboBox"
+                          Grid.Row="0"
+                          Grid.Column="1"
+                          Height="{Binding ElementName=ShowDataGridButton, Path=ActualHeight}"
+                          Margin="4,0,0,0"
+                          Padding="4,0"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          IsEditable="True"
+                          IsTextSearchEnabled="True"
+                          Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
+                          Text="{Binding DetailsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
+                          ItemsSource="{Binding DetailsFilterCollectionsComboBox}">
+                    <i:Interaction.Triggers>
+                        <i:KeyTrigger Key="Return" ActiveOnFocus="True">
+                            <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
+                        </i:KeyTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
             </Grid>
         </DockPanel>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <DataGrid d:ItemsSource="{d:SampleData ItemCount=100}"
+                      AutoGenerateColumns="False"
+                      CanUserSortColumns="True"
+                      VerticalScrollBarVisibility="Auto"
+                      ItemsSource="{Binding VstsDataCollectionViewDetails}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </UserControl>

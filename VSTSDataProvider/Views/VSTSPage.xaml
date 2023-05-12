@@ -175,9 +175,9 @@
             <!--  Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"  -->
             <Button Name="RefreshButton"
                     Style="{StaticResource BaseButtonStyle}"
-                    Grid.ColumnSpan="2"
                     Grid.Row="0"
                     Grid.Column="2"
+                    Grid.ColumnSpan="2"
                     Margin="4,0,0,0"
                     ToolTip="Refresh the table."
                     Command="{Binding RefreshButtonClickedCommand}"
@@ -199,7 +199,7 @@
                               Command="{Binding AboutCommand}"
                               CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
                 </MenuItem>
-            </Menu> -->
+            </Menu>-->
         </Grid>
     </Grid>
 </UserControl>
