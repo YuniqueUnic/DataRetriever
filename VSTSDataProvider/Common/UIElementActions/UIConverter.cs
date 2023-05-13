@@ -242,27 +242,28 @@ public class KeyNameExtraToStringConverter : MarkupExtension, IValueConverter
 
 
 
-public class StringMatchToVisibilityConverter : IValueConverter
+public class StringMatchToVisibilityConverter : MarkupExtension, IValueConverter
 {
+    public bool Reverse { get; set; }
 
     public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
     {
-        if( value is string strValue )
-        {
-            if( string.IsNullOrWhiteSpace(parameter as string) )
-            {
-                return string.IsNullOrWhiteSpace(strValue) ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
-            {
-                return strValue.Equals(parameter as string) ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-        return Visibility.Collapsed;
+        string? strValue = value?.ToString();
+
+        string? strParameter = parameter?.ToString();
+
+        bool isMatch = string.Equals(strValue , strParameter , StringComparison.OrdinalIgnoreCase);
+
+        return (isMatch ^ Reverse) ? Visibility.Visible : Visibility.Collapsed; // 使用异或运算符来简化条件语句
     }
 
     public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
     {
         throw new NotImplementedException();
+    }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        return this;
     }
 }

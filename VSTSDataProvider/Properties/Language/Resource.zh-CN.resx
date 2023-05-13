@@ -180,10 +180,10 @@
     <value>打开文件</value>
   </data>
   <data name="EditTab" xml:space="preserve">
-    <value>编辑模式</value>
+    <value>编辑</value>
   </data>
   <data name="VSTSTab" xml:space="preserve">
-    <value>基本模式</value>
+    <value>基本</value>
   </data>
   <data name="About" xml:space="preserve">
     <value>关于</value>
