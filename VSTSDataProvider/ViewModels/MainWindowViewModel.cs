@@ -3,6 +3,7 @@ using MiniExcelLibs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -34,12 +35,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     {
         MainWindowLoadedCommand = new RelayCommand(MainWindowLoaded);
         GetDataButtonClickedCommand = new AsyncRelayCommand(GetVSTSDataTask , CanGetData);
-        RefreshButtonClickedCommand = new AsyncRelayCommand(RefreshDataTableAsync , (o) => true);
+        RefreshButtonClickedCommand = new RelayCommand(RefreshDataTable , canRefresh);
         ExportCommand = new RelayCommand(Export);
         ImportCommand = new RelayCommand(Import);
         ModeSwitchCommand = new RelayCommand(ModeSwitch);
         LanguageChangeCommand = new RelayCommand(LanguageChange);
         AboutCommand = new RelayCommand(About);
+        EditinCommand = new RelayCommand(Editin);
     }
 
 
@@ -95,15 +97,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             //        filterSet.UnionWith(testCase.AllToHashSet());
             //    };
 
-            //    var sortedFilterSet = new List<string>(filterSet);
-            //    sortedFilterSet.Sort();
+            //    var sortedFilterHashSet = new List<string>(filterSet);
+            //    sortedFilterHashSet.Sort();
 
-            //    TCsFilterCollectionsComboBox = sortedFilterSet;
+            //    TCsFilterCollectionsComboBox = sortedFilterHashSet;
             //}
             #endregion
             //RefreshComboBoxProperties<Models.TestCase>(value);
             var results
-                = RefreshComboBoxProperties<Models.TestCase>(ref _vstsDataCollectionViewTCs , ref value , TCsFilterComboBoxText);
+                = RefreshComboBoxProperties<Models.TestCase>(ref _vstsDataCollectionViewTCs , ref value);
             if( results.succeedRefreshIt == true )
             {
                 VstsDataCollectionViewTCs = results.withFilterCollectionView;
@@ -160,7 +162,11 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public bool IsDetailsChecked
     {
         get => _isDetailsChecked;
-        set => SetProperty(ref _isDetailsChecked , value);
+        set
+        {
+            SetProperty(ref _isDetailsChecked , value);
+            RefreshButtonClickedCommand.RaiseCanExecuteChanged();
+        }
     }
 
     public bool ModeToggleButtonState
@@ -212,10 +218,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public bool? ProgressShowing
     {
         get => _progressBarShowing ?? false;
-        set
-        {
-            SetProperty(ref _progressBarShowing , value);
-        }
+        set => SetProperty(ref _progressBarShowing , value);
     }
 
     public ConcurrentBag<Models.DetailModel> VSTSDataCollectionDetails
@@ -225,7 +228,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
 
             var results
-                = RefreshComboBoxProperties<Models.DetailModel>(ref _vstsDataCollectionViewTCs , ref value , DetailsFilterComboBoxText);
+                = RefreshComboBoxProperties<Models.DetailModel>(ref _vstsDataCollectionViewDetails , ref value);
+
             if( results.succeedRefreshIt == true )
             {
                 VstsDataCollectionViewDetails = results.withFilterCollectionView;
@@ -238,6 +242,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                     if( testCase == null ) return false;
                     return testCase.Contains(DetailsFilterComboBoxText);
                 };
+
             }
             SetProperty(ref _vstsDataCollectionDetails , value);
         }
@@ -249,7 +254,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set
         {
             var results
-                = RefreshComboBoxProperties<Models.OTE_OfflineModel>(ref _vstsDataCollectionViewOTEs , ref value , OTEsFilterComboBoxText);
+                = RefreshComboBoxProperties<Models.OTE_OfflineModel>(ref _vstsDataCollectionViewOTEs , ref value);
+
             if( results.succeedRefreshIt == true )
             {
                 VstsDataCollectionViewOTEs = results.withFilterCollectionView;
@@ -263,12 +269,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                     return testCase.Contains(OTEsFilterComboBoxText);
                 };
             }
+
             SetProperty(ref _vstsDataCollectionOTEs , value);
         }
     }
 
     private (bool? succeedRefreshIt, ICollectionView withFilterCollectionView, List<string> withFilterTextList) RefreshComboBoxProperties<T>
-            (ref ICollectionView targetCollectionView , ref ConcurrentBag<T> value , string targetComboBoxText)
+            (ref ICollectionView targetCollectionView , ref ConcurrentBag<T> value)
         where T : class, Models.IResultsModel
     {
         if( !Object.Equals(targetCollectionView , value) )
@@ -291,10 +298,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                 filterSet.UnionWith(testCase.AllToHashSet());
             };
 
-            var sortedFilterSet = new List<string>(filterSet);
-            sortedFilterSet.Sort();
+            var sortedFilterHashSet = new List<string>(filterSet);
+            sortedFilterHashSet.Sort();
 
-            return (true, newCollectionView, sortedFilterSet);
+            return (true, newCollectionView, sortedFilterHashSet);
         }
         else
         {
@@ -308,14 +315,24 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ICollectionView VstsDataCollectionViewDetails
     {
         get => _vstsDataCollectionViewDetails;
-        set => SetProperty(ref _vstsDataCollectionViewDetails , value);
+        set
+        {
+            SetProperty(ref _vstsDataCollectionViewDetails , value);
+            RefreshButtonClickedCommand.RaiseCanExecuteChanged();
+        }
     }
 
     public ICollectionView VstsDataCollectionViewOTEs
     {
         get => _vstsDataCollectionViewOTEs;
-        set => SetProperty(ref _vstsDataCollectionViewOTEs , value);
+        set
+        {
+            SetProperty(ref _vstsDataCollectionViewOTEs , value);
+            RefreshButtonClickedCommand.RaiseCanExecuteChanged();
+        }
     }
+
+
 
     //Details ComboBox FilterText
     public string DetailsFilterComboBoxText
@@ -343,22 +360,18 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set => SetProperty(ref _otesFilterCollectionsComboBox , value);
     }
 
-
-
     #endregion UI Binding - BindingProperties
 
 
     #region UI Binding - RelayCommands
 
     public RelayCommand MainWindowLoadedCommand { get; private set; }
-
-    private void MainWindowLoaded( )
-    {
-
-    }
-
-
     public AsyncRelayCommand GetDataButtonClickedCommand { get; private set; }
+    public RelayCommand RefreshButtonClickedCommand { get; private set; }
+
+    private void MainWindowLoaded( ) { }
+
+    #region Get Data Async
 
     public bool CanGetData(object p)
     {
@@ -387,10 +400,12 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
             VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
         }
         else
         {
             VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
         }
 
     }
@@ -432,7 +447,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
         }
     }
-
 
     //private async Task ReleaseMethod_TCs( )
     //{
@@ -479,23 +493,30 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     //   }
     //}
 
+    #endregion Get Data
 
-
-    public AsyncRelayCommand RefreshButtonClickedCommand { get; private set; }
-
-    private async Task RefreshDataTableAsync(CancellationToken arg)
+    private bool canRefresh(object obj)
     {
         if( IsDetailsChecked )
         {
-            //if( VstsDataCollectionViewTCs is null ) return;
-            //VstsDataCollectionViewTCs.Refresh();            
+            if( VstsDataCollectionViewDetails is null ) return false;
+            return true;
+        }
+        else
+        {
+            if( VstsDataCollectionViewOTEs is null ) return false;
+            return true;
+        }
+    }
 
-            if( VstsDataCollectionViewDetails is null ) return;
+    private void RefreshDataTable(object param)
+    {
+        if( IsDetailsChecked )
+        {
             VstsDataCollectionViewDetails.Refresh();
         }
         else
         {
-            if( VstsDataCollectionViewOTEs is null ) return;
             VstsDataCollectionViewOTEs.Refresh();
         }
         //using( var dataFile = File.OpenText(Path.GetFullPath(@"C:\Users\Administrator\Documents\LINQPad Queries\Data\Json\NewExcuateFile.json")) )
@@ -505,7 +526,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     }
 
 
-    #region Menu Functions
+    #region MainMenu Functions
+
     public ICommand ExportCommand { get; private set; }
     public ICommand ImportCommand { get; private set; }
     public ICommand ModeSwitchCommand { get; private set; }
@@ -671,9 +693,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-    #region About Command
-
-    //TODO: Υ���� MVVM ��ԭ��, �Ժ��� behavior �ع�
+    //TODO: Violated the MVVM design pattern and will be replaced with behavior in the future.
     private void About(object owerWindow)
     {
         var AboutWindowDialog = new AboutWindow();
@@ -682,11 +702,163 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         AboutWindowDialog.Show();
     }
 
-    #endregion About Command
-
-    #endregion Menu Function
+    #endregion MainMenu Function
 
 
+    #region Edit Page
+
+    private ConcurrentBag<Models.DetailModel> _editDetailsCollection;
+    private ConcurrentBag<Models.OTE_OfflineModel> _editOTEsCollection;
+    private ICollectionView _editDetailsCollectionView;
+    private ICollectionView _editOTEsCollectionView;
+
+    private string _editDetailsFilterComboBoxText;
+    private List<string> _editDetailsFilterCollectionsComboBox;
+
+    private string _editOTEsFilterComboBoxText;
+    private List<string> _editOTEsFilterCollectionsComboBox;
+
+    public ConcurrentBag<Models.DetailModel> EditDetailsCollection
+    {
+        get => _editDetailsCollection ?? new();
+        set
+        {
+            if( !EqualityComparer<ConcurrentBag<Models.DetailModel>>.Default.Equals(_editDetailsCollection , value) )
+            {
+                EditDetailsCollectionView = CollectionViewSource.GetDefaultView(value);
+
+                var filterSet = new HashSet<string>();
+
+                foreach( var testCase in value )
+                {
+                    filterSet.Add(testCase.ID.ToString());
+                    filterSet.Add(testCase.Name ?? string.Empty);
+                };
+
+                var sortedFilterHashSet = new List<string>(filterSet);
+                sortedFilterHashSet.Sort();
+
+                EditDetailsFilterCollectionsComboBox = sortedFilterHashSet;
+
+                EditDetailsCollectionView.Filter = (o) =>
+                {
+                    if( string.IsNullOrEmpty(EditDetailsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.DetailModel;
+                    if( testCase == null ) return false;
+                    return testCase.Contains(EditDetailsFilterComboBoxText);
+                };
+
+            }
+
+            SetProperty(ref _editDetailsCollection , value);
+        }
+    }
+
+    public ConcurrentBag<Models.OTE_OfflineModel> EditOTEsCollection
+    {
+        get => _editOTEsCollection ?? new();
+        set
+        {
+            if( !EqualityComparer<ConcurrentBag<Models.OTE_OfflineModel>>.Default.Equals(_editOTEsCollection , value) )
+            {
+                EditOTEsCollectionView = CollectionViewSource.GetDefaultView(value);
+
+                var filterSet = new HashSet<string>();
+
+                foreach( var testCase in value )
+                {
+                    filterSet.Add(testCase.TestCaseId.ToString());
+                    filterSet.Add(testCase.Title ?? string.Empty);
+                };
+
+                var sortedFilterHashSet = new List<string>(filterSet);
+                sortedFilterHashSet.Sort();
+
+                EditOTEsFilterCollectionsComboBox = sortedFilterHashSet;
+
+                EditOTEsCollectionView.Filter = (o) =>
+                {
+                    if( string.IsNullOrEmpty(EditOTEsFilterComboBoxText) ) return true;
+                    var testCase = o as Models.OTE_OfflineModel;
+                    if( testCase == null ) return false;
+                    return testCase.Contains(EditOTEsFilterComboBoxText);
+                };
+
+            }
+
+            SetProperty(ref _editOTEsCollection , value);
+        }
+    }
+
+    public ICollectionView EditDetailsCollectionView
+    {
+        get => _editDetailsCollectionView;
+        set => SetProperty(ref _editDetailsCollectionView , value);
+    }
+
+    public ICollectionView EditOTEsCollectionView
+    {
+        get => _editOTEsCollectionView;
+        set => SetProperty(ref _editOTEsCollectionView , value);
+    }
+
+    // Edit Details ComboBox FilterText
+    public string EditDetailsFilterComboBoxText
+    {
+        get => _editDetailsFilterComboBoxText;
+        set => SetProperty(ref _editDetailsFilterComboBoxText , value);
+    }
+
+    public List<string> EditDetailsFilterCollectionsComboBox
+    {
+        get => _editDetailsFilterCollectionsComboBox;
+        set => SetProperty(ref _editDetailsFilterCollectionsComboBox , value);
+    }
+
+    // Edit OTEs ComboBox FilterText
+    public string EditOTEsFilterComboBoxText
+    {
+        get => _editOTEsFilterComboBoxText;
+        set => SetProperty(ref _editOTEsFilterComboBoxText , value);
+    }
+
+    public List<string> EditOTEsFilterCollectionsComboBox
+    {
+        get => _editOTEsFilterCollectionsComboBox;
+        set => SetProperty(ref _editOTEsFilterCollectionsComboBox , value);
+    }
+
+    public ObservableCollection<Models.DetailModel> EditingDetailObCollection { get; set; } = new ObservableCollection<Models.DetailModel>();
+
+    public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollection { get; set; } = new ObservableCollection<Models.OTE_OfflineModel>();
+
+
+
+    public ICommand EditByTheSelecteItemCommand { get; private set; }
+    public ICommand EditinCommand { get; private set; }
+
+    public void EditByTheSelecteItem( )
+    {
+
+    }
+
+    public void Editin(object param)
+    {
+        string sideofTextBox = param as string ?? "Left";
+
+        if( sideofTextBox.Equals("Right") )
+        {
+            ModeToggleButtonState = false;
+        }
+        else
+        {
+            ModeToggleButtonState = true;
+
+        }
+    }
+
+
+    #endregion Edit Page
 
     #endregion UI Binding - RelayCommands
 

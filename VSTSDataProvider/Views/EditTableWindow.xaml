@@ -11,7 +11,8 @@
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="EditTableWindow"
         Width="800"
-        Height="450">
+        Height="450"
+        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}">
     <Window.Resources>
         <ResourceDictionary>
 

@@ -266,4 +266,10 @@
   <data name="Menu" xml:space="preserve">
     <value>菜单</value>
   </data>
+  <data name="EditinLeft" xml:space="preserve">
+    <value>左侧编辑</value>
+  </data>
+  <data name="EditinRight" xml:space="preserve">
+    <value>右侧编辑</value>
+  </data>
 </root>

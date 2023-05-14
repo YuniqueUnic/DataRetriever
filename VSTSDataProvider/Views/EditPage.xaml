@@ -139,16 +139,42 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
-            <DataGrid Name="OTEsDataGrid"
-                      d:ItemsSource="{d:SampleData ItemCount=100}"
-                      Template="{StaticResource OTE_OfflineModelsGridTemplate}"
-                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibilityReverse}}"
-                      ItemsSource="{Binding VstsDataCollectionViewOTEs}" />
-            <DataGrid Name="DetailsDataGrid"
-                      d:ItemsSource="{d:SampleData ItemCount=100}"
-                      Template="{StaticResource DetailModelsGridTemplate}"
-                      Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
-                      ItemsSource="{Binding VstsDataCollectionViewDetails}" />
+            <DataGrid Name="EditingItemDataGrid"
+                      d:ItemsSource="{d:SampleData ItemCount=1}"
+                      IsReadOnly="True"
+                      SelectionUnit="Cell">
+                <!--  TODO: Add ContextMenu on Cell  -->
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu x:Name="EditColumnContextMenu">
+                                    <MenuItem Header="{x:Static prop:Resource.EditinLeft}"
+                                              Command="{Binding EditinCommand}"
+                                              CommandParameter="Left" />
+                                    <MenuItem Header="{x:Static prop:Resource.EditinRight}"
+                                              Command="{Binding EditinCommand}"
+                                              CommandParameter="Right" />
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
+                                <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditingDetailObCollection}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
+                                <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditingOTEObCollection}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
+            </DataGrid>
         </Grid>
         <GridSplitter Grid.Row="1"
                       Grid.Column="0"

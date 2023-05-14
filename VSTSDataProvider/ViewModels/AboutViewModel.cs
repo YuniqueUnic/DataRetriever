@@ -54,7 +54,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
     public ICommand AboutContentFlowDocumentReader_LoadedCommand { get; set; }
     public ICommand OKButtonClickedCommand { get; set; }
 
-    //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
+    //TODO: Violated the MVVM design pattern and will be replaced with behavior in the future.
     private void AboutContentFlowDocumentReader_Loaded(object sender)
     {
         FlowDocumentReader flowDocumentReader = (FlowDocumentReader)sender;
@@ -62,7 +62,7 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         flowDocumentReader.Document = flowDocument;
     }
 
-    //TODO: 违背了 MVVM 的原则, 以后用 behavior 重构
+    //TODO: Violated the MVVM design pattern and will be replaced with behavior in the future.
     private void ClosethisWindow(object window) => (window as Window)!.Close();
 
     #region FlowDocumentContent
@@ -83,77 +83,57 @@ public class AboutViewModel : ViewModelBase.BaseViewModel
         //new Models.OpenSourceProjectInfos { Name = "第三方组件名称2", Version = "第三方组件版本号2", License = "第三方组件许可证2", Url = "http://Bing.com" },
         //new Models.OpenSourceProjectInfos { Name = "第三方组件名称3", Version = "第三方组件版本号3", License = "第三方组件许可证3", Url = "http://Google.com" }
     };
-
     private List<Models.OpenSourceProjectInfos> _specialThanks = new List<Models.OpenSourceProjectInfos>
     {
             new Models.OpenSourceProjectInfos { Name = "HYSYS", Version = "", License = "", Url = "https://www.aspentech.com/en/products/engineering/aspen-hysys/?src=web-apaccn" },
             new Models.OpenSourceProjectInfos { Name = "AspenTech", Version = "", License = "", Url = "https://www.aspentech.cn/" },
     };
 
-
-
-
     public string SoftwareName
     {
         get => _softwareName;
-        set
-        {
-            SetProperty(ref _softwareName , value);
-        }
+        set => SetProperty(ref _softwareName , value);
     }
 
     public string SoftwareVersion
     {
         get => _softwareVersion;
-        set
-        {
-            SetProperty(ref _softwareVersion , value);
-        }
+        set => SetProperty(ref _softwareVersion , value);
     }
 
     public string CopyrightOwner
     {
         get => _copyrightOwner;
         set
-        {
-            SetProperty(ref _copyrightOwner , value);
-        }
+        => SetProperty(ref _copyrightOwner , value);
     }
 
     public string ReleaseDate
     {
         get => _releaseDate;
         set
-        {
-            SetProperty(ref _releaseDate , value);
-        }
+        => SetProperty(ref _releaseDate , value);
     }
 
     public List<Models.OpenSourceProjectInfos> OpenSourceLibraries
     {
         get => _openSourceLibraries;
         set
-        {
-            SetProperty(ref _openSourceLibraries , value);
-        }
+        => SetProperty(ref _openSourceLibraries , value);
     }
 
     public List<Models.OpenSourceProjectInfos> ThirdPartyComponents
     {
         get => _thirdPartyComponents;
         set
-        {
-            SetProperty(ref _thirdPartyComponents , value);
-        }
+        => SetProperty(ref _thirdPartyComponents , value);
     }
 
     public List<Models.OpenSourceProjectInfos> SpecialThanks
     {
         get => _specialThanks;
         set
-        {
-            SetProperty(ref _specialThanks , value);
-        }
+        => SetProperty(ref _specialThanks , value);
     }
 
     #region Rewrite to AboutContentRichTextBox_Loaded()

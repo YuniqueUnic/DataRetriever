@@ -21,69 +21,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <!--  row = 0  -->
-            <!--<Grid Name="LeftInfoGrid"
-                  Grid.Row="0"
-                  Grid.Column="0"
-                  Margin="4"
-                  Background="#1000">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MaxHeight="100" />
-                    <RowDefinition Height="Auto" MaxHeight="100" />
-                    <RowDefinition Height="Auto" MaxHeight="100" />
-                    <RowDefinition Height="3*" />
-                    <RowDefinition Height="3*" />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0"
-                            Margin="0,4,0,0"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                    <RadioButton Name="TCsRadioButton"
-                                 Grid.Row="0"
-                                 Margin="4,0"
-                                 GroupName="DataGridTypeRadioGroup"
-                                 IsChecked="{Binding IsDetailsChecked}"
-                                 Content="{x:Static prop:Resource.Detail}" />
-                    <RadioButton Name="OTEsRadioButton"
-                                 Grid.Row="0"
-                                 Margin="4,0"
-                                 GroupName="DataGridTypeRadioGroup"
-                                 Content="{x:Static prop:Resource.OTE}" />
-                </StackPanel>
-                <TextBox Name="TestPlanTextBox"
-                         Style="{StaticResource TextBoxShortWithLabel}"
-                         Grid.Row="1"
-                         Margin="0,4"
-                         d:Text="Test Plan"
-                         Tag="{x:Static prop:Resource.TestPlan}"
-                         Text="{Binding TestPlanID, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Name="TestSuiteTextBox"
-                         Style="{StaticResource TextBoxShortWithLabel}"
-                         Grid.Row="2"
-                         Margin="0,4"
-                         d:Text="Test Suite"
-                         Tag="{x:Static prop:Resource.TestSuite}"
-                         Text="{Binding TestSuiteID, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Name="CompleteURLTextBox"
-                         Style="{StaticResource TextBoxLongWithLabel}"
-                         Grid.Row="3"
-                         Margin="0,4"
-                         Tag="{x:Static prop:Resource.CompleteUrl}"
-                         TextWrapping="Wrap"
-                         Text="{Binding CompleteUrl, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Name="CookieTextBox"
-                         Style="{StaticResource TextBoxLongWithLabel}"
-                         Grid.Row="4"
-                         Margin="0,4"
-                         d:Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie."
-                         Tag="{x:Static prop:Resource.Cookie}"
-                         TextWrapping="Wrap"
-                         Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
-            </Grid>-->
             <Border Grid.Row="0"
                     Grid.Column="2"
                     Margin="4"
