@@ -1,0 +1,38 @@
+name: Build and Release .NET Core Desktop Application
+
+on:
+  push:
+    branches:
+      - Work
+  pull_request:
+    branches:
+      - Work
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest
+
+    env:
+      solution_name: HysysToolModels.sln
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore NuGet packages
+        run: dotnet restore ${{ env.solution_name }}
+
+      - name: Build
+        run: dotnet build ${{ env.solution_name }} --configuration ${{ matrix.configuration }}
+
+      - name: Publish
+        run: dotnet publish ${{ env.solution_name }} --configuration ${{ matrix.configuration }} --output ./publish
