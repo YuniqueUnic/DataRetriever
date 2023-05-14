@@ -1,5 +1,3 @@
-using Microsoft.Win32;
-using MiniExcelLibs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+using Microsoft.Win32;
+using MiniExcelLibs;
 using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
 // using VSTSDataProvider.TestData;
@@ -37,7 +37,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         RefreshButtonClickedCommand = new AsyncRelayCommand(RefreshDataTableAsync , (o) => true);
         ExportCommand = new RelayCommand(Export);
         ImportCommand = new RelayCommand(Import);
-        EditCommand = new RelayCommand(Edit);
+        ModeSwitchCommand = new RelayCommand(ModeSwitch);
         LanguageChangeCommand = new RelayCommand(LanguageChange);
         AboutCommand = new RelayCommand(About);
     }
@@ -47,6 +47,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     #region UI Binding - BindingProperties
 
     private bool _isDetailsChecked = true;
+    private bool _modeToggleButtonState = true;
 
     private string? _testPlanID;
     private string? _testSuiteID;
@@ -160,6 +161,12 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     {
         get => _isDetailsChecked;
         set => SetProperty(ref _isDetailsChecked , value);
+    }
+
+    public bool ModeToggleButtonState
+    {
+        get => _modeToggleButtonState;
+        set => SetProperty(ref _modeToggleButtonState , value);
     }
 
     public string? TestPlanID
@@ -501,7 +508,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     #region Menu Functions
     public ICommand ExportCommand { get; private set; }
     public ICommand ImportCommand { get; private set; }
-    public ICommand EditCommand { get; private set; }
+    public ICommand ModeSwitchCommand { get; private set; }
     public ICommand LanguageChangeCommand { get; private set; }
     public ICommand AboutCommand { get; private set; }
 
@@ -630,18 +637,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     }
 
-    private void Edit( )
-    {
-        var EditWindow = new EditTableWindow();
-        EditWindow.DataContext = this;
-        EditWindow.Show();
-
-        //MessageBox.Show(
-        //            $"The function is still under development, please wait patiently, thank you...\n\n" ,
-        //            $"Function is not ready" ,
-        //            MessageBoxButton.OK ,
-        //            MessageBoxImage.Exclamation);
-    }
+    private void ModeSwitch( ) => ModeToggleButtonState = !ModeToggleButtonState;
 
     private void LanguageChange(object param)
     {
@@ -667,7 +663,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             {
                 FileName = fileName ,
                 Arguments = string.Join(" " , args) ,
-                UseShellExecute = true ,
+                UseShellExecute = false ,
                 Verb = "runas"
             });
 

@@ -14,6 +14,8 @@
                                              Reverse="True" />
             <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityConverter" />
 
+            <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityReverseConverter" Reverse="True" />
+
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="Template">

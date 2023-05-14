@@ -205,16 +205,16 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
-        ///   查找类似 Edit 的本地化字符串。
+        ///   查找类似 ModeSwitch 的本地化字符串。
         /// </summary>
         public static string Edit {
             get {
-                return ResourceManager.GetString("Edit", resourceCulture);
+                return ResourceManager.GetString("ModeSwitch", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   查找类似 Edit Mode 的本地化字符串。
+        ///   查找类似 ModeSwitch 的本地化字符串。
         /// </summary>
         public static string EditTab {
             get {
@@ -484,7 +484,7 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
-        ///   查找类似 Basic Mode 的本地化字符串。
+        ///   查找类似 Basic 的本地化字符串。
         /// </summary>
         public static string VSTSTab {
             get {
