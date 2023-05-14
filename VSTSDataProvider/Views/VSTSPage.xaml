@@ -172,6 +172,14 @@
                     </i:KeyTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
+            <ProgressBar Name="GetVSTSDataProgressBar"
+                         Grid.Row="0"
+                         Grid.Column="1"
+                         Height="{Binding ElementName=DetailsFilterComboBox, Path=ActualHeight}"
+                         VerticalAlignment="Center"
+                         d:Visibility="Collapsed"
+                         IsIndeterminate="True"
+                         Visibility="{Binding GetDataButtonClickedCommand.IsExecuting, Converter={StaticResource BoolenNullableToVisibility}}" />
             <!--  Width="{Binding ElementName=TCsFilterComboBox, Path=ActualWidth}"  -->
             <Button Name="RefreshButton"
                     Style="{StaticResource BaseButtonStyle}"

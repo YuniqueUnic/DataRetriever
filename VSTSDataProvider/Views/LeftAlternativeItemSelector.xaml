@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
@@ -35,7 +36,26 @@
                         <TextBlock Margin="4,0" Text="Show" />
                     </StackPanel>
                 </Button>
-                <ComboBox Name="DetailsFilterComboBox"
+                <ComboBox Name="EditFilterComboBox"
+                          Grid.Row="0"
+                          Grid.Column="1"
+                          Height="{Binding ElementName=ShowDataGridButton, Path=ActualHeight}"
+                          Margin="4,0,0,0"
+                          Padding="4,0"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          IsEditable="True"
+                          IsTextSearchEnabled="True"
+                          Visibility="Visible"
+                          Text="{Binding OTEsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
+                          ItemsSource="{Binding OTEsFilterCollectionsComboBox}">
+                    <i:Interaction.Triggers>
+                        <i:KeyTrigger Key="Return" ActiveOnFocus="True">
+                            <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
+                        </i:KeyTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <!--<ComboBox Name="DetailsFilterComboBox"
                           Grid.Row="0"
                           Grid.Column="1"
                           Height="{Binding ElementName=ShowDataGridButton, Path=ActualHeight}"
@@ -53,20 +73,22 @@
                             <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
                         </i:KeyTrigger>
                     </i:Interaction.Triggers>
-                </ComboBox>
+                </ComboBox>-->
             </Grid>
         </DockPanel>
         <Grid Grid.Row="1" Grid.Column="0">
-            <DataGrid d:ItemsSource="{d:SampleData ItemCount=100}"
-                      AutoGenerateColumns="False"
-                      CanUserSortColumns="True"
-                      VerticalScrollBarVisibility="Auto"
-                      ItemsSource="{Binding VstsDataCollectionViewDetails}">
+            <DataGrid d:ItemsSource="{d:SampleData ItemCount=100}" ItemsSource="{Binding VstsDataCollectionViewDetails}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
                     <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
                 </DataGrid.Columns>
             </DataGrid>
+            <!--<DataGrid d:ItemsSource="{d:SampleData ItemCount=100}" ItemsSource="{Binding VstsDataCollectionViewDetails}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
+                    <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                </DataGrid.Columns>
+            </DataGrid>-->
         </Grid>
     </Grid>
 </UserControl>

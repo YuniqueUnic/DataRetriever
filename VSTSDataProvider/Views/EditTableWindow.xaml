@@ -16,6 +16,7 @@
         <ResourceDictionary>
 
             <cvtr:KeyNameExtraToStringConverter x:Key="KeyNameExtraToStringConverter" />
+            <cvtr:MainPageDataGridTemplateSelector x:Key="MainPageDataGridTemplateSelector" />
 
             <DataTemplate x:Key="VSTSPageContent" DataType="{x:Type local:VSTSPage}">
                 <local:VSTSPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
@@ -65,14 +66,39 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                        <Viewbox Width="32" MaxWidth="50">
-                            <TextBlock Name="ModeTextBlock" Margin="4,0">
-                                <Run Foreground="Blue"
-                                     FontSize="14"
-                                     FontWeight="DemiBold"
-                                     Text="{Binding ElementName=PageContentControl, Path=ContentTemplate.DataTemplateKey, Mode=OneWay, Converter={cvtr:KeyNameExtraToStringConverter ShowText='Edit', DefaultText='VSTS'}, ConverterParameter='Edit'}" />
-                            </TextBlock>
-                        </Viewbox>
+                        <ToggleButton Name="ModeToggleButton"
+                                      BorderBrush="Transparent"
+                                      IsChecked="{Binding ModeToggleButtonState}">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="#323B64AD" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Background" Value="#323B64FF" />
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <TextBlock Foreground="Blue"
+                                                               FontSize="12"
+                                                               FontWeight="DemiBold"
+                                                               Text="VSTS" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Background" Value="#3996CAAB" />
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <TextBlock Foreground="#FF2CA120"
+                                                               FontSize="12"
+                                                               FontWeight="DemiBold"
+                                                               Text="Edit" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
                         <RadioButton Name="TCsRadioButton"
                                      Grid.Row="0"
                                      Margin="4,0"
@@ -129,14 +155,16 @@
                              TextWrapping="Wrap"
                              Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>-->
-                <local:LeftAlternativeTextBoxPage Grid.Row="1"
+                <local:LeftAlternativeTextBoxPage x:Name="LeftAlternativeTextBoxPage"
+                                                  Grid.Row="1"
                                                   Grid.Column="0"
                                                   DataContext="{Binding}"
-                                                  Visibility="{Binding ElementName=LeftAlternativeItemSelector, Path=Visibility, Converter={StaticResource StringMatchNullorEmptyToVisibilityConverter}, ConverterParameter='Collapsed'}" />
+                                                  Visibility="{Binding ElementName=ModeToggleButton, Path=IsChecked, Converter={StaticResource BoolenNullableToVisibility}}" />
                 <local:LeftAlternativeItemSelector x:Name="LeftAlternativeItemSelector"
                                                    Grid.Row="1"
                                                    Grid.Column="0"
-                                                   DataContext="{Binding}" />
+                                                   DataContext="{Binding}"
+                                                   Visibility="{Binding ElementName=LeftAlternativeTextBoxPage, Path=Visibility, Converter={StaticResource StringMatchNullorEmptyToVisibilityReverseConverter}, ConverterParameter='Visible'}" />
                 <DockPanel Name="LeftBottomFuncGrid"
                            Grid.Row="2"
                            Grid.Column="0"
@@ -218,19 +246,30 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
+                <!--
+                    d:ContentTemplate="{StaticResource EditPageContent}"
+                    ContentTemplate="{StaticResource VSTSPageContent}"
+                -->
                 <ContentControl x:Name="PageContentControl"
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                d:ContentTemplate="{StaticResource VSTSPageContent}"
-                                ContentTemplate="{StaticResource EditPageContent}" />
-                <ProgressBar Name="GetVSTSDataProgressBar"
-                             Grid.Row="1"
-                             Grid.Column="0"
-                             Height="12"
-                             Margin="4"
-                             VerticalAlignment="Center"
-                             IsIndeterminate="True"
-                             Visibility="{Binding ProgressShowing, Converter={StaticResource BoolenNullableToVisibility}}" />
+                                Content="{Binding ElementName=ModeToggleButton, Path=Content.Text}">
+                    <ContentControl.ContentTemplateSelector>
+                        <cvtr:MainPageDataGridTemplateSelector>
+                            <cvtr:MainPageDataGridTemplateSelector.VSTSPageDataTemplate>
+                                <DataTemplate DataType="{x:Type local:VSTSPage}">
+                                    <local:VSTSPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </DataTemplate>
+                            </cvtr:MainPageDataGridTemplateSelector.VSTSPageDataTemplate>
+                            <cvtr:MainPageDataGridTemplateSelector.EditPageDataTemplate>
+                                <DataTemplate DataType="{x:Type local:EditPage}">
+                                    <local:EditPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </DataTemplate>
+                            </cvtr:MainPageDataGridTemplateSelector.EditPageDataTemplate>
+                        </cvtr:MainPageDataGridTemplateSelector>
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
             </Grid>
         </Grid>
     </Grid>
