@@ -1,3 +1,5 @@
+using Microsoft.Win32;
+using MiniExcelLibs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,8 +11,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using Microsoft.Win32;
-using MiniExcelLibs;
 using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
 // using VSTSDataProvider.TestData;
