@@ -82,16 +82,18 @@
                                     <Border>
                                         <Grid>
                                             <Grid.Resources>
-                                                <Style TargetType="DataGrid">
+                                                <!--<Style TargetType="DataGrid">
                                                     <Setter Property="AutoGenerateColumns" Value="False" />
                                                     <Setter Property="CanUserReorderColumns" Value="True" />
                                                     <Setter Property="CanUserResizeColumns" Value="True" />
                                                     <Setter Property="CanUserSortColumns" Value="True" />
                                                     <Setter Property="IsReadOnly" Value="True" />
-                                                </Style>
+                                                </Style>-->
                                             </Grid.Resources>
                                             <DataGrid x:Name="OTEsDataGrid"
                                                       Style="{StaticResource BaseDataGridStyle}"
+                                                      IsReadOnly="True"
+                                                      SelectionUnit="FullRow"
                                                       ItemsSource="{Binding EditOTEsCollectionView}">
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
@@ -103,6 +105,8 @@
                                             </DataGrid>
                                             <DataGrid x:Name="DetailsDataGrid"
                                                       Style="{StaticResource BaseDataGridStyle}"
+                                                      IsReadOnly="True"
+                                                      SelectionUnit="FullRow"
                                                       Visibility="Collapsed"
                                                       ItemsSource="{Binding EditDetailsCollectionView}">
                                                 <DataGrid.Columns>

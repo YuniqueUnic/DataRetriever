@@ -833,7 +833,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollection { get; set; } = new ObservableCollection<Models.OTE_OfflineModel>();
 
 
-
     public ICommand EditByTheSelecteItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
 

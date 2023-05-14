@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iMy="clr-namespace:VSTSDataProvider.Common.UIElementActions"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
              d:Background="White"
@@ -120,7 +121,7 @@
                             </StackPanel>
                         </MenuItem.Header>
                         <MenuItem Header="{x:Static prop:Resource.Save}" Command="{Binding ExportCommand}" />
-                        <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding EditCommand}" />
+                        <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding EditinCommand}" />
                         <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="{Binding AboutCommand}" />
                     </MenuItem>
                 </Menu>
@@ -139,33 +140,43 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
+
             <DataGrid Name="EditingItemDataGrid"
                       d:ItemsSource="{d:SampleData ItemCount=1}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
                       IsReadOnly="True"
                       SelectionUnit="Cell">
-                <!--  TODO: Add ContextMenu on Cell  -->
-                <DataGrid.CellStyle>
+                <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
                         <Setter Property="ContextMenu">
                             <Setter.Value>
-                                <ContextMenu x:Name="EditColumnContextMenu">
-                                    <MenuItem Header="{x:Static prop:Resource.EditinLeft}"
-                                              Command="{Binding EditinCommand}"
-                                              CommandParameter="Left" />
-                                    <MenuItem Header="{x:Static prop:Resource.EditinRight}"
-                                              Command="{Binding EditinCommand}"
-                                              CommandParameter="Right" />
+                                <ContextMenu x:Name="EditColumnContextMenu" IsEnabled="True">
+                                    <MenuItem Header="{x:Static prop:Resource.EditinLeft}">
+                                        <!--  // TODO: This behavior is not complete.  -->
+                                        <i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior SideName="Left" />
+                                        </i:Interaction.Behaviors>
+                                    </MenuItem>
+                                    <MenuItem Header="{x:Static prop:Resource.EditinRight}">
+                                        <!--  // TODO: This behavior is not complete.  -->
+                                        <i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior SideName="Right" />
+                                        </i:Interaction.Behaviors>
+                                    </MenuItem>
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>
                     </Style>
-                </DataGrid.CellStyle>
+                </DataGrid.Resources>
+                <!--  TODO: Add ContextMenu on Cell  -->
                 <DataGrid.Style>
                     <Style TargetType="DataGrid">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
                                 <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
                                 <Setter Property="ItemsSource" Value="{Binding EditingDetailObCollection}" />
+
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
                                 <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
@@ -175,7 +186,10 @@
                     </Style>
                 </DataGrid.Style>
             </DataGrid>
+
         </Grid>
+
+
         <GridSplitter Grid.Row="1"
                       Grid.Column="0"
                       HorizontalAlignment="Stretch"

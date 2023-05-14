@@ -91,3 +91,45 @@ public class DoubleClickToEditItemBehavior : Behavior<FrameworkElement>
     }
 
 }
+
+// TODO: This behavior is not complete.
+public class EditinTheSideOfBehavior : Behavior<UIElement>
+{
+    public string SideName
+    {
+        get { return (string)GetValue(SideNameProperty); }
+        set { SetValue(SideNameProperty , value); }
+    }
+
+    // Using a DependencyProperty as the backing store for SideName.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty SideNameProperty =
+        DependencyProperty.Register(
+            "SideName" ,
+            typeof(string) ,
+            typeof(EditinTheSideOfBehavior) ,
+            new PropertyMetadata("Left"));
+
+    protected override void OnAttached( )
+    {
+        base.OnAttached();
+        AssociatedObject.MouseDown += EditinTheSideof;
+    }
+
+    private void EditinTheSideof(object sender , MouseButtonEventArgs e)
+    {
+
+        if( sender == null ) return;
+        if( string.IsNullOrEmpty(SideName) ) return;
+
+        ContextMenu contextMenu = sender as ContextMenu;
+        int a = 0;
+
+    }
+
+    protected override void OnDetaching( )
+    {
+        base.OnDetaching();
+        AssociatedObject.MouseDown -= EditinTheSideof;
+    }
+
+}

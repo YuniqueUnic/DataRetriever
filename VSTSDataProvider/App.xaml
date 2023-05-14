@@ -127,7 +127,6 @@
                 <Setter Property="CanUserResizeRows" Value="True" />
                 <Setter Property="CanUserSortColumns" Value="True" />
                 <Setter Property="FontSize" Value="13" />
-                <Setter Property="IsReadOnly" Value="True" />
                 <Setter Property="RowStyle">
                     <Setter.Value>
                         <Style TargetType="DataGridRow">
@@ -170,7 +169,10 @@
 
             <ControlTemplate x:Key="DetailModelsGridTemplate" TargetType="{x:Type DataGrid}">
                 <DataGrid Style="{StaticResource BaseDataGridStyle}"
-                          IsReadOnly="true"
+                          CanUserAddRows="{TemplateBinding CanUserAddRows}"
+                          CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
+                          IsReadOnly="{TemplateBinding IsReadOnly}"
+                          SelectionUnit="{TemplateBinding SelectionUnit}"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
@@ -193,7 +195,12 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="OTE_OfflineModelsGridTemplate" TargetType="{x:Type DataGrid}">
-                <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          CanUserAddRows="{TemplateBinding CanUserAddRows}"
+                          CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
+                          IsReadOnly="{TemplateBinding IsReadOnly}"
+                          SelectionUnit="{TemplateBinding SelectionUnit}"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
