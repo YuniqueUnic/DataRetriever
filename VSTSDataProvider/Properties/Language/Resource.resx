@@ -191,10 +191,10 @@
     <comment>打开文件</comment>
   </data>
   <data name="VSTSTab" xml:space="preserve">
-    <value>Basic Mode</value>
+    <value>Basic</value>
   </data>
   <data name="EditTab" xml:space="preserve">
-    <value>Edit Mode</value>
+    <value>Edit</value>
   </data>
   <data name="About" xml:space="preserve">
     <value>About</value>

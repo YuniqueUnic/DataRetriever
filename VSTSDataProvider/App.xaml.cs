@@ -83,7 +83,8 @@ public partial class App : Application
         var viewModel = new ViewModels.MainWindowViewModel(showConsole);
 
         // Create the MainWindow and set the ViewModel
-        var mainWindow = new MainWindow();
+        //var mainWindow = new MainWindow();        
+        var mainWindow = new EditTableWindow();
         mainWindow.DataContext = viewModel;
         mainWindow.Show();
     }

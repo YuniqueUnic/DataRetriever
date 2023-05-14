@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-
-namespace VSTSDataProvider.Common;
+﻿namespace VSTSDataProvider.Common;
 
 class TemplateSelectors
 {
