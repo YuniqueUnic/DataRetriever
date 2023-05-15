@@ -249,7 +249,7 @@ public class RichTextBoxHelper : DependencyObject
                     var range = new TextRange(doc.ContentStart , doc.ContentEnd);
 
                     range.Load(new MemoryStream(Encoding.UTF8.GetBytes(xaml)) ,
-                          DataFormats.Xaml);
+                          DataFormats.Rtf);
 
                     // Set the document
                     richTextBox.Document = doc;
@@ -260,7 +260,7 @@ public class RichTextBoxHelper : DependencyObject
                         if( richTextBox.Document == doc )
                         {
                             MemoryStream buffer = new MemoryStream();
-                            range.Save(buffer , DataFormats.Xaml);
+                            range.Save(buffer , DataFormats.Rtf);
                             SetDocumentXaml(richTextBox ,
                                 Encoding.UTF8.GetString(buffer.ToArray()));
                         }
@@ -268,5 +268,47 @@ public class RichTextBoxHelper : DependencyObject
                 }
             });
 }
+
+public class BindingINFOHelper : DependencyObject
+{
+
+    public static object GetBindingObj(DependencyObject obj)
+    {
+        return (object)obj.GetValue(BindingObjProperty);
+    }
+
+    public static void SetBindingObj(DependencyObject obj , object value)
+    {
+        obj.SetValue(BindingObjProperty , value);
+    }
+
+    // Using a DependencyProperty as the backing store for BindingObj.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty BindingObjProperty =
+        DependencyProperty.RegisterAttached("BindingObj" ,
+            typeof(object) ,
+            typeof(BindingINFOHelper) ,
+            new FrameworkPropertyMetadata(null , FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+
+    public static object GetBindingObj2(DependencyObject obj)
+    {
+        return (object)obj.GetValue(BindingObj2Property);
+    }
+
+    public static void SetBindingObj2(DependencyObject obj , object value)
+    {
+        obj.SetValue(BindingObj2Property , value);
+    }
+
+    // Using a DependencyProperty as the backing store for BindingObj2.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty BindingObj2Property =
+        DependencyProperty.RegisterAttached(
+            "BindingObj2" ,
+            typeof(object) ,
+            typeof(BindingINFOHelper) ,
+            new FrameworkPropertyMetadata(null , FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+}
+
 
 #endregion PropAP AttachProperty

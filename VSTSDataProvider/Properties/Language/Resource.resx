@@ -284,4 +284,10 @@
   <data name="EditinRight" xml:space="preserve">
     <value>Edit in Right</value>
   </data>
+  <data name="FontColor" xml:space="preserve">
+    <value>Font Color</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>Background Color</value>
+  </data>
 </root>

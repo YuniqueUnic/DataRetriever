@@ -7,11 +7,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
 // using VSTSDataProvider.TestData;
@@ -708,12 +712,14 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     #region Edit Page
 
+    public IOrderedEnumerable<FontFamily> FontFamiliesList { get; private set; } = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+    public List<Int32> FontSizeList { get; private set; } = new List<Int32>() { 2 , 4 , 6 , 8 , 10 , 12 , 14 , 16 , 18 , 20 , 22 , 24 , 26 , 28 , 32 , 48 , 72 };
     private const string initialXamlDocument = $@"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""><Paragraph Foreground=""Black""><Bold></Bold></Paragraph></FlowDocument>";
 
-    private string _leftEditRichTextBoxTitle;
+    private string _leftEditTextBoxTitle;
     private string _rightEditRichTextBoxTitle;
 
-    private string _leftEditRichTextBoxDocument;
+    private string _leftEditTextBoxDocument;
     private string _rightEditRichTextBoxDocument;
 
 
@@ -729,10 +735,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private List<string> _editOTEsFilterCollectionsComboBox;
 
 
-    public string LeftEditRichTextBoxTitle
+    public string LeftEditTextBoxTitle
     {
-        get => _leftEditRichTextBoxTitle;
-        set => SetProperty(ref _leftEditRichTextBoxTitle , value);
+        get => _leftEditTextBoxTitle;
+        set => SetProperty(ref _leftEditTextBoxTitle , value);
     }
 
     public string RightEditRichTextBoxTitle
@@ -742,12 +748,12 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     }
 
 
-    public string LeftEditRichTextBoxDocument
+    public string LeftEditTextBoxDocument
     {
-        get => _leftEditRichTextBoxDocument;
+        get => _leftEditTextBoxDocument;
         set
         {
-            SetProperty(ref _leftEditRichTextBoxDocument , value);
+            SetProperty(ref _leftEditTextBoxDocument , value);
         }
     }
 
@@ -878,9 +884,25 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ICommand SaveEditingItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
 
+    //TODO: Add a command to save the edited item
+    // Solve the problem of the RichTextBox not binding to the FlowDocument
     public void SaveEditingItem(object content)
     {
-        MessageBox.Show($"\n\n{content.ToString()}" , LeftEditRichTextBoxTitle);
+        string results = string.Empty;
+
+        if( content is FlowDocument rtbEditor )
+        {
+            TextRange range = new TextRange(rtbEditor.ContentStart , rtbEditor.ContentEnd);
+            MemoryStream buffer = new MemoryStream();
+            range.Save(buffer , System.Windows.DataFormats.Rtf);
+            results = Encoding.UTF8.GetString(buffer.ToArray());
+        }
+        else if( content is string text )
+        {
+            results = text;
+        }
+
+        MessageBox.Show($"\n\n{results}" , LeftEditTextBoxTitle);
     }
 
     public void Editin(object param)

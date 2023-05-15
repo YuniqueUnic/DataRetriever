@@ -23,6 +23,7 @@
     <None Remove="Images\Add.png" />
     <None Remove="Images\AddPicture.png" />
     <None Remove="Images\AllDone.png" />
+    <None Remove="Images\BackgroundHightlight.png" />
     <None Remove="Images\BoldText.png" />
     <None Remove="Images\CharacterGrowFont.png" />
     <None Remove="Images\CharacterShrinkFont.png" />
@@ -32,6 +33,7 @@
     <None Remove="Images\EditPaste.png" />
     <None Remove="Images\EditRedo.png" />
     <None Remove="Images\EditUndo.png" />
+    <None Remove="Images\FontColor.png" />
     <None Remove="Images\ItalicText.png" />
     <None Remove="Images\ListBullets.png" />
     <None Remove="Images\ListNumbering.png" />
@@ -47,6 +49,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataProvider2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BackgroundHightlight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -105,6 +112,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\EditUndo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FontColor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\ItalicText.png">

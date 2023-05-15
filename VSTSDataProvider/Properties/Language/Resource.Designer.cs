@@ -115,6 +115,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Background Color 的本地化字符串。
+        /// </summary>
+        public static string BackgroundColor {
+            get {
+                return ResourceManager.GetString("BackgroundColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Bold 的本地化字符串。
         /// </summary>
         public static string Bold {
@@ -246,6 +255,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string Export {
             get {
                 return ResourceManager.GetString("Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Font Color 的本地化字符串。
+        /// </summary>
+        public static string FontColor {
+            get {
+                return ResourceManager.GetString("FontColor", resourceCulture);
             }
         }
         

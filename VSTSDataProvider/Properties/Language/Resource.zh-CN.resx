@@ -272,4 +272,10 @@
   <data name="EditinRight" xml:space="preserve">
     <value>右侧编辑</value>
   </data>
+  <data name="FontColor" xml:space="preserve">
+    <value>字体颜色</value>
+  </data>
+  <data name="BackgroundColor" xml:space="preserve">
+    <value>背景色</value>
+  </data>
 </root>
