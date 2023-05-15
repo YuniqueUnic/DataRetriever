@@ -1,13 +1,21 @@
 ﻿using Microsoft.Xaml.Behaviors;
+using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using VSTSDataProvider.Common.Helpers;
 
 namespace VSTSDataProvider.Common.UIElementActions;
 
 class MyBehaviors { }
+
+#region Propdp Behaviors
 
 public class RefreshCollectionViewBehavior : Behavior<FrameworkElement>
 {
@@ -93,12 +101,24 @@ public class DoubleClickToEditItemBehavior : Behavior<FrameworkElement>
 }
 
 // TODO: This behavior is not complete.
-public class EditinTheSideOfBehavior : Behavior<UIElement>
+public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 {
     public string SideName
     {
         get { return (string)GetValue(SideNameProperty); }
         set { SetValue(SideNameProperty , value); }
+    }
+
+    public string RichTextBoxTitle
+    {
+        get { return (string)GetValue(RichTextBoxTitleProperty); }
+        set { SetValue(RichTextBoxTitleProperty , value); }
+    }
+
+    public string RichTextBoxContent
+    {
+        get { return (string)GetValue(RichTextBoxContentProperty); }
+        set { SetValue(RichTextBoxContentProperty , value); }
     }
 
     // Using a DependencyProperty as the backing store for SideName.  This enables animation, styling, binding, etc...
@@ -109,10 +129,28 @@ public class EditinTheSideOfBehavior : Behavior<UIElement>
             typeof(EditinTheSideOfBehavior) ,
             new PropertyMetadata("Left"));
 
+    // Using a DependencyProperty as the backing store for RichTextBoxTitle.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty RichTextBoxTitleProperty =
+        DependencyProperty.Register(
+            "RichTextBoxTitle" ,
+            typeof(string) ,
+            typeof(EditinTheSideOfBehavior) ,
+            new FrameworkPropertyMetadata("RichTextBox" , FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+    // Using a DependencyProperty as the backing store for RichTextBoxContent.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty RichTextBoxContentProperty =
+        DependencyProperty.Register(
+            "RichTextBoxContent" ,
+            typeof(string) ,
+            typeof(EditinTheSideOfBehavior) ,
+            new FrameworkPropertyMetadata((new FlowDocument(
+                new Paragraph(new Run(string.Empty)))).ToString() ,
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
     protected override void OnAttached( )
     {
         base.OnAttached();
-        AssociatedObject.MouseDown += EditinTheSideof;
+        AssociatedObject.PreviewMouseLeftButtonDown += EditinTheSideof;
     }
 
     private void EditinTheSideof(object sender , MouseButtonEventArgs e)
@@ -120,16 +158,115 @@ public class EditinTheSideOfBehavior : Behavior<UIElement>
 
         if( sender == null ) return;
         if( string.IsNullOrEmpty(SideName) ) return;
+        try
+        {
 
-        ContextMenu contextMenu = sender as ContextMenu;
-        int a = 0;
+            MenuItem menuItem = sender as MenuItem;
+            ContextMenu contextMenu = menuItem?.Parent as ContextMenu;
+            DataGridCell dataGridCell = contextMenu?.PlacementTarget as DataGridCell;
+            DataGridColumn dataGridTextColumn = dataGridCell?.Column;
+            string cellValue = (dataGridCell.Content as TextBlock).Text;
+            string cellColumnHeaderValue = dataGridTextColumn.Header.ToString();
+
+            RichTextBoxTitle = cellColumnHeaderValue;
+            RichTextBoxContent = cellValue;
+
+            BindingOperations.GetBindingExpression(this , RichTextBoxTitleProperty).UpdateSource();
+            BindingOperations.GetBindingExpression(this , RichTextBoxContentProperty).UpdateSource();
+        }
+        catch( NullReferenceException )
+        {
+            throw;
+        }
 
     }
 
     protected override void OnDetaching( )
     {
         base.OnDetaching();
-        AssociatedObject.MouseDown -= EditinTheSideof;
+        AssociatedObject.PreviewMouseLeftButtonDown -= EditinTheSideof;
     }
 
 }
+
+#endregion Propdp Behaviors
+
+#region PropAP AttachProperty
+
+public class BindingProxy : Freezable
+{
+    #region Overrides of Freezable
+
+    protected override Freezable CreateInstanceCore( )
+    {
+        return new BindingProxy();
+    }
+
+    #endregion
+
+    public object Data
+    {
+        get { return (object)GetValue(DataProperty); }
+        set { SetValue(DataProperty , value); }
+    }
+
+    // Using a DependencyProperty as the backing store for Data.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty DataProperty =
+        DependencyProperty.Register("Data" ,
+            typeof(object) ,
+            typeof(BindingProxy) ,
+            new UIPropertyMetadata(null));
+}
+
+public class RichTextBoxHelper : DependencyObject
+{
+    public static string GetDocumentXaml(DependencyObject obj)
+    {
+        return (string)obj.GetValue(DocumentXamlProperty);
+    }
+
+    public static void SetDocumentXaml(DependencyObject obj , string value)
+    {
+        obj.SetValue(DocumentXamlProperty , value);
+    }
+
+    public static readonly DependencyProperty DocumentXamlProperty =
+        DependencyProperty.RegisterAttached(
+            "DocumentXaml" ,
+            typeof(string) ,
+            typeof(RichTextBoxHelper) ,
+            new FrameworkPropertyMetadata
+            {
+                BindsTwoWayByDefault = true ,
+                PropertyChangedCallback = (obj , e) =>
+                {
+                    var richTextBox = (RichTextBox)obj;
+
+                    // Parse the XAML to a document (or use XamlReader.Parse())
+                    var xaml = GetDocumentXaml(richTextBox);
+                    if( xaml.IsNullOrWhiteSpaceOrEmpty() ) { xaml = " "; }
+                    var doc = new FlowDocument();
+                    var range = new TextRange(doc.ContentStart , doc.ContentEnd);
+
+                    range.Load(new MemoryStream(Encoding.UTF8.GetBytes(xaml)) ,
+                          DataFormats.Xaml);
+
+                    // Set the document
+                    richTextBox.Document = doc;
+
+                    // When the document changes update the source
+                    range.Changed += (obj2 , e2) =>
+                    {
+                        if( richTextBox.Document == doc )
+                        {
+                            MemoryStream buffer = new MemoryStream();
+                            range.Save(buffer , DataFormats.Xaml);
+                            SetDocumentXaml(richTextBox ,
+                                Encoding.UTF8.GetString(buffer.ToArray()));
+                        }
+                    };
+                }
+            });
+}
+
+#endregion PropAP AttachProperty

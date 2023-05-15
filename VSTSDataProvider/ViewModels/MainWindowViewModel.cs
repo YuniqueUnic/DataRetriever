@@ -42,6 +42,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         LanguageChangeCommand = new RelayCommand(LanguageChange);
         AboutCommand = new RelayCommand(About);
         EditinCommand = new RelayCommand(Editin);
+        SaveEditingItemCommand = new RelayCommand(SaveEditingItem);
     }
 
 
@@ -707,6 +708,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     #region Edit Page
 
+    private const string initialXamlDocument = $@"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""><Paragraph Foreground=""Black""><Bold></Bold></Paragraph></FlowDocument>";
+
+    private string _leftEditRichTextBoxTitle;
+    private string _rightEditRichTextBoxTitle;
+
+    private string _leftEditRichTextBoxDocument;
+    private string _rightEditRichTextBoxDocument;
+
+
     private ConcurrentBag<Models.DetailModel> _editDetailsCollection;
     private ConcurrentBag<Models.OTE_OfflineModel> _editOTEsCollection;
     private ICollectionView _editDetailsCollectionView;
@@ -717,6 +727,38 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private string _editOTEsFilterComboBoxText;
     private List<string> _editOTEsFilterCollectionsComboBox;
+
+
+    public string LeftEditRichTextBoxTitle
+    {
+        get => _leftEditRichTextBoxTitle;
+        set => SetProperty(ref _leftEditRichTextBoxTitle , value);
+    }
+
+    public string RightEditRichTextBoxTitle
+    {
+        get => _rightEditRichTextBoxTitle;
+        set => SetProperty(ref _rightEditRichTextBoxTitle , value);
+    }
+
+
+    public string LeftEditRichTextBoxDocument
+    {
+        get => _leftEditRichTextBoxDocument;
+        set
+        {
+            SetProperty(ref _leftEditRichTextBoxDocument , value);
+        }
+    }
+
+    public string RightEditRichTextBoxDocument
+    {
+        get => _rightEditRichTextBoxDocument;
+        set
+        {
+            SetProperty(ref _rightEditRichTextBoxDocument , value);
+        }
+    }
 
     public ConcurrentBag<Models.DetailModel> EditDetailsCollection
     {
@@ -833,12 +875,12 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollection { get; set; } = new ObservableCollection<Models.OTE_OfflineModel>();
 
 
-    public ICommand EditByTheSelecteItemCommand { get; private set; }
+    public ICommand SaveEditingItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
 
-    public void EditByTheSelecteItem( )
+    public void SaveEditingItem(object content)
     {
-
+        MessageBox.Show($"\n\n{content.ToString()}" , LeftEditRichTextBoxTitle);
     }
 
     public void Editin(object param)
