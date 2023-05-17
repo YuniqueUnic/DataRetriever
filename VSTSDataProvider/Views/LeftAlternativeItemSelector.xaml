@@ -48,6 +48,12 @@
                           IsEditable="True"
                           IsTextSearchEnabled="True"
                           Visibility="Visible">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel IsVirtualizing="True"
+                                VirtualizationMode="Recycling" />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
                     <ComboBox.Style>
                         <Style TargetType="ComboBox">
                             <Style.Triggers>
@@ -82,13 +88,6 @@
                                     <Border>
                                         <Grid>
                                             <Grid.Resources>
-                                                <!--<Style TargetType="DataGrid">
-                                                    <Setter Property="AutoGenerateColumns" Value="False" />
-                                                    <Setter Property="CanUserReorderColumns" Value="True" />
-                                                    <Setter Property="CanUserResizeColumns" Value="True" />
-                                                    <Setter Property="CanUserSortColumns" Value="True" />
-                                                    <Setter Property="IsReadOnly" Value="True" />
-                                                </Style>-->
                                             </Grid.Resources>
                                             <DataGrid x:Name="OTEsDataGrid"
                                                       Style="{StaticResource BaseDataGridStyle}"
@@ -96,6 +95,7 @@
                                                       SelectionUnit="FullRow"
                                                       ItemsSource="{Binding EditOTEsCollectionView}">
                                                 <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Index}" Header="No." />
                                                     <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
                                                     <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
                                                 </DataGrid.Columns>
@@ -110,6 +110,7 @@
                                                       Visibility="Collapsed"
                                                       ItemsSource="{Binding EditDetailsCollectionView}">
                                                 <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Index}" Header="No." />
                                                     <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
                                                     <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
                                                 </DataGrid.Columns>
