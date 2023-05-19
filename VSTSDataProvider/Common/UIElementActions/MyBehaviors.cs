@@ -256,15 +256,15 @@ public class RichTextBoxHelper : DependencyObject
 
                     // When the document changes update the source
                     range.Changed += (obj2 , e2) =>
-                    {
-                        if( richTextBox.Document == doc )
-                        {
-                            MemoryStream buffer = new MemoryStream();
-                            range.Save(buffer , DataFormats.Rtf);
-                            SetDocumentXaml(richTextBox ,
-                                Encoding.UTF8.GetString(buffer.ToArray()));
-                        }
-                    };
+                                    {
+                                        if( richTextBox.Document == doc )
+                                        {
+                                            MemoryStream buffer = new MemoryStream();
+                                            range.Save(buffer , DataFormats.Rtf);
+                                            SetDocumentXaml(richTextBox ,
+                                                Encoding.UTF8.GetString(buffer.ToArray()));
+                                        }
+                                    };
                 }
             });
 }

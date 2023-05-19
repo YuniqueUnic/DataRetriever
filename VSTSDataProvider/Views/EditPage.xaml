@@ -9,7 +9,10 @@
              xmlns:iMy="clr-namespace:VSTSDataProvider.Common.UIElementActions"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+             xmlns:rtk="clr-namespace:Topten.RichTextKit;assembly=Topten.RichTextKit"
+             xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
              d:Background="White"
+             d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
              d:DesignHeight="450"
              d:DesignWidth="800">
 
@@ -313,15 +316,15 @@
                                              IsEnabled="True">
                                     <MenuItem Header="{x:Static prop:Resource.EditinLeft}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                          SideName="Left" />
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
                                     <MenuItem Header="{x:Static prop:Resource.EditinRight}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}"
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                          SideName="Right" />
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
@@ -361,7 +364,7 @@
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Center"
                    LastChildFill="True">
-            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=LeftRTB, Path=Text}"
+            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=LeftRTB, Path=Document}"
                   DockPanel.Dock="Left"
                   Tag="{Binding LeftEditTextBoxTitle}"
                   Template="{StaticResource RichTextActionMenu}" />
@@ -384,16 +387,18 @@
                   Grid.Column="0"
                   MinWidth="32">
                 <DockPanel Name="LeftDockPanel" Margin="2,0">
-                    <!--<RichTextBox Name="LeftRTB"
+
+                    <RichTextBox Name="LeftRTB"
                                  Style="{StaticResource BaseRichTextBoxStyle}"
-                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding LeftEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />-->
-                    <TextBox Name="LeftRTB"
+                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding LeftEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
+                    <!--<TextBox Name="LeftRTB"
                              AcceptsReturn="True"
                              AcceptsTab="True"
                              AutoWordSelection="True"
                              IsUndoEnabled="True"
                              TextWrapping="WrapWithOverflow"
-                             Text="{Binding LeftEditTextBoxDocument}" />
+                             Text="{Binding LeftEditTextBoxDocument}" />-->
+
                 </DockPanel>
             </Grid>
             <GridSplitter Grid.Row="0"
@@ -407,7 +412,7 @@
                 <DockPanel Name="RightDockPanel" Margin="2,0">
                     <RichTextBox Name="RightRTB"
                                  Style="{StaticResource BaseRichTextBoxStyle}"
-                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding RightEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
+                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding RightEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </DockPanel>
             </Grid>
         </Grid>

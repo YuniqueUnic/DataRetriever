@@ -52,7 +52,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
 
     #region UI Binding - BindingProperties
-
+    private int _totalCount;
     private bool _isDetailsChecked = true;
     private bool _modeToggleButtonState = true;
 
@@ -164,6 +164,26 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private string _otesFilterComboBoxText;
     private List<string> _otesFilterCollectionsComboBox;
 
+    public int TotalCount
+    {
+        get => _totalCount;
+        set
+        {
+            int _tmpCount = 0;
+            if( IsDetailsChecked )
+            {
+                _tmpCount = VSTSDataCollectionDetails.Count;
+            }
+            else
+            {
+
+                _tmpCount = VSTSDataCollectionOTEs.Count;
+
+            }
+            SetProperty(ref _totalCount , _tmpCount);
+        }
+    }
+
     public bool IsDetailsChecked
     {
         get => _isDetailsChecked;
@@ -171,6 +191,9 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             SetProperty(ref _isDetailsChecked , value);
             RefreshButtonClickedCommand.RaiseCanExecuteChanged();
+            //Just RaisePropertyChangedEvent for TotalCount
+            TotalCount = 0;
+
         }
     }
 
@@ -250,6 +273,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
             }
             SetProperty(ref _vstsDataCollectionDetails , value);
+            //Just RaisePropertyChangedEvent for TotalCount
+            TotalCount = 0;
         }
     }
 
@@ -276,6 +301,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             }
 
             SetProperty(ref _vstsDataCollectionOTEs , value);
+            //Just RaisePropertyChangedEvent for TotalCount
+            TotalCount = 0;
         }
     }
 
@@ -919,6 +946,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
         }
     }
+
 
 
     #endregion Edit Page
