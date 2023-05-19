@@ -211,37 +211,6 @@ public class EnumerableToStringConverter : IValueConverter
 }
 
 
-public class KeyNameExtraToStringConverter : MarkupExtension, IValueConverter
-{
-    public string DefaultText { get; set; }
-    public string ShowText { get; set; }
-
-    public KeyNameExtraToStringConverter( )
-    {
-        DefaultText = string.Empty;
-        ShowText = string.Empty;
-    }
-
-    public override object ProvideValue(IServiceProvider serviceProvider)
-    {
-        return this;
-    }
-
-    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
-    {
-        if( value is null || parameter is null ) throw new NullReferenceException();
-
-        return value.ToString().Contains(parameter.ToString()) ? ShowText : DefaultText;
-    }
-
-    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-
-
 public class StringMatchToVisibilityConverter : MarkupExtension, IValueConverter
 {
     public bool Reverse { get; set; }
@@ -265,5 +234,32 @@ public class StringMatchToVisibilityConverter : MarkupExtension, IValueConverter
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
         return this;
+    }
+}
+
+public class SpecifiedStringToEmptyConverter : MarkupExtension,IValueConverter
+{
+    public string ComparisonString { get; set; } = "Null";
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        string valueStr = value?.ToString() ?? "";
+
+        if (string.IsNullOrEmpty(valueStr) || valueStr.Equals(ComparisonString,StringComparison.OrdinalIgnoreCase))
+        {
+            return "";
+        }
+
+        return value?.ToString() ?? "";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+       return this;
     }
 }

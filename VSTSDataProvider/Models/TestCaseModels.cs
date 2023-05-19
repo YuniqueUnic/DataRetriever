@@ -194,6 +194,8 @@ public interface ITestObject
 
 public class DetailModel : IResultsModel
 {
+    [ExcelIgnore]
+    public int Index{get;set;}=-1;
     public int TestPlanId { get; set; } = -1;
     public int TestSuiteId { get; set; } = -1;
     public int ID { get; set; } = -1;
@@ -308,8 +310,8 @@ public class DetailModel : IResultsModel
 public class OTE_OfflineModel : IResultsModel
 {
     //private OutcomeState? _outcome { get; set; }
-
-
+    [ExcelIgnore]
+    public int Index{get;set;}=-1;
     public int TestCaseId { get; set; } = -1;
     public string? Title { get; set; }
     public string? TestStep { get; set; } = string.Empty;

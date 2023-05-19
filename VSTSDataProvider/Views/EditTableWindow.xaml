@@ -16,7 +16,6 @@
     <Window.Resources>
         <ResourceDictionary>
 
-            <cvtr:KeyNameExtraToStringConverter x:Key="KeyNameExtraToStringConverter" />
             <cvtr:MainPageDataGridTemplateSelector x:Key="MainPageDataGridTemplateSelector" />
 
             <DataTemplate x:Key="VSTSPageContent" DataType="{x:Type local:VSTSPage}">
@@ -248,7 +247,7 @@
                                VerticalAlignment="Center"
                                d:Text="Sum: 100"
                                DockPanel.Dock="Right"
-                               Text="{Binding VSTSDataCollectionDetails.Count, StringFormat='Sum: {0}'}" />
+                               Text="{Binding TotalCount, StringFormat='Sum: {0}'}" />
                     <Label IsEnabled="False" />
                 </DockPanel>
             </Grid>

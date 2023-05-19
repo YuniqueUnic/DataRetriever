@@ -302,7 +302,7 @@
                       d:ItemsSource="{d:SampleData ItemCount=1}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
-                      IsReadOnly="True"
+                      IsReadOnly="False"
                       SelectionUnit="Cell">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
@@ -314,17 +314,15 @@
                                     <MenuItem Header="{x:Static prop:Resource.EditinLeft}">
                                         <i:Interaction.Behaviors>
                                             <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"
-                                                                         SideName="Left" />
+                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"/>
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
-                                    <MenuItem Header="{x:Static prop:Resource.EditinRight}">
+                                    <!-- <MenuItem Header="{x:Static prop:Resource.EditinRight}">
                                         <i:Interaction.Behaviors>
                                             <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}"
-                                                                         SideName="Right" />
+                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}" />
                                         </i:Interaction.Behaviors>
-                                    </MenuItem>
+                                    </MenuItem> -->
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>
