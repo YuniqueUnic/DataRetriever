@@ -314,18 +314,16 @@
                                 <ContextMenu x:Name="EditColumnContextMenu"
                                              DataContext="{Binding Data, Source={StaticResource BindingProxy}}"
                                              IsEnabled="True">
-                                    <MenuItem Header="{x:Static prop:Resource.EditinLeft}">
+                                    <MenuItem Header="{x:Static prop:Resource.EditThisItem}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"/>
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}" RichTextBoxTitle="{Binding LeftEditTextBoxTitle}" />
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
-                                    <!-- <MenuItem Header="{x:Static prop:Resource.EditinRight}">
-                                        <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}"
-                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}" />
-                                        </i:Interaction.Behaviors>
-                                    </MenuItem> -->
+                                    <MenuItem Header="{x:Static prop:Resource.EditExtraRtf}">
+                                        <!--<i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}" RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}" />
+                                        </i:Interaction.Behaviors>-->
+                                    </MenuItem>
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>
@@ -362,7 +360,7 @@
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Center"
                    LastChildFill="True">
-            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=LeftRTB, Path=Document}"
+            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=LeftRTB, Path=Text}"
                   DockPanel.Dock="Left"
                   Tag="{Binding LeftEditTextBoxTitle}"
                   Template="{StaticResource RichTextActionMenu}" />
@@ -384,11 +382,15 @@
             <Grid Grid.Row="0"
                   Grid.Column="0"
                   MinWidth="32">
-                <DockPanel Name="LeftDockPanel" Margin="2,0">
-
-                    <RichTextBox Name="LeftRTB"
-                                 Style="{StaticResource BaseRichTextBoxStyle}"
-                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding LeftEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
+                <DockPanel Name="LeftDockPanel"
+                           Margin="2,0"
+                           LastChildFill="True">
+                    <TextBox Name="LeftRTB"
+                             AcceptsReturn="True"
+                             AutoWordSelection="True"
+                             SpellCheck.IsEnabled="True"
+                             TextWrapping="WrapWithOverflow"
+                             Text="{Binding LeftEditTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
                     <!--<TextBox Name="LeftRTB"
                              AcceptsReturn="True"
                              AcceptsTab="True"
@@ -408,9 +410,8 @@
                   Grid.Column="2"
                   MinWidth="32">
                 <DockPanel Name="RightDockPanel" Margin="2,0">
-                    <RichTextBox Name="RightRTB"
-                                 Style="{StaticResource BaseRichTextBoxStyle}"
-                                 iMy:RichTextBoxHelper.DocumentXaml="{Binding RightEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <!--  iMy:RichTextBoxHelper.DocumentXaml="{Binding RightEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  -->
+                    <RichTextBox Name="RightRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
                 </DockPanel>
             </Grid>
         </Grid>

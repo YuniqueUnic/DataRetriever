@@ -237,15 +237,15 @@ public class StringMatchToVisibilityConverter : MarkupExtension, IValueConverter
     }
 }
 
-public class SpecifiedStringToEmptyConverter : MarkupExtension,IValueConverter
+public class SpecifiedStringToEmptyConverter : MarkupExtension, IValueConverter
 {
     public string ComparisonString { get; set; } = "Null";
 
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
     {
         string valueStr = value?.ToString() ?? "";
 
-        if (string.IsNullOrEmpty(valueStr) || valueStr.Equals(ComparisonString,StringComparison.OrdinalIgnoreCase))
+        if( string.IsNullOrEmpty(valueStr) || valueStr.Equals(ComparisonString , StringComparison.OrdinalIgnoreCase) )
         {
             return "";
         }
@@ -253,13 +253,13 @@ public class SpecifiedStringToEmptyConverter : MarkupExtension,IValueConverter
         return value?.ToString() ?? "";
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
     {
         throw new NotImplementedException();
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
-       return this;
+        return this;
     }
 }

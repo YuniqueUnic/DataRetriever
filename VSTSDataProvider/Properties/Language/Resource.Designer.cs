@@ -223,20 +223,11 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
-        ///   查找类似 Edit in Left 的本地化字符串。
+        ///   查找类似 Edit Extra-Rtf 的本地化字符串。
         /// </summary>
-        public static string EditinLeft {
+        public static string EditExtraRtf {
             get {
-                return ResourceManager.GetString("EditinLeft", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 Edit in Right 的本地化字符串。
-        /// </summary>
-        public static string EditinRight {
-            get {
-                return ResourceManager.GetString("EditinRight", resourceCulture);
+                return ResourceManager.GetString("EditExtraRtf", resourceCulture);
             }
         }
         
@@ -246,6 +237,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string EditTab {
             get {
                 return ResourceManager.GetString("EditTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Edit this item 的本地化字符串。
+        /// </summary>
+        public static string EditThisItem {
+            get {
+                return ResourceManager.GetString("EditThisItem", resourceCulture);
             }
         }
         

@@ -278,11 +278,11 @@
   <data name="Menu" xml:space="preserve">
     <value>Menu</value>
   </data>
-  <data name="EditinLeft" xml:space="preserve">
-    <value>Edit in Left</value>
+  <data name="EditThisItem" xml:space="preserve">
+    <value>Edit this item</value>
   </data>
-  <data name="EditinRight" xml:space="preserve">
-    <value>Edit in Right</value>
+  <data name="EditExtraRtf" xml:space="preserve">
+    <value>Edit Extra-Rtf</value>
   </data>
   <data name="FontColor" xml:space="preserve">
     <value>Font Color</value>

@@ -60,6 +60,7 @@ public class AsyncRelayCommand : ViewModelBase.BaseViewModel, ICommand
     private bool _isExecuting; // 表示命令是否正在执行的标志位
     private Func<Task> refreshDataTableAsync;
     private Func<object , bool> value;
+    private Func<CancellationTokenSource , Task> updateRichTextTextAsync;
 
     public bool IsExecuting
     {
@@ -85,6 +86,11 @@ public class AsyncRelayCommand : ViewModelBase.BaseViewModel, ICommand
     {
         this.refreshDataTableAsync = refreshDataTableAsync;
         this.value = value;
+    }
+
+    public AsyncRelayCommand(Func<CancellationTokenSource , Task> updateRichTextTextAsync)
+    {
+        this.updateRichTextTextAsync = updateRichTextTextAsync;
     }
 
     public bool CanExecute(object parameter)

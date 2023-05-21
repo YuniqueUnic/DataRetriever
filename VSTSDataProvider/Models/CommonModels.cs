@@ -1,5 +1,6 @@
-﻿using System.Reflection;
-using MiniExcelLibs.Attributes;
+﻿using MiniExcelLibs.Attributes;
+using System.Collections.Generic;
+using System.Reflection;
 using VSTSDataProvider.Common;
 
 namespace VSTSDataProvider.Models;
@@ -17,7 +18,7 @@ public class OpenSourceProjectInfos
 }
 
 
-public class EditingModel
+public class EditingModel : Models.IResultsModel
 {
     public int Index { get; set; } = -1;
     public int TestPlanId { get; set; } = -1;
@@ -62,24 +63,29 @@ public class EditingModel
     public bool Contains(string value)
     {
         // search for the value in all public properties and fields of the object
-        foreach (var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        foreach( var property in this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance) )
         {
             var propertyValue = property.GetValue(this)?.ToString();
-            if (propertyValue != null && propertyValue.Contains(value))
+            if( propertyValue != null && propertyValue.Contains(value) )
             {
                 return true;
             }
         }
 
-        foreach (var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
+        foreach( var field in this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance) )
         {
             var fieldValue = field.GetValue(this)?.ToString();
-            if (fieldValue != null && fieldValue.Contains(value))
+            if( fieldValue != null && fieldValue.Contains(value) )
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    HashSet<string> IResultsModel.AllToHashSet( )
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -1,13 +1,21 @@
+using MiniExcelLibs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+using VSTSDataProvider.Properties.Language;
+using VSTSDataProvider.ViewModels.ViewModelBase;
 // using VSTSDataProvider.TestData;
 
 namespace VSTSDataProvider.ViewModels;
@@ -37,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         AboutCommand = new RelayCommand(About);
         EditinCommand = new RelayCommand(Editin);
         SaveEditingItemCommand = new RelayCommand(SaveEditingItem);
+        InitRelayCommandsForEditingWindow();
     }
 
 
@@ -46,7 +55,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private bool _isDetailsChecked = true;
     private bool _modeToggleButtonState = true;
 
-    private int _totalCount;
     private string? _testPlanID;
     private string? _testSuiteID;
     private string? _completeUrl;
@@ -308,7 +316,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         if( !Object.Equals(targetCollectionView , value) )
         {
 
-            var newCollectionView = CollectionViewSource.GetDefaultView(value);
+            var newCollectionView = System.Windows.Data.CollectionViewSource.GetDefaultView(value);
             // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
             //newCollectionView.Filter = (o) =>
             //{
@@ -422,58 +430,58 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        await ReleaseMethod_TCs();
-        // if( IsDetailsChecked )
-        // {
-        //     //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
-        //     VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
-        // }
-        // else
-        // {
-        //     VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
-        // }
         //await ReleaseMethod_TCs();
-
+        if( IsDetailsChecked )
+        {
+            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
+        }
+        else
+        {
+            VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
+        }
 
     }
 
-    // private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
-    // {
-    //     Models.ExecuteVSTSModel.RootObject exeResult;
-    //     Models.QueryVSTSModel.RootObject queResult;
+    private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
+    {
+        Models.ExecuteVSTSModel.RootObject exeResult;
+        Models.QueryVSTSModel.RootObject queResult;
 
-    //     using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
-    //     {
-    //         var fileData = await dataFile.ReadToEndAsync();
-    //         exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
-    //     }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
+        }
 
-    //     using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
-    //     {
-    //         var fileData = await dataFile.ReadToEndAsync();
-    //         queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
-    //     }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
+        }
 
-    //     if( typeof(T) == typeof(Models.OTE_OfflineModel) )
-    //     {
-    //         ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new TestData.TestVSTSClass().MergeModelstoOTEs(exeResult , queResult , out bool succeedMergeOTEs);
-    //         return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
-    //     }
-    //     else if( typeof(T) == typeof(Models.TestCase) )
-    //     {
-    //         ConcurrentBag<Models.TestCase> newTCsModel = new TestData.TestVSTSClass().MergeModelstoTCs(exeResult , queResult , out bool succeedMergeTcs);
-    //         return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //     }
-    //     else if( typeof(T) == typeof(Models.DetailModel) )
-    //     {
-    //         ConcurrentBag<Models.DetailModel> newTCsModel = new TestData.TestVSTSClass().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
-    //         return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //     }
-    //     else
-    //     {
-    //         throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
-    //     }
-    // }
+        if( typeof(T) == typeof(Models.OTE_OfflineModel) )
+        {
+            ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new TestData.TestVSTSClass().MergeModelstoOTEs(exeResult , queResult , out bool succeedMergeOTEs);
+            return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.TestCase) )
+        {
+            ConcurrentBag<Models.TestCase> newTCsModel = new TestData.TestVSTSClass().MergeModelstoTCs(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.DetailModel) )
+        {
+            ConcurrentBag<Models.DetailModel> newTCsModel = new TestData.TestVSTSClass().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
+        }
+    }
 
     private async Task ReleaseMethod_TCs( )
     {
@@ -544,7 +552,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     }
 
 
-    #endregion Get Data
+    #endregion Get Data Async
 
     private bool canRefresh(object obj)
     {
@@ -588,7 +596,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private async void Export( )
     {
         // create a SaveFileDialog Instance
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
+        Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
 
         // set the default Title and File name
         saveFileDialog.Title = Resource.SaveFileDialogTitle;
@@ -607,10 +615,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             string directoryPath = saveFileDialog.FileName.Replace(fileName , "");
 
             // According to the file extension to determine the ExcelType
-            ExcelType excelType = ExcelOperator.ParseExcelType(fileName);
+            ExcelType excelType = Common.ExcelOperator.ParseExcelType(fileName);
 
             // export as Excel
-            var exportResult = await new ExcelOperator(directoryPath)
+            var exportResult = await new Common.ExcelOperator(directoryPath)
                 .SetSheetName(IsDetailsChecked ? Resource.Detail : Resource.OTE)
                 .setFileName(fileName)
                 .SetExcelType(excelType)
@@ -619,15 +627,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             if( exportResult.SucceedDone )
             {
                 // MessageBox show the successfully saving information, 
-                var userSelection = MessageBox.Show(
+                var userSelection = System.Windows.MessageBox.Show(
                      $"Saved Path: {saveFileDialog.FileName}\n\n" +
                      $"Click Yes to open the directory of it." ,
                      Resource.SaveFileSuccessfully ,
-                     MessageBoxButton.YesNo ,
-                     MessageBoxImage.Information);
+                     System.Windows.MessageBoxButton.YesNo ,
+                     System.Windows.MessageBoxImage.Information);
 
                 // and if user click ok to open the directory of saved file.
-                if( userSelection == MessageBoxResult.Yes )
+                if( userSelection == System.Windows.MessageBoxResult.Yes )
                 {
                     try
                     {
@@ -642,12 +650,12 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             }
             else
             {
-                MessageBox.Show(
+                System.Windows.MessageBox.Show(
                     $"{Resource.SaveFileFailed}\n\n" +
                     $"Fail Reason: {exportResult.Info}" ,
                     Resource.SaveFileFailed ,
-                    MessageBoxButton.OK ,
-                    MessageBoxImage.Error);
+                    System.Windows.MessageBoxButton.OK ,
+                    System.Windows.MessageBoxImage.Error);
             }
         }
 
@@ -656,7 +664,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private async void Import( )
     {
         // create an OpenFileDialog Instance
-        OpenFileDialog openFileDialog = new OpenFileDialog();
+        Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
 
         // set the default Title and File name
         openFileDialog.Title = Resource.OpenFileDialogTitle;
@@ -675,19 +683,19 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             string directoryPath = openFileDialog.FileName.Replace(fileName , "");
             string fileExtension = Path.GetExtension(fileName);
 
-            ExcelType excelType = ExcelOperator.ParseExcelType(fileName);
+            ExcelType excelType = Common.ExcelOperator.ParseExcelType(fileName);
 
-            ExcelOperatorResult importResult;
+            Common.ExcelOperatorResult importResult;
             // ImportFile
             if( IsDetailsChecked )
             {
-                importResult = await new ExcelOperator(fileName , directoryPath)
+                importResult = await new Common.ExcelOperator(fileName , directoryPath)
                                .SetExcelType(excelType)
                                .ImportAsync<Models.DetailModel>();
             }
             else
             {
-                importResult = await new ExcelOperator(fileName , directoryPath)
+                importResult = await new Common.ExcelOperator(fileName , directoryPath)
                                .SetExcelType(excelType)
                                .ImportAsync<Models.OTE_OfflineModel>();
             }
@@ -747,8 +755,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     //TODO: Violated the MVVM design pattern and will be replaced with behavior in the future.
     private void About(object owerWindow)
     {
-        var AboutWindow = new AboutWindow();
-        AboutWindow.Owner = owerWindow as Window;
+        var AboutWindow = new VSTSDataProvider.Views.AboutWindow();
+        AboutWindow.Owner = owerWindow as System.Windows.Window;
         AboutWindow.Show();
     }
 
@@ -757,15 +765,23 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     #region Edit Page
 
-    public IOrderedEnumerable<FontFamily> FontFamiliesList { get; private set; } = Fonts.SystemFontFamilies.OrderBy(f => f.Source);
+    private void InitRelayCommandsForEditingWindow( )
+    {
+        RichTextBoxTextChangedCommand = new RelayCommand(UpdateRichTextTextAsync);
+    }
+
+
+
+    public IOrderedEnumerable<System.Windows.Media.FontFamily> FontFamiliesList { get; private set; } = System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source);
     public List<Int32> FontSizeList { get; private set; } = new List<Int32>() { 2 , 4 , 6 , 8 , 10 , 12 , 14 , 16 , 18 , 20 , 22 , 24 , 26 , 28 , 32 , 48 , 72 };
+
     private const string initialXamlDocument = $@"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""><Paragraph Foreground=""Black""><Bold></Bold></Paragraph></FlowDocument>";
 
     private string _leftEditTextBoxTitle;
     private string _rightEditRichTextBoxTitle;
 
     private string _leftEditTextBoxDocument;
-    private string _rightEditRichTextBoxDocument;
+    private string _rightEditRichTextBoxDocument = initialXamlDocument;
 
 
     private ConcurrentBag<Models.DetailModel> _editDetailsCollection;
@@ -818,7 +834,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             if( !EqualityComparer<ConcurrentBag<Models.DetailModel>>.Default.Equals(_editDetailsCollection , value) )
             {
-                EditDetailsCollectionView = CollectionViewSource.GetDefaultView(value);
+                EditDetailsCollectionView = System.Windows.Data.CollectionViewSource.GetDefaultView(value);
 
                 var filterSet = new HashSet<string>();
 
@@ -854,7 +870,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             if( !EqualityComparer<ConcurrentBag<Models.OTE_OfflineModel>>.Default.Equals(_editOTEsCollection , value) )
             {
-                EditOTEsCollectionView = CollectionViewSource.GetDefaultView(value);
+                EditOTEsCollectionView = System.Windows.Data.CollectionViewSource.GetDefaultView(value);
 
                 var filterSet = new HashSet<string>();
 
@@ -928,14 +944,16 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     public ICommand SaveEditingItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
+    public ICommand RichTextBoxTextChangedCommand { get; private set; }
 
     //TODO: Add a command to save the edited item
     // Solve the problem of the RichTextBox not binding to the FlowDocument
     public void SaveEditingItem(object content)
     {
         string results = string.Empty;
+        RichTextBox r = new RichTextBox();
 
-        if( content is FlowDocument rtbEditor )
+        if( content is System.Windows.Documents.FlowDocument rtbEditor )
         {
             TextRange range = new TextRange(rtbEditor.ContentStart , rtbEditor.ContentEnd);
             MemoryStream buffer = new MemoryStream();
@@ -947,7 +965,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
             results = text;
         }
 
-        MessageBox.Show($"\n\n{results}" , LeftEditTextBoxTitle);
+        System.Windows.MessageBox.Show($"\n\n{results}" , LeftEditTextBoxTitle);
     }
 
     public void Editin(object param)
@@ -965,6 +983,47 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
+    private void UpdateRichTextTextAsync(object param)
+    {
+        if( param is not RichTextBox richTextBox ) return;
+
+        Task t = new Task(( ) =>
+        {
+            // 将文本内容保存为 RTF 格式
+            using( var memoryStream = new MemoryStream() )
+            {
+                var textRange = new TextRange(richTextBox.Document.ContentStart , richTextBox.Document.ContentEnd);
+                textRange.Save(memoryStream , DataFormats.Rtf);
+                memoryStream.Seek(0 , SeekOrigin.Begin);
+                using( var streamReader = new StreamReader(memoryStream) )
+                {
+                    string rtfText = streamReader.ReadToEnd();
+                    // 在 UI 线程中更新属性
+                    Application.Current.Dispatcher.Invoke(( ) =>
+                    {
+                        RightEditRichTextBoxDocument = rtfText;
+                    });
+                }
+            }
+        });
+
+        t.RunSynchronously();
+
+        // 将 RTF 格式的文本内容转换为普通文本
+        using( var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(RightEditRichTextBoxDocument)) )
+        {
+            RichTextBox rich = new RichTextBox();
+            var textRange = new TextRange(rich.Document.ContentStart , rich.Document.ContentEnd);
+            textRange.Load(memoryStream , DataFormats.Rtf);
+            string plainTextContent = textRange.Text;
+            // 在 UI 线程中更新属性
+            Application.Current.Dispatcher.Invoke(( ) =>
+            {
+                LeftEditTextBoxDocument = plainTextContent;
+            });
+        }
+
+    }
 
 
     #endregion Edit Page

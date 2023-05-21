@@ -266,11 +266,11 @@
   <data name="Menu" xml:space="preserve">
     <value>菜单</value>
   </data>
-  <data name="EditinLeft" xml:space="preserve">
-    <value>左侧编辑</value>
+  <data name="EditThisItem" xml:space="preserve">
+    <value>左侧编辑该项</value>
   </data>
-  <data name="EditinRight" xml:space="preserve">
-    <value>右侧编辑</value>
+  <data name="EditExtraRtf" xml:space="preserve">
+    <value>右侧编辑额外信息</value>
   </data>
   <data name="FontColor" xml:space="preserve">
     <value>字体颜色</value>
