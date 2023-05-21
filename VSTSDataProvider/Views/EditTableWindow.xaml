@@ -16,7 +16,6 @@
     <Window.Resources>
         <ResourceDictionary>
 
-            <cvtr:KeyNameExtraToStringConverter x:Key="KeyNameExtraToStringConverter" />
             <cvtr:MainPageDataGridTemplateSelector x:Key="MainPageDataGridTemplateSelector" />
 
             <DataTemplate x:Key="VSTSPageContent" DataType="{x:Type local:VSTSPage}">

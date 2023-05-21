@@ -107,6 +107,11 @@
                       Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
                       Text="{Binding DetailsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}"
                       ItemsSource="{Binding DetailsFilterCollectionsComboBox}">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
                 <i:Interaction.Triggers>
                     <i:KeyTrigger Key="Return" ActiveOnFocus="True">
                         <i:InvokeCommandAction Command="{Binding RefreshButtonClickedCommand}" />
@@ -131,24 +136,7 @@
                     ToolTip="Refresh the table."
                     Command="{Binding RefreshButtonClickedCommand}"
                     Content="{x:Static prop:Resource.Refresh}" />
-            <!-- <Menu Grid.Row="0" Grid.Column="3">
-                <MenuItem Padding="4"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center"
-                          FontStyle="Oblique"
-                          FontWeight="ExtraBold"
-                          Header="...">
-                    <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Edit}" Command="{Binding EditCommand}" />
-                    <MenuItem Header="{x:Static prop:Resource.Language}"
-                              Command="{Binding LanguageChangeCommand}"
-                              CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=Header}" />
-                    <MenuItem Header="{x:Static prop:Resource.About}"
-                              Command="{Binding AboutCommand}"
-                              CommandParameter="{Binding ElementName=MainWindowCurrentInstance}" />
-                </MenuItem>
-            </Menu>-->
+
         </Grid>
     </Grid>
 </UserControl>

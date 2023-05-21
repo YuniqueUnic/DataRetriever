@@ -16,6 +16,8 @@
 
             <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityReverseConverter" Reverse="True" />
 
+            <cvtr:SpecifiedStringToEmptyConverter x:Key="NullStringToEmptyConverter" ComparisonString="Null"/>
+
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />
                 <Setter Property="Template">
@@ -172,10 +174,14 @@
                           CanUserAddRows="{TemplateBinding CanUserAddRows}"
                           CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
                           IsReadOnly="{TemplateBinding IsReadOnly}"
+                          EnableColumnVirtualization="True" 
+                          EnableRowVirtualization="True" 
+                          VirtualizingStackPanel.IsVirtualizing="True"
                           SelectionUnit="{TemplateBinding SelectionUnit}"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
+                        <DataGridTextColumn Binding="{Binding Index}" Header="No." />
                         <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
                         <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
                         <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
@@ -183,7 +189,7 @@
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
                         <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
-                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding TestTool,Converter={StaticResource  NullStringToEmptyConverter}}" Header="TestTool" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
                         <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
@@ -202,6 +208,7 @@
                           SelectionUnit="{TemplateBinding SelectionUnit}"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Index}" Header="No." />
                         <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
                         <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
                         <DataGridTextColumn Binding="{Binding TestStep}" Header="TestStep" />

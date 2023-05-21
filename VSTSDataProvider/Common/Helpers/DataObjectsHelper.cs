@@ -1,4 +1,8 @@
-﻿namespace VSTSDataProvider.Common.Helpers;
+﻿using System;
+using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
+
+namespace VSTSDataProvider.Common.Helpers;
 
 public static class DataObjectsHelper
 {
@@ -9,9 +13,9 @@ public static class DataObjectsHelper
         return Tobject.Equals(default(T));
     }
 
-    public static bool IsZero(this int value)
+    public static bool IsZero<T>(this T value) where T : struct, System.IEquatable<T>
     {
-        return value.Equals(default);
+        return value.Equals(default(T));
     }
 
     public static bool IsNullOrWhiteSpaceOrEmpty(this string value)

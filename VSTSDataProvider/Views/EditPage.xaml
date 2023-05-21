@@ -305,7 +305,7 @@
                       d:ItemsSource="{d:SampleData ItemCount=1}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
-                      IsReadOnly="True"
+                      IsReadOnly="False"
                       SelectionUnit="Cell">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
@@ -316,18 +316,16 @@
                                              IsEnabled="True">
                                     <MenuItem Header="{x:Static prop:Resource.EditinLeft}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                         SideName="Left" />
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
+                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"/>
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
-                                    <MenuItem Header="{x:Static prop:Resource.EditinRight}">
+                                    <!-- <MenuItem Header="{x:Static prop:Resource.EditinRight}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                         SideName="Right" />
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}"
+                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}" />
                                         </i:Interaction.Behaviors>
-                                    </MenuItem>
+                                    </MenuItem> -->
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>

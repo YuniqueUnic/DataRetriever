@@ -103,11 +103,11 @@ public class DoubleClickToEditItemBehavior : Behavior<FrameworkElement>
 // TODO: This behavior is not complete.
 public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 {
-    public string SideName
-    {
-        get { return (string)GetValue(SideNameProperty); }
-        set { SetValue(SideNameProperty , value); }
-    }
+    // public string SideName
+    // {
+    //     get { return (string)GetValue(SideNameProperty); }
+    //     set { SetValue(SideNameProperty , value); }
+    // }
 
     public string RichTextBoxTitle
     {
@@ -157,13 +157,14 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
     {
 
         if( sender == null ) return;
-        if( string.IsNullOrEmpty(SideName) ) return;
+        // if( string.IsNullOrEmpty(SideName) ) return;
         try
         {
 
-            MenuItem menuItem = sender as MenuItem;
-            ContextMenu contextMenu = menuItem?.Parent as ContextMenu;
-            DataGridCell dataGridCell = contextMenu?.PlacementTarget as DataGridCell;
+            // MenuItem menuItem = sender as MenuItem;
+            // ContextMenu contextMenu = menuItem?.Parent as ContextMenu;
+            // DataGridCell dataGridCell = contextMenu?.PlacementTarget as DataGridCell;
+            DataGridCell dataGridCell = ((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as DataGridCell;
             DataGridColumn dataGridTextColumn = dataGridCell?.Column;
             string cellValue = (dataGridCell.Content as TextBlock).Text;
             string cellColumnHeaderValue = dataGridTextColumn.Header.ToString();
@@ -229,16 +230,16 @@ public class RichTextBoxHelper : DependencyObject
     {
         obj.SetValue(DocumentXamlProperty , value);
     }
-
+// BindsTwoWayByDefault = 
+// PropertyChangedCallback = 
     public static readonly DependencyProperty DocumentXamlProperty =
         DependencyProperty.RegisterAttached(
             "DocumentXaml" ,
             typeof(string) ,
             typeof(RichTextBoxHelper) ,
-            new FrameworkPropertyMetadata
-            {
-                BindsTwoWayByDefault = true ,
-                PropertyChangedCallback = (obj , e) =>
+            new FrameworkPropertyMetadata("",
+            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault ,
+                (obj , e) =>
                 {
                     var richTextBox = (RichTextBox)obj;
 
@@ -266,7 +267,7 @@ public class RichTextBoxHelper : DependencyObject
                                         }
                                     };
                 }
-            });
+            ));
 }
 
 public class BindingINFOHelper : DependencyObject
