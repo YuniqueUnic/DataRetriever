@@ -259,34 +259,6 @@
                 </ToolBar>
             </ControlTemplate>
 
-            <ControlTemplate x:Key="RichTextActionMenu" TargetType="{x:Type Menu}">
-                <Menu VerticalAlignment="Center">
-                    <MenuItem>
-                        <MenuItem.Header>
-                            <StackPanel Margin="0" Orientation="Horizontal">
-                                <Image Width="12"
-                                       Margin="0,0,4,0"
-                                       Source="\Images\Menu.png" />
-                                <TextBlock MaxWidth="120"
-                                           Margin="0"
-                                           Padding="0"
-                                           VerticalAlignment="Center"
-                                           Text="{TemplateBinding Tag}" />
-                            </StackPanel>
-                        </MenuItem.Header>
-                        <MenuItem Header="{x:Static prop:Resource.Save}"
-                                  Command="{Binding SaveEditingItemCommand}"
-                                  CommandParameter="{TemplateBinding iMy:BindingINFOHelper.BindingObj}" />
-                        <MenuItem Header="{x:Static prop:Resource.Reset}"
-                                  Command="{Binding EditinCommand}"
-                                  CommandParameter="{TemplateBinding Clip}" />
-                        <MenuItem Header="{x:Static prop:Resource.Cancel}"
-                                  Command="{Binding AboutCommand}"
-                                  CommandParameter="{TemplateBinding Clip}" />
-                    </MenuItem>
-                </Menu>
-            </ControlTemplate>
-
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -360,15 +332,58 @@
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Center"
                    LastChildFill="True">
-            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=LeftRTB, Path=Text}"
-                  DockPanel.Dock="Left"
-                  Tag="{Binding LeftEditTextBoxTitle}"
-                  Template="{StaticResource RichTextActionMenu}" />
-            <Menu iMy:BindingINFOHelper.BindingObj="{Binding ElementName=RightRTB, Path=Document}"
-                  DockPanel.Dock="Right"
-                  Tag="{Binding RightEditRichTextBoxTitle}"
-                  Template="{StaticResource RichTextActionMenu}" />
-            <ToolBar Grid.Row="2"
+            <Menu VerticalAlignment="Center" DockPanel.Dock="Left">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <StackPanel Margin="0" Orientation="Horizontal">
+                            <Image Width="12"
+                                   Margin="0,0,4,0"
+                                   Source="\Images\Menu.png" />
+                            <TextBlock MaxWidth="120"
+                                       Margin="0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding LeftEditTextBoxTitle}" />
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem Header="{x:Static prop:Resource.Save}"
+                              Command="{Binding SaveEditingItemCommand}"
+                              CommandParameter="{Binding ElementName=LeftRTB, Path=Text}" />
+                    <MenuItem Header="{x:Static prop:Resource.Reset}"
+                              Command="{Binding EditinCommand}"
+                              CommandParameter="{Binding Clip}" />
+                    <MenuItem Header="{x:Static prop:Resource.Cancel}"
+                              Command="{Binding AboutCommand}"
+                              CommandParameter="{Binding Clip}" />
+                </MenuItem>
+            </Menu>
+            <Menu VerticalAlignment="Center" DockPanel.Dock="Right">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <StackPanel Margin="0" Orientation="Horizontal">
+                            <Image Width="12"
+                                   Margin="0,0,4,0"
+                                   Source="\Images\Menu.png" />
+                            <TextBlock MaxWidth="120"
+                                       Margin="0"
+                                       Padding="0"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding RightEditRichTextBoxTitle}" />
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem Header="{x:Static prop:Resource.Save}"
+                              Command="{Binding SaveEditingItemCommand}"
+                              CommandParameter="{Binding ElementName=RightRTB, Path=Document}" />
+                    <MenuItem Header="{x:Static prop:Resource.Reset}"
+                              Command="{Binding EditinCommand}"
+                              CommandParameter="{Binding Clip}" />
+                    <MenuItem Header="{x:Static prop:Resource.Cancel}"
+                              Command="{Binding AboutCommand}"
+                              CommandParameter="{Binding Clip}" />
+                </MenuItem>
+            </Menu>
+            <ToolBar Name="RichTextBoxToolBar"
+                     Grid.Row="2"
                      Grid.Column="0"
                      Template="{StaticResource EditFuncToolBarTemplate}" />
         </DockPanel>
@@ -391,13 +406,6 @@
                              SpellCheck.IsEnabled="True"
                              TextWrapping="WrapWithOverflow"
                              Text="{Binding LeftEditTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
-                    <!--<TextBox Name="LeftRTB"
-                             AcceptsReturn="True"
-                             AcceptsTab="True"
-                             AutoWordSelection="True"
-                             IsUndoEnabled="True"
-                             TextWrapping="WrapWithOverflow"
-                             Text="{Binding LeftEditTextBoxDocument}" />-->
 
                 </DockPanel>
             </Grid>
@@ -410,7 +418,6 @@
                   Grid.Column="2"
                   MinWidth="32">
                 <DockPanel Name="RightDockPanel" Margin="2,0">
-                    <!--  iMy:RichTextBoxHelper.DocumentXaml="{Binding RightEditRichTextBoxDocument, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"  -->
                     <RichTextBox Name="RightRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
                 </DockPanel>
             </Grid>

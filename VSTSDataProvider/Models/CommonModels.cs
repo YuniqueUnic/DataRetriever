@@ -45,6 +45,7 @@ public class EditingModel : Models.IResultsModel
     public string? StateofAutomation { get; set; }
     public string? Comment { get; set; } = string.Empty;
     public string? Defects { get; set; } = string.Empty;
+    public string? RtfLink { get; set; } = string.Empty;
 
     [ExcelIgnore]
     public string? TestToolStr

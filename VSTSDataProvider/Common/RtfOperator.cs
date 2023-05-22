@@ -10,6 +10,7 @@ public class RtfOperator
 {
     private RichTextBox? _richTextBox;
     private string? _currentRtfFullPath;
+    private string? _onLoadingrtfFileFullPath;
 
     public RichTextBox? RichTextBox
     {
@@ -26,6 +27,12 @@ public class RtfOperator
     public RtfOperator(RichTextBox? richTextBox)
     {
         RichTextBox = richTextBox;
+    }
+
+    public RtfOperator SetOnLoadingRtf(string rtfFileFullPath)
+    {
+        this.CurrentRtfFullPath = rtfFileFullPath;
+        return this;
     }
 
     public void SaveRtf( )
@@ -53,13 +60,25 @@ public class RtfOperator
         }
     }
 
-    public bool LoadRtfFrom(string rtfFileFullPath)
+    public bool LoadRtf( )
     {
         Microsoft.Win32.OpenFileDialog file = new Microsoft.Win32.OpenFileDialog();
 
-        file.Filter = file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|Text Files (*.txt)|*.txt";
-        file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|Text Files (*.txt)|*.txt";
+        if( file.ShowDialog() == true )
+        {
+            FileStream stream = new FileStream(file.FileName , FileMode.Open);
+            TextRange range = new TextRange(RichTextBox.Document.ContentStart , RichTextBox.Document.ContentEnd);
+        }
 
+        return true;
+    }
+
+    public bool LoadRtfFrom(string rtfFileFullPath)
+    {
+        Microsoft.Win32.OpenFileDialog file = new Microsoft.Win32.OpenFileDialog();
+        TextBox a = new();
+        file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|Text Files (*.txt)|*.txt";
         if( file.ShowDialog() == true )
         {
             FileStream stream = new FileStream(file.FileName , FileMode.Open);

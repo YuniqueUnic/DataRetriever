@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -767,7 +766,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private void InitRelayCommandsForEditingWindow( )
     {
-        RichTextBoxTextChangedCommand = new RelayCommand(UpdateRichTextTextAsync);
+
     }
 
 
@@ -944,7 +943,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     public ICommand SaveEditingItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
-    public ICommand RichTextBoxTextChangedCommand { get; private set; }
 
     //TODO: Add a command to save the edited item
     // Solve the problem of the RichTextBox not binding to the FlowDocument
@@ -983,47 +981,47 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-    private void UpdateRichTextTextAsync(object param)
-    {
-        if( param is not RichTextBox richTextBox ) return;
+    //private void UpdateRichTextTextAsync(object param)
+    //{
+    //    if( param is not RichTextBox richTextBox ) return;
 
-        Task t = new Task(( ) =>
-        {
-            // 将文本内容保存为 RTF 格式
-            using( var memoryStream = new MemoryStream() )
-            {
-                var textRange = new TextRange(richTextBox.Document.ContentStart , richTextBox.Document.ContentEnd);
-                textRange.Save(memoryStream , DataFormats.Rtf);
-                memoryStream.Seek(0 , SeekOrigin.Begin);
-                using( var streamReader = new StreamReader(memoryStream) )
-                {
-                    string rtfText = streamReader.ReadToEnd();
-                    // 在 UI 线程中更新属性
-                    Application.Current.Dispatcher.Invoke(( ) =>
-                    {
-                        RightEditRichTextBoxDocument = rtfText;
-                    });
-                }
-            }
-        });
+    //    Task t = new Task(( ) =>
+    //    {
+    //        // 将文本内容保存为 RTF 格式
+    //        using( var memoryStream = new MemoryStream() )
+    //        {
+    //            var textRange = new TextRange(richTextBox.Document.ContentStart , richTextBox.Document.ContentEnd);
+    //            textRange.Save(memoryStream , DataFormats.Rtf);
+    //            memoryStream.Seek(0 , SeekOrigin.Begin);
+    //            using( var streamReader = new StreamReader(memoryStream) )
+    //            {
+    //                string rtfText = streamReader.ReadToEnd();
+    //                // 在 UI 线程中更新属性
+    //                Application.Current.Dispatcher.Invoke(( ) =>
+    //                {
+    //                    RightEditRichTextBoxDocument = rtfText;
+    //                });
+    //            }
+    //        }
+    //    });
 
-        t.RunSynchronously();
+    //    t.RunSynchronously();
 
-        // 将 RTF 格式的文本内容转换为普通文本
-        using( var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(RightEditRichTextBoxDocument)) )
-        {
-            RichTextBox rich = new RichTextBox();
-            var textRange = new TextRange(rich.Document.ContentStart , rich.Document.ContentEnd);
-            textRange.Load(memoryStream , DataFormats.Rtf);
-            string plainTextContent = textRange.Text;
-            // 在 UI 线程中更新属性
-            Application.Current.Dispatcher.Invoke(( ) =>
-            {
-                LeftEditTextBoxDocument = plainTextContent;
-            });
-        }
+    //    // 将 RTF 格式的文本内容转换为普通文本
+    //    using( var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(RightEditRichTextBoxDocument)) )
+    //    {
+    //        RichTextBox rich = new RichTextBox();
+    //        var textRange = new TextRange(rich.Document.ContentStart , rich.Document.ContentEnd);
+    //        textRange.Load(memoryStream , DataFormats.Rtf);
+    //        string plainTextContent = textRange.Text;
+    //        // 在 UI 线程中更新属性
+    //        Application.Current.Dispatcher.Invoke(( ) =>
+    //        {
+    //            LeftEditTextBoxDocument = plainTextContent;
+    //        });
+    //    }
 
-    }
+    //}
 
 
     #endregion Edit Page
