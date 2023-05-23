@@ -23,11 +23,7 @@ public class EditingModel : Models.IResultsModel
     public int Index { get; set; } = -1;
     public int TestPlanId { get; set; } = -1;
     public int TestSuiteId { get; set; } = -1;
-    [ExcelIgnore]
-    public int TestCaseId => ID;
     public int ID { get; set; } = -1;
-    [ExcelIgnore]
-    public string? Title => Name;
     public string? Name { get; set; }
     public string? CQID { get; set; }
     public string? ProductArea { get; set; }

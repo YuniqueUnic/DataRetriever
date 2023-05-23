@@ -102,12 +102,6 @@ public class DoubleClickToEditItemBehavior : Behavior<FrameworkElement>
 // TODO: This behavior is not complete.
 public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 {
-    // public string SideName
-    // {
-    //     get { return (string)GetValue(SideNameProperty); }
-    //     set { SetValue(SideNameProperty , value); }
-    // }
-
     public string RichTextBoxTitle
     {
         get { return (string)GetValue(RichTextBoxTitleProperty); }
@@ -156,7 +150,6 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
     {
 
         if( sender == null ) return;
-        // if( string.IsNullOrEmpty(SideName) ) return;
         try
         {
 

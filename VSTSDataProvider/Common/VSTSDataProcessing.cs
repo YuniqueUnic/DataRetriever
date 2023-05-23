@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -265,6 +266,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
                 RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
                 StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
+                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
             };
         }));
 
@@ -331,6 +333,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
                 RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
                 StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
+                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
             };
         }));
     });
@@ -399,8 +402,8 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     /// <summary>
     /// Extracts TestPlan and TestSuite IDs from a given URI string.
     /// </summary>
-    /// <param name="completeUri">The complete URI string to match against.</param>
-    /// <param name="succeedMatch">A boolean value indicating whether the match succeeded or not.</param>
+    /// <step name="completeUri">The complete URI string to match against.</step>
+    /// <step name="succeedMatch">A boolean value indicating whether the match succeeded or not.</step>
     /// <returns>
     /// If the match succeeds, returns a TestPlanSuiteId structure with the extracted TestPlan and TestSuite IDs.
     /// Otherwise, returns a TestPlanSuiteId structure with default values.

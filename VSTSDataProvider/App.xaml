@@ -189,13 +189,36 @@
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
                         <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
-                        <DataGridTextColumn Binding="{Binding TestTool,Converter={StaticResource  NullStringToEmptyConverter}}" Header="TestTool" />
+                        <DataGridTextColumn
+                            Binding="{Binding TestTool,Converter={StaticResource  NullStringToEmptyConverter}}"
+                            Header="TestTool" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
                         <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}"
+                            Header="LastUpdatedDate" />
                         <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
-                        <DataGridTextColumn Binding="{Binding StateofAutomation}" Header="State of Automation" />
+                        <DataGridTextColumn Binding="{Binding StateofAutomation}"
+                            Header="State of Automation" />
+                        <DataGridTextColumn Binding="{Binding TestSteps}" Header="Test Steps" />
+
+                        <DataGridTemplateColumn Header="Test Steps">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                        <DataGrid ItemsSource="{Binding TestSteps}" AutoGenerateColumns="False" Width="600" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Binding="{Binding Index}"
+                                                Header="No." />
+                                                <DataGridTextColumn Binding="{Binding Action}"
+                                                Header="Actions" />
+                                                <DataGridTextColumn Binding="{Binding ExpectedResult}"
+                                                Header="ExpectedResults" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>

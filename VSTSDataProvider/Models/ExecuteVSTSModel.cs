@@ -98,7 +98,8 @@ public class ExecuteVSTSModel : BaseVSTSModel
         "Aspentech.TestCase.ScriptName",
         "Aspentech.common.SubmitDate",
         "System.AreaPath",
-        "Aspentech.TestCase.StateofTest"
+        "Aspentech.TestCase.StateofTest",
+        "Microsoft.VSTS.TCM.Steps",
     };
 
     internal new Dictionary<string , object> optionalParameters = new Dictionary<string , object>
@@ -182,6 +183,8 @@ public class ExecuteVSTSModel : BaseVSTSModel
         public string areaPath { get; set; }
         [JsonProperty("Aspentech.TestCase.StateofTest")]
         public string stateofAutomation { get; set; }
+        [JsonProperty("Microsoft.VSTS.TCM.Steps")]
+        public string testSteps { get; set; }
     }
 
     public class PointAssignment
