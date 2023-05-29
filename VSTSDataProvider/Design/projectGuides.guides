@@ -13,5 +13,19 @@
         </GuideModel>
       </GuideModels>
     </ProjectItemGuide>
+    <ProjectItemGuide TargetFile="Views\StepsWindow.xaml">
+      <GuideModels>
+        <GuideModel>
+          <Guides>
+            <Guide Alignment="Left" Position="12" />
+            <Guide Alignment="Top" Position="28" />
+            <Guide Alignment="Left" Position="788" />
+            <Guide Alignment="Top" Position="438" />
+            <Guide Alignment="Left" Position="400" />
+            <Guide Alignment="Top" Position="217" />
+          </Guides>
+        </GuideModel>
+      </GuideModels>
+    </ProjectItemGuide>
   </ProjectItemGuides>
 </ProjectGuidesConfiguration>

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 // using VSTSDataProvider.TestData;
@@ -44,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         AboutCommand = new RelayCommand(About);
         EditinCommand = new RelayCommand(Editin);
         SaveEditingItemCommand = new RelayCommand(SaveEditingItem);
+        ShowStepsCommand = new RelayCommand(ShowSteps);
         InitRelayCommandsForEditingWindow();
     }
 
@@ -316,14 +318,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
 
             var newCollectionView = System.Windows.Data.CollectionViewSource.GetDefaultView(value);
-            // The VstsDataCollectionView filter by the text of TCsFilterComboBoxText
-            //newCollectionView.Filter = (o) =>
-            //{
-            //    if( string.IsNullOrEmpty(targetComboBoxText) ) return true;
-            //    var testCase = o as T;
-            //    if( testCase == null ) return false;
-            //    return testCase.Contains(targetComboBoxText);
-            //};
 
             var filterSet = new HashSet<string>();
 
@@ -429,58 +423,58 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        await ReleaseMethod_TCs();
-        // if( IsDetailsChecked )
-        // {
-        //     //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
-        //     VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
-        //     EditDetailsCollection = await DebugMethod<Models.DetailModel>();
-        // }
-        // else
-        // {
-        //     VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
-        //     EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
-        // }
+        //await ReleaseMethod_TCs();
+        if( IsDetailsChecked )
+        {
+            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
+        }
+        else
+        {
+            VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
+        }
 
     }
 
-    // private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
-    // {
-    //     Models.ExecuteVSTSModel.RootObject exeResult;
-    //     Models.QueryVSTSModel.RootObject queResult;
+    private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
+    {
+        Models.ExecuteVSTSModel.RootObject exeResult;
+        Models.QueryVSTSModel.RootObject queResult;
 
-    //     using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\WithFields.json")) )
-    //     {
-    //         var fileData = await dataFile.ReadToEndAsync();
-    //         exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
-    //     }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithDetail.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
+        }
 
-    //     using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\TestPoint.json")) )
-    //     {
-    //         var fileData = await dataFile.ReadToEndAsync();
-    //         queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
-    //     }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithOTE.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
+        }
 
-    //     if( typeof(T) == typeof(Models.OTE_OfflineModel) )
-    //     {
-    //         ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new TestData.TestVSTSClass().MergeModelstoOTEs(exeResult , queResult , out bool succeedMergeOTEs);
-    //         return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
-    //     }
-    //     else if( typeof(T) == typeof(Models.TestCase) )
-    //     {
-    //         ConcurrentBag<Models.TestCase> newTCsModel = new TestData.TestVSTSClass().MergeModelstoTCs(exeResult , queResult , out bool succeedMergeTcs);
-    //         return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //     }
-    //     else if( typeof(T) == typeof(Models.DetailModel) )
-    //     {
-    //         ConcurrentBag<Models.DetailModel> newTCsModel = new TestData.TestVSTSClass().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
-    //         return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //     }
-    //     else
-    //     {
-    //         throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
-    //     }
-    // }
+        if( typeof(T) == typeof(Models.OTE_OfflineModel) )
+        {
+            ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new VSTSDataProcessing().MergeModelstoOTEsBy(exeResult , queResult , out bool succeedMergeOTEs);
+            return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.TestCase) )
+        {
+            ConcurrentBag<Models.TestCase> newTCsModel = new VSTSDataProcessing().MergeModelstoTCsBy(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.DetailModel) )
+        {
+            ConcurrentBag<Models.DetailModel> newTCsModel = new VSTSDataProcessing().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
+        }
+    }
 
     private async Task ReleaseMethod_TCs( )
     {
@@ -591,6 +585,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ICommand ModeSwitchCommand { get; private set; }
     public ICommand LanguageChangeCommand { get; private set; }
     public ICommand AboutCommand { get; private set; }
+    public ICommand ShowStepsCommand { get; private set; }
 
     private async void Export( )
     {
@@ -757,6 +752,14 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         var AboutWindow = new VSTSDataProvider.Views.AboutWindow();
         AboutWindow.Owner = owerWindow as System.Windows.Window;
         AboutWindow.Show();
+    }
+
+    private void ShowSteps(object param)
+    {
+        var stepsWindow = new VSTSDataProvider.Views.StepsWindow();
+        Models.DetailModel model = param as Models.DetailModel;
+        stepsWindow.DataContext = model;
+        stepsWindow.Show();
     }
 
     #endregion MainMenu Function

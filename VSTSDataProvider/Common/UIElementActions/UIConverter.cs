@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -261,5 +262,23 @@ public class SpecifiedStringToEmptyConverter : MarkupExtension, IValueConverter
     public override object ProvideValue(IServiceProvider serviceProvider)
     {
         return this;
+    }
+}
+
+
+public class SingleObjectToListConverter : IValueConverter
+{
+    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        if( value != null )
+        {
+            return new List<object>() { value };
+        }
+        return null;
+    }
+
+    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }

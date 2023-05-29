@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -34,38 +33,38 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     public TestPlan TestPlan
     {
         get => _testPlan;
-        private set => SetProperty(ref _testPlan, value);
+        private set => SetProperty(ref _testPlan , value);
     }
 
     public TestSuite TestSuite
     {
         get => _testSuite;
-        private set => SetProperty(ref _testSuite, value);
+        private set => SetProperty(ref _testSuite , value);
     }
 
     [Obsolete("Recommend using DetailModel.")]
     public ConcurrentBag<TestCase> TestCasesModels
     {
         get => _testCaseModels;
-        private set { SetProperty(ref _testCaseModels, value); }
+        private set { SetProperty(ref _testCaseModels , value); }
     }
 
     public ConcurrentBag<DetailModel> DetailModels
     {
         get => _detailModels;
-        private set => SetProperty(ref _detailModels, value);
+        private set => SetProperty(ref _detailModels , value);
     }
 
     public ConcurrentBag<OTE_OfflineModel> OTEs_OfflineModels
     {
         get => _otesOfflineModels;
-        private set => SetProperty(ref _otesOfflineModels, value);
+        private set => SetProperty(ref _otesOfflineModels , value);
     }
 
     public bool IsTestCasesLoadOver
     {
         get => _testCasesLoadOver;
-        private set { SetProperty(ref _testCasesLoadOver, value); }
+        private set { SetProperty(ref _testCasesLoadOver , value); }
     }
 
     public VSTSDataProcessing SetCookie(string cookie)
@@ -76,30 +75,30 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public VSTSDataProcessing ParseUriToId(string uri)
     {
-        var idStruct = TryGetTestPlanSuiteId(uri, out bool succeedMatch);
+        var idStruct = TryGetTestPlanSuiteId(uri , out bool succeedMatch);
 
-        if (!succeedMatch) { throw new System.ArgumentException($"Failed to parse {uri} to TestPlanSuiteID"); }
+        if( !succeedMatch ) { throw new System.ArgumentException($"Failed to parse {uri} to TestPlanSuiteID"); }
 
         this._testPlanID = idStruct.PlanId;
         this._testSuiteID = idStruct.SuiteId;
         return this;
     }
 
-    public VSTSDataProcessing SetTestPlanSuiteID(int planID, int suiteID)
+    public VSTSDataProcessing SetTestPlanSuiteID(int planID , int suiteID)
     {
         _testPlanID = planID;
         _testSuiteID = suiteID;
         return this;
     }
 
-    public bool SucceedLoadData() => CheckModels(_exeRootObject, _queryRootObject);
+    public bool SucceedLoadData( ) => CheckModels(_exeRootObject , _queryRootObject);
 
     public async Task<bool> PreLoadData(System.Action action = null)
     {
-        var executeVSTSModel = await new ExecuteVSTSModel(_cookie, _testPlanID, _testSuiteID).GetModel(action);
-        var queryVSTSModel = await new QueryVSTSModel(_cookie, _testPlanID, _testSuiteID).GetModel(action);
+        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
+        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
 
-        if (CheckModels(executeVSTSModel, queryVSTSModel))
+        if( CheckModels(executeVSTSModel , queryVSTSModel) )
         {
             _queryRootObject = queryVSTSModel;
             _exeRootObject = executeVSTSModel;
@@ -111,41 +110,41 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     //TODO to show the concat progress
     [Obsolete("Recommend using DetailModel.")]
-    public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync()
+    public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync( )
     {
         IsTestCasesLoadOver = false;
 
-        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
         {
             return null;
         }
 
-        var newTCModels = MergeModelstoTCsBy(_exeRootObject, _queryRootObject, out bool succeedMerge);
+        var newTCModels = MergeModelstoTCsBy(_exeRootObject , _queryRootObject , out bool succeedMerge);
 
-        if (succeedMerge)
+        if( succeedMerge )
         {
             TestCasesModels = newTCModels;
             TestSuite = TestCasesModels.First().ParentTestSuite;
             TestPlan = TestSuite.ParentTestPlan;
         }
-        
+
         IsTestCasesLoadOver = true;
         return TestCasesModels;
     }
 
     //TODO to show the concat progress
-    public async Task<ConcurrentBag<Models.DetailModel>> GET_DetailsAsync()
+    public async Task<ConcurrentBag<Models.DetailModel>> GET_DetailsAsync( )
     {
         IsTestCasesLoadOver = false;
 
-        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
         {
             return null;
         }
 
-        var newDetailModels =await MergeModelstoDetailsByAsync(_exeRootObject, _queryRootObject);
+        var newDetailModels = await MergeModelstoDetailsByAsync(_exeRootObject , _queryRootObject);
 
-        if (newDetailModels.Count.Equals(_exeRootObject.count))
+        if( newDetailModels.Count.Equals(_exeRootObject.count) )
         {
             DetailModels = newDetailModels;
         }
@@ -155,18 +154,18 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     //TODO to show the concat progress
-    public async Task<ConcurrentBag<Models.OTE_OfflineModel>> GET_OTEsAsync()
+    public async Task<ConcurrentBag<Models.OTE_OfflineModel>> GET_OTEsAsync( )
     {
         IsTestCasesLoadOver = false;
 
-        if (!CheckModels(_exeRootObject, _queryRootObject) && !(await PreLoadData()))
+        if( !CheckModels(_exeRootObject , _queryRootObject) && !(await PreLoadData()) )
         {
             return null;
         }
 
-        var newOTEModels =await MergeModelstoOTEsByAsync(_exeRootObject, _queryRootObject);
+        var newOTEModels = await MergeModelstoOTEsByAsync(_exeRootObject , _queryRootObject);
 
-        if (newOTEModels.Count.Equals(_exeRootObject.count))
+        if( newOTEModels.Count.Equals(_exeRootObject.count) )
         {
             OTEs_OfflineModels = newOTEModels;
         }
@@ -176,33 +175,33 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
 
-    private bool CheckModels(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel)
+    private bool CheckModels(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
     {
-        if (exeModel == null || querModel == null) { return false; }
+        if( exeModel == null || querModel == null ) { return false; }
 
-        if (exeModel.count != querModel.count) { return false; }
+        if( exeModel.count != querModel.count ) { return false; }
 
-        if (exeModel.value[0].testPlan.id != querModel.value[0].testPlan.id) return false;
+        if( exeModel.value[0].testPlan.id != querModel.value[0].testPlan.id ) return false;
 
         return true;
     }
 
     [Obsolete("Recommend using DetailModel.")]
-    public ConcurrentBag<TestCase> MergeModelstoTCsBy(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel, out bool succeedMerge)
+    public ConcurrentBag<TestCase> MergeModelstoTCsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
 
-        if (!CheckModels(exeModel, querModel)) return null;
+        if( !CheckModels(exeModel , querModel) ) return null;
 
         Models.TestPlan mTestPlan = new Models.TestPlan
         {
-            ID = exeModel.value[0].testPlan.id,
+            ID = exeModel.value[0].testPlan.id ,
             Name = exeModel.value[0].testPlan.name
         };
 
         Models.TestSuite mTestSuite = new Models.TestSuite
         {
-            ID = exeModel.value[0].testSuite.id,
+            ID = exeModel.value[0].testSuite.id ,
             Name = exeModel.value[0].testSuite.name
         };
 
@@ -210,25 +209,25 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         {
             return new TestCase()
             {
-                ID = v.workItem.id,
-                Name = v.workItem.name,
-                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId,
-                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
-                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea,
-                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName,
+                ID = v.workItem.id ,
+                Name = v.workItem.name ,
+                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
+                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
                 SelfTestPoint = new TestPoint()
                 {
 
-                    Name = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                    ID = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                    ConfigurationId = (int)v.pointAssignments.FirstOrDefault(point => point.configurationId >= default(int))?.configurationId,
-                    lastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
-                    displayName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName,
-                    uniqueName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
-                },
-                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool,
-                ParentTestSuite = mTestSuite,
+                    Name = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                    ID = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                    ConfigurationId = (int)v.pointAssignments.FirstOrDefault(point => point.configurationId >= default(int))?.configurationId ,
+                    lastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
+                    displayName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                    uniqueName = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                } ,
+                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
+                ParentTestSuite = mTestSuite ,
             };
         }));
 
@@ -239,134 +238,134 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         succeedMerge = true;
         return TestCases;
     }
-    
+
     [Obsolete("Recommend using Async.")]
-    public ConcurrentBag<DetailModel> MergeModelstoDetailsBy(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel, out bool succeedMerge)
+    public ConcurrentBag<DetailModel> MergeModelstoDetailsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
 
-        if (!CheckModels(exeModel, querModel)) return null;
+        if( !CheckModels(exeModel , querModel) ) return null;
         int index = exeModel.count;
         var DetailModels = new ConcurrentBag<DetailModel>(exeModel.value.Select(v =>
         {
             return new DetailModel()
             {
-                Index = index--,
-                TestPlanId = exeModel.value[0].testPlan.id,
-                TestSuiteId = exeModel.value[0].testSuite.id,
-                ID = v.workItem.id,
-                Name = v.workItem.name,
-                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId,
-                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea,
-                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName,
-                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool,
-                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
-                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
-                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
-                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
+                Index = index-- ,
+                TestPlanId = exeModel.value[0].testPlan.id ,
+                TestSuiteId = exeModel.value[0].testSuite.id ,
+                ID = v.workItem.id ,
+                Name = v.workItem.name ,
+                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
+                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
+                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
+                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
+                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps ,
             };
         }));
 
         succeedMerge = true;
         return DetailModels;
     }
-    
+
     [Obsolete("Recommend using Async.")]
-    public ConcurrentBag<OTE_OfflineModel> MergeModelstoOTEsBy(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel, out bool succeedMerge)
+    public ConcurrentBag<OTE_OfflineModel> MergeModelstoOTEsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
 
-        if (!CheckModels(exeModel, querModel)) return null;
+        if( !CheckModels(exeModel , querModel) ) return null;
         int index = exeModel.count;
         var OTEModels = new ConcurrentBag<OTE_OfflineModel>(exeModel.value.Select(v =>
         {
             return new OTE_OfflineModel()
             {
-                Index = index--,
-                TestCaseId = v.workItem.id,
-                Title = v.workItem.name,
-                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName,
-                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
+                Index = index-- ,
+                TestCaseId = v.workItem.id ,
+                Title = v.workItem.name ,
+                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
             };
         }));
 
         succeedMerge = true;
         return OTEModels;
     }
-    
-    public async Task<ConcurrentBag<DetailModel>> MergeModelstoDetailsByAsync(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel)
-{
-    bool succeedMerge = false;
 
-    if (!CheckModels(exeModel, querModel)) return null;
-
-    int index = exeModel.count+1;
-
-    var DetailModels = new ConcurrentBag<DetailModel>();
-
-    await Task.Run(() =>
-    {
-        DetailModels = new ConcurrentBag<DetailModel>(exeModel.value.AsParallel().Select(v =>
-        {
-            int currentIndex = System.Threading.Interlocked.Decrement(ref index);
-
-            return new DetailModel()
-            {
-                Index = currentIndex,
-                TestPlanId = exeModel.value[0].testPlan.id,
-                TestSuiteId = exeModel.value[0].testSuite.id,
-                ID = v.workItem.id,
-                Name = v.workItem.name,
-                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId,
-                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea,
-                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName,
-                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool,
-                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
-                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
-                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
-                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
-            };
-        }));
-    });
-
-    succeedMerge = true;
-    return DetailModels;
-}
-
-    public async Task<ConcurrentBag<OTE_OfflineModel>> MergeModelstoOTEsByAsync(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel)
+    public async Task<ConcurrentBag<DetailModel>> MergeModelstoDetailsByAsync(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
     {
         bool succeedMerge = false;
 
-        if (!CheckModels(exeModel, querModel)) return null;
+        if( !CheckModels(exeModel , querModel) ) return null;
 
-        int index = exeModel.count+1;
+        int index = exeModel.count + 1;
+
+        var DetailModels = new ConcurrentBag<DetailModel>();
+
+        await Task.Run(( ) =>
+        {
+            DetailModels = new ConcurrentBag<DetailModel>(exeModel.value.AsParallel().Select(v =>
+            {
+                int currentIndex = System.Threading.Interlocked.Decrement(ref index);
+
+                return new DetailModel()
+                {
+                    Index = currentIndex ,
+                    TestPlanId = exeModel.value[0].testPlan.id ,
+                    TestSuiteId = exeModel.value[0].testSuite.id ,
+                    ID = v.workItem.id ,
+                    Name = v.workItem.name ,
+                    CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                    ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                    ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
+                    TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
+                    OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                    TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                    Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                    LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
+                    RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                    StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
+                    TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps ,
+                };
+            }));
+        });
+
+        succeedMerge = true;
+        return DetailModels;
+    }
+
+    public async Task<ConcurrentBag<OTE_OfflineModel>> MergeModelstoOTEsByAsync(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel)
+    {
+        bool succeedMerge = false;
+
+        if( !CheckModels(exeModel , querModel) ) return null;
+
+        int index = exeModel.count + 1;
 
         var OTEModels = new ConcurrentBag<OTE_OfflineModel>();
 
-        await Task.Run(() =>
+        await Task.Run(( ) =>
         {
             OTEModels = new ConcurrentBag<OTE_OfflineModel>(exeModel.value.AsParallel().Select(v =>
-            {            
+            {
                 int currentIndex = System.Threading.Interlocked.Decrement(ref index);
                 return new OTE_OfflineModel()
                 {
-                    Index = currentIndex,
-                    TestCaseId = v.workItem.id,
-                    Title = v.workItem.name,
-                    TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                    Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                    AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName,
-                    OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                    RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
+                    Index = currentIndex ,
+                    TestCaseId = v.workItem.id ,
+                    Title = v.workItem.name ,
+                    TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                    Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                    AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                    OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                    RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
                 };
             }));
         });
@@ -375,21 +374,21 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         return OTEModels;
     }
 
-    public async Task<ConcurrentBag<TModel>> MergeLocalModelsAgainAsync<TModel>() where TModel : class, Models.IResultsModel
+    public async Task<ConcurrentBag<TModel>> MergeLocalModelsAgainAsync<TModel>( ) where TModel : class, Models.IResultsModel
     {
         ConcurrentBag<TModel> mergedModel = null;
 
-        if (typeof(TModel) == typeof(Models.OTE_OfflineModel))
+        if( typeof(TModel) == typeof(Models.OTE_OfflineModel) )
         {
-            mergedModel = (ConcurrentBag<TModel>)(object)(await MergeModelstoOTEsByAsync(_exeRootObject, _queryRootObject));
+            mergedModel = (ConcurrentBag<TModel>)(object)(await MergeModelstoOTEsByAsync(_exeRootObject , _queryRootObject));
         }
-        else if (typeof(TModel) == typeof(Models.DetailModel))
+        else if( typeof(TModel) == typeof(Models.DetailModel) )
         {
-            mergedModel =(ConcurrentBag<TModel>)(object)(await MergeModelstoDetailsByAsync(_exeRootObject, _queryRootObject));
+            mergedModel = (ConcurrentBag<TModel>)(object)(await MergeModelstoDetailsByAsync(_exeRootObject , _queryRootObject));
         }
-        else if (typeof(TModel) == typeof(Models.TestCase))
+        else if( typeof(TModel) == typeof(Models.TestCase) )
         {
-            mergedModel = (ConcurrentBag<TModel>)(object)MergeModelstoTCsBy(_exeRootObject, _queryRootObject, out _);
+            mergedModel = (ConcurrentBag<TModel>)(object)MergeModelstoTCsBy(_exeRootObject , _queryRootObject , out _);
         }
         else
         {
@@ -408,20 +407,20 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     /// If the match succeeds, returns a TestPlanSuiteId structure with the extracted TestPlan and TestSuite IDs.
     /// Otherwise, returns a TestPlanSuiteId structure with default values.
     /// </returns>
-    public static TestPlanSuiteId TryGetTestPlanSuiteId(string completeUri, out bool succeedMatch)
+    public static TestPlanSuiteId TryGetTestPlanSuiteId(string completeUri , out bool succeedMatch)
     {
         succeedMatch = false;
         string pattern = @"planId=(?<planId>\d+)&suiteId=(?<suiteId>\d+)";
         RegexOptions options = RegexOptions.IgnoreCase;
 
-        Match m = Regex.Match(completeUri, pattern, options);
+        Match m = Regex.Match(completeUri , pattern , options);
 
-        if (m.Success)
+        if( m.Success )
         {
             int planId = int.Parse(m.Groups["planId"].Value);
             int suiteId = int.Parse(m.Groups["suiteId"].Value);
             succeedMatch = true;
-            return new TestPlanSuiteId(planId, suiteId);
+            return new TestPlanSuiteId(planId , suiteId);
         }
         else
         {

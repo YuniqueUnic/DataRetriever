@@ -1,0 +1,108 @@
+﻿<Window x:Class="VSTSDataProvider.Views.StepsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+        xmlns:local="clr-namespace:VSTSDataProvider.Views"
+        Title="StepsWindow"
+        Width="800"
+        Height="450">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <cvtr:SingleObjectToListConverter x:Key="SingleObjectToListConverter" />
+            </ResourceDictionary>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      EnableColumnVirtualization="True"
+                      EnableRowVirtualization="True"
+                      IsReadOnly="True"
+                      SelectionUnit="CellOrRowHeader"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext, Converter={StaticResource SingleObjectToListConverter}}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Index}" Header="No." />
+                    <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
+                    <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
+                    <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                    <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                    <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                    <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                    <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                    <DataGridTextColumn Binding="{Binding TestTool, Converter={StaticResource NullStringToEmptyConverter}}" Header="TestTool" />
+                    <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                    <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                    <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                    <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
+                    <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
+                    <DataGridTextColumn Binding="{Binding StateofAutomation}" Header="State of Automation" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        <GridSplitter Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Background="#630C7635" />
+        <Grid Grid.Row="2">
+            <ListView x:Name="listView"
+                      FontSize="12"
+                      ItemsSource="{Binding TestSteps}">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="White" />
+                        <Setter Property="BorderBrush" Value="Gray" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="5" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="50" Header="No.">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Index}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="550" Header="Actions">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontSize="13"
+                                               TextWrapping="WrapWithOverflow"
+                                               Text="{Binding Action}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" Header="ExpectedResults">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding ExpectedResult}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Done">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+        </Grid>
+    </Grid>
+</Window>

@@ -16,7 +16,7 @@
 
             <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityReverseConverter" Reverse="True" />
 
-            <cvtr:SpecifiedStringToEmptyConverter x:Key="NullStringToEmptyConverter" ComparisonString="Null"/>
+            <cvtr:SpecifiedStringToEmptyConverter x:Key="NullStringToEmptyConverter" ComparisonString="Null" />
 
             <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
                 <Setter Property="FontSize" Value="12" />
@@ -173,11 +173,11 @@
                 <DataGrid Style="{StaticResource BaseDataGridStyle}"
                           CanUserAddRows="{TemplateBinding CanUserAddRows}"
                           CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
+                          EnableColumnVirtualization="True"
+                          EnableRowVirtualization="True"
                           IsReadOnly="{TemplateBinding IsReadOnly}"
-                          EnableColumnVirtualization="True" 
-                          EnableRowVirtualization="True" 
-                          VirtualizingStackPanel.IsVirtualizing="True"
                           SelectionUnit="{TemplateBinding SelectionUnit}"
+                          VirtualizingStackPanel.IsVirtualizing="True"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
                     <DataGrid.Columns>
                         <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
@@ -189,32 +189,26 @@
                         <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
                         <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
                         <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
-                        <DataGridTextColumn
-                            Binding="{Binding TestTool,Converter={StaticResource  NullStringToEmptyConverter}}"
-                            Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding TestTool, Converter={StaticResource NullStringToEmptyConverter}}" Header="TestTool" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
                         <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}"
-                            Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
                         <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
-                        <DataGridTextColumn Binding="{Binding StateofAutomation}"
-                            Header="State of Automation" />
-                        <DataGridTextColumn Binding="{Binding TestSteps}" Header="Test Steps" />
-
+                        <DataGridTextColumn Binding="{Binding StateofAutomation}" Header="State of Automation" />
                         <DataGridTemplateColumn Header="Test Steps">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                        <DataGrid ItemsSource="{Binding TestSteps}" AutoGenerateColumns="False" Width="600" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Binding="{Binding Index}"
-                                                Header="No." />
-                                                <DataGridTextColumn Binding="{Binding Action}"
-                                                Header="Actions" />
-                                                <DataGridTextColumn Binding="{Binding ExpectedResult}"
-                                                Header="ExpectedResults" />
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Command="{Binding DataContext.ShowStepsCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=DataContext}"
+                                                Content="Show Steps" />
+                                    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
