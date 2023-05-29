@@ -210,6 +210,7 @@ public class DetailModel : IResultsModel
     public string? LastUpdatedDate { get; set; }
     public string? RunBy { get; set; }
     public string? StateofAutomation { get; set; }
+    public List<TestStep>? TestSteps { get; set; }
 
     [ExcelIgnore]
     public string? TestToolStr
@@ -225,6 +226,20 @@ public class DetailModel : IResultsModel
         set => Outcome = value.SetEnumValueIgnoreCase<OutcomeState>();
     }
 
+    [ExcelIgnore]
+    public string? TestStepsStr{
+        //  TestSteps.Aggregate((current, next) => current + System.Environment.NewLine + next)
+        get=>"";
+        set{
+            List<TestStep> stepsStrings = new TestStepExtractor(value).ExtractTestSteps();
+            // List<string> allSteps=new List<string>();
+            // foreach (TestStep step in stepsStrings)
+            // {
+            //     allSteps.Add($"No.{step.Index}:\r\n  Action: {step.Action}\r\n  Result: {step.ExpectedResult}\r\n  Description: {step.Description}");
+            // }
+            TestSteps=stepsStrings;
+        }
+    }
 
     public bool Contains(string value)
     {
