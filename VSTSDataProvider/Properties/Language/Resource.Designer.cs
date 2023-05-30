@@ -475,6 +475,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Test Steps 的本地化字符串。
+        /// </summary>
+        public static string TestStepsWindow {
+            get {
+                return ResourceManager.GetString("TestStepsWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 TestSuite 的本地化字符串。
         /// </summary>
         public static string TestSuite {

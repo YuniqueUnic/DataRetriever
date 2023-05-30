@@ -268,17 +268,16 @@
                            MinHeight="28"
                            MaxHeight="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ActualHeight, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.8'}" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.Column="0">
-
             <DataGrid Name="EditingItemDataGrid"
                       d:ItemsSource="{d:SampleData ItemCount=1}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       IsReadOnly="False"
-                      SelectionUnit="Cell">
+                      RowHeight="{Binding ElementName=EditingItemDataGrid, Path=ActualHeight}"
+                      SelectionUnit="CellOrRowHeader">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
                         <Setter Property="ContextMenu">
@@ -307,7 +306,6 @@
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
                                 <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
                                 <Setter Property="ItemsSource" Value="{Binding EditingDetailObCollection}" />
-
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
                                 <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
@@ -319,76 +317,20 @@
             </DataGrid>
 
         </Grid>
-
-
         <GridSplitter Grid.Row="1"
                       Grid.Column="0"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
-                      Background="#2000" />
-        <DockPanel Grid.Row="2"
-                   Grid.Column="0"
-                   Margin="2,0"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Center"
-                   LastChildFill="True">
-            <Menu VerticalAlignment="Center" DockPanel.Dock="Left">
-                <MenuItem>
-                    <MenuItem.Header>
-                        <StackPanel Margin="0" Orientation="Horizontal">
-                            <Image Width="12"
-                                   Margin="0,0,4,0"
-                                   Source="\Images\Menu.png" />
-                            <TextBlock MaxWidth="120"
-                                       Margin="0"
-                                       Padding="0"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding LeftEditTextBoxTitle}" />
-                        </StackPanel>
-                    </MenuItem.Header>
-                    <MenuItem Header="{x:Static prop:Resource.Save}"
-                              Command="{Binding SaveEditingItemCommand}"
-                              CommandParameter="{Binding ElementName=LeftRTB, Path=Text}" />
-                    <MenuItem Header="{x:Static prop:Resource.Reset}"
-                              Command="{Binding EditinCommand}"
-                              CommandParameter="{Binding Clip}" />
-                    <MenuItem Header="{x:Static prop:Resource.Cancel}"
-                              Command="{Binding AboutCommand}"
-                              CommandParameter="{Binding Clip}" />
-                </MenuItem>
-            </Menu>
-            <Menu VerticalAlignment="Center" DockPanel.Dock="Right">
-                <MenuItem>
-                    <MenuItem.Header>
-                        <StackPanel Margin="0" Orientation="Horizontal">
-                            <Image Width="12"
-                                   Margin="0,0,4,0"
-                                   Source="\Images\Menu.png" />
-                            <TextBlock MaxWidth="120"
-                                       Margin="0"
-                                       Padding="0"
-                                       VerticalAlignment="Center"
-                                       Text="{Binding RightEditRichTextBoxTitle}" />
-                        </StackPanel>
-                    </MenuItem.Header>
-                    <MenuItem Header="{x:Static prop:Resource.Save}"
-                              Command="{Binding SaveEditingItemCommand}"
-                              CommandParameter="{Binding ElementName=RightRTB, Path=Document}" />
-                    <MenuItem Header="{x:Static prop:Resource.Reset}"
-                              Command="{Binding EditinCommand}"
-                              CommandParameter="{Binding Clip}" />
-                    <MenuItem Header="{x:Static prop:Resource.Cancel}"
-                              Command="{Binding AboutCommand}"
-                              CommandParameter="{Binding Clip}" />
-                </MenuItem>
-            </Menu>
-            <ToolBar Name="RichTextBoxToolBar"
-                     Grid.Row="2"
-                     Grid.Column="0"
-                     Template="{StaticResource EditFuncToolBarTemplate}" />
-        </DockPanel>
-
-        <Grid Grid.Row="3" Grid.Column="0">
+                      Background="#2000">
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="DragCompleted">
+                    <i:ChangePropertyAction PropertyName="RowHeight"
+                                            TargetObject="{Binding ElementName=EditingItemDataGrid}"
+                                            Value="{Binding ActualHeight, ElementName=EditingItemDataGrid}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+        </GridSplitter>
+        <Grid Grid.Row="2" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="5" />
@@ -400,6 +342,41 @@
                 <DockPanel Name="LeftDockPanel"
                            Margin="2,0"
                            LastChildFill="True">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Menu Grid.Column="0" VerticalAlignment="Center">
+                            <MenuItem>
+                                <MenuItem.Header>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <Image Width="12"
+                                               Margin="0,0,4,0"
+                                               Source="\Images\Menu.png" />
+                                        <TextBlock MaxWidth="120"
+                                                   Margin="0"
+                                                   Padding="0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding LeftEditTextBoxTitle}" />
+                                    </StackPanel>
+                                </MenuItem.Header>
+                                <MenuItem Header="{x:Static prop:Resource.Save}"
+                                          Command="{Binding SaveEditingItemCommand}"
+                                          CommandParameter="{Binding ElementName=LeftRTB, Path=Text}" />
+                                <MenuItem Header="{x:Static prop:Resource.Reset}"
+                                          Command="{Binding EditinCommand}"
+                                          CommandParameter="{Binding Clip}" />
+                                <MenuItem Header="{x:Static prop:Resource.Cancel}"
+                                          Command="{Binding AboutCommand}"
+                                          CommandParameter="{Binding Clip}" />
+                            </MenuItem>
+                        </Menu>
+                        <ToolBar Name="TextBoxToolBar"
+                                 Grid.Column="1"
+                                 Template="{StaticResource EditFuncToolBarTemplate}" />
+
+                    </Grid>
                     <TextBox Name="LeftRTB"
                              AcceptsReturn="True"
                              AutoWordSelection="True"
@@ -418,6 +395,41 @@
                   Grid.Column="2"
                   MinWidth="32">
                 <DockPanel Name="RightDockPanel" Margin="2,0">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ToolBar Name="RichTextBoxToolBar"
+                                 Grid.Column="0"
+                                 Template="{StaticResource EditFuncToolBarTemplate}" />
+                        <Menu Grid.Column="1" VerticalAlignment="Center">
+                            <MenuItem>
+                                <MenuItem.Header>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <Image Width="12"
+                                               Margin="0,0,4,0"
+                                               Source="\Images\Menu.png" />
+                                        <TextBlock MaxWidth="120"
+                                                   Margin="0"
+                                                   Padding="0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding RightEditRichTextBoxTitle}" />
+                                    </StackPanel>
+                                </MenuItem.Header>
+                                <MenuItem Header="{x:Static prop:Resource.Save}"
+                                          Command="{Binding SaveEditingItemCommand}"
+                                          CommandParameter="{Binding ElementName=RightRTB, Path=Document}" />
+                                <MenuItem Header="{x:Static prop:Resource.Reset}"
+                                          Command="{Binding EditinCommand}"
+                                          CommandParameter="{Binding Clip}" />
+                                <MenuItem Header="{x:Static prop:Resource.Cancel}"
+                                          Command="{Binding AboutCommand}"
+                                          CommandParameter="{Binding Clip}" />
+                            </MenuItem>
+                        </Menu>
+                    </Grid>
+
                     <RichTextBox Name="RightRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
                 </DockPanel>
             </Grid>

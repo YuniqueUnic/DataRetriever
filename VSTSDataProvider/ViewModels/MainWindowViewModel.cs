@@ -757,8 +757,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private void ShowSteps(object param)
     {
         var stepsWindow = new VSTSDataProvider.Views.StepsWindow();
-        Models.DetailModel model = param as Models.DetailModel;
-        stepsWindow.DataContext = model;
+        stepsWindow.DataContext = param as Models.DetailModel;
         stepsWindow.Show();
     }
 

@@ -176,6 +176,7 @@
                           EnableColumnVirtualization="True"
                           EnableRowVirtualization="True"
                           IsReadOnly="{TemplateBinding IsReadOnly}"
+                          RowHeight="{TemplateBinding RowHeight}"
                           SelectionUnit="{TemplateBinding SelectionUnit}"
                           VirtualizingStackPanel.IsVirtualizing="True"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">

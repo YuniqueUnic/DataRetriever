@@ -278,4 +278,7 @@
   <data name="BackgroundColor" xml:space="preserve">
     <value>背景色</value>
   </data>
+  <data name="TestStepsWindow" xml:space="preserve">
+    <value>测试步骤</value>
+  </data>
 </root>

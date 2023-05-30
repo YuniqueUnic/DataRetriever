@@ -7,7 +7,8 @@
         xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider.Views"
-        Title="StepsWindow"
+        xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+        Title="{x:Static prop:Resource.TestStepsWindow}"
         Width="800"
         Height="450">
     <Grid>

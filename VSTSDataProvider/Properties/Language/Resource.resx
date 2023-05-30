@@ -290,4 +290,7 @@
   <data name="BackgroundColor" xml:space="preserve">
     <value>Background Color</value>
   </data>
+  <data name="TestStepsWindow" xml:space="preserve">
+    <value>Test Steps</value>
+  </data>
 </root>
