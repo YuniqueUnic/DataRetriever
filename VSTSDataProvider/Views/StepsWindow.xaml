@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider.Views"
         Title="StepsWindow"
         Width="800"
@@ -16,17 +17,19 @@
             </ResourceDictionary>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="80" />
             <RowDefinition Height="5" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                      Grid.Row="0"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       EnableColumnVirtualization="True"
                       EnableRowVirtualization="True"
                       IsReadOnly="True"
+                      RowHeight="{Binding RelativeSource={RelativeSource self}, Path=ActualHeight}"
                       SelectionUnit="CellOrRowHeader"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       ItemsSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=DataContext, Converter={StaticResource SingleObjectToListConverter}}">
@@ -50,17 +53,29 @@
             </DataGrid>
         </Grid>
         <GridSplitter Grid.Row="1"
-                      HorizontalAlignment="Center"
+                      HorizontalAlignment="Stretch"
                       VerticalAlignment="Center"
-                      Background="#630C7635" />
+                      Background="Gray"
+                      BorderBrush="Gainsboro"
+                      BorderThickness="2" />
         <Grid Grid.Row="2">
             <ListView x:Name="listView"
-                      FontSize="12"
+                      Grid.Row="2"
+                      FontSize="13"
                       ItemsSource="{Binding TestSteps}">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="Background" Value="White" />
-                        <Setter Property="BorderBrush" Value="Gray" />
+                        <Setter Property="Margin" Value="0,4" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush">
+                            <Setter.Value>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Offset="0" Color="Transparent" />
+                                    <GradientStop Offset="0.5" Color="Transparent" />
+                                    <GradientStop Offset="1" Color="Gray" />
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
                         <Setter Property="BorderThickness" Value="1" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -68,18 +83,19 @@
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="50" Header="No.">
+                    <GridView x:Name="ListViewGridView" VirtualizingPanel.IsVirtualizing="True">
+                        <GridViewColumn Width="30" Header="No.">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Index}" />
+                                    <TextBlock LineHeight="1.25" Text="{Binding Index}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="550" Header="Actions">
+                        <GridViewColumn Width="520" Header="Actions">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock FontSize="13"
+                                               LineHeight="1.25"
                                                TextWrapping="WrapWithOverflow"
                                                Text="{Binding Action}" />
                                 </DataTemplate>
@@ -88,21 +104,39 @@
                         <GridViewColumn Width="150" Header="ExpectedResults">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding ExpectedResult}" />
+                                    <TextBlock LineHeight="1.25"
+                                               TextWrapping="WrapWithOverflow"
+                                               Text="{Binding ExpectedResult}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Done">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox />
+                                    <CheckBox Name="PartDoneCheckBox"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              HorizontalContentAlignment="Center"
+                                              VerticalContentAlignment="Center">
+                                        <i:Interaction.Triggers>
+                                            <i:DataTrigger Binding="{Binding ElementName=PartDoneCheckBox, Path=IsChecked}" Value="True">
+                                                <i:ChangePropertyAction PropertyName="Background"
+                                                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}"
+                                                                        Value="#D0A2CEA5" />
+                                            </i:DataTrigger>
+                                            <i:DataTrigger Binding="{Binding ElementName=PartDoneCheckBox, Path=IsChecked}" Value="False">
+                                                <i:ChangePropertyAction PropertyName="Background"
+                                                                        TargetObject="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem, Mode=FindAncestor}}"
+                                                                        Value="Transparent" />
+                                            </i:DataTrigger>
+                                        </i:Interaction.Triggers>
+                                    </CheckBox>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
-
         </Grid>
     </Grid>
 </Window>
