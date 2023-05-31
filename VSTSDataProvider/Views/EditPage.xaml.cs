@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace VSTSDataProvider.Views;
 
@@ -10,6 +14,111 @@ public partial class EditPage : UserControl
     public EditPage( )
     {
         InitializeComponent();
+    }
+    private static int currentNumberingNum = 1;
+    private static bool isNumberingChecked = false;
+    private static string textFormatCurrent = string.Empty;
+
+    /// <summary>
+    /// Generates a formatted string based on the specified single string and repetition count arrays.
+    /// </summary>
+    /// <param name="repeatChars">The character array to repeat.</param>
+    /// <param name="numberToNextChar">The repetition count array indicating the number of characters to follow each character.</param>
+    /// <param name="cycleTimes">The number of times to repeat the entire formatted string, default is 0 which means no repetition.</param>
+    /// <returns>The generated formatted string.</returns>
+    private string SpecifiedFormat(string[] repeatStrings , int[] numberToNextChar , int cycleTimes = 0)
+    {
+        // Check the validity of the input parameters
+        if( repeatStrings.Length != numberToNextChar.Length || cycleTimes < 0 )
+        {
+            throw new ArgumentException("Invalid input parameters");
+        }
+        // Generate the formatted string
+        string formatStr = "";
+        for( int i = 0; i < repeatStrings.Length; i++ )
+        {
+            formatStr += string.Join("" , Enumerable.Repeat(repeatStrings[i] , numberToNextChar[i])); ;
+        }
+
+        // Repeat the entire formatted string based on the specified cycle times
+        if( cycleTimes > 0 )
+        {
+            formatStr = new string(formatStr.ToCharArray().SelectMany(c => Enumerable.Repeat(c , cycleTimes)).ToArray());
+        }
+
+        return formatStr;
+    }
+
+    private void BulletsToggleButton_Checked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        NumberingToggleButton.IsChecked = false;
+        TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
+        textFormatCurrent = SpecifiedFormat(new string[] { " " , "*" , " " } , new int[] { 4 , 1 , 2 });
+        leftTextBoxt.PreviewKeyDown += AddSpecifiedContent;
+    }
+
+    private void BulletsToggleButton_UnChecked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
+        textFormatCurrent = string.Empty;
+        leftTextBoxt.PreviewKeyDown -= AddSpecifiedContent;
+    }
+
+    private void NumberingToggleButton_Checked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        BulletsToggleButton.IsChecked = false;
+        TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
+        isNumberingChecked = true;
+        textFormatCurrent = SpecifiedFormat(new string[] { " " , currentNumberingNum.ToString() , "." , " " } , new int[] { 4 , 1 , 1 , 2 });
+        leftTextBoxt.PreviewKeyDown += AddSpecifiedContent;
+    }
+
+    private void NumberingToggleButton_UnChecked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
+        isNumberingChecked = false;
+        textFormatCurrent = string.Empty;
+        currentNumberingNum = 1;
+        leftTextBoxt.PreviewKeyDown -= AddSpecifiedContent;
+    }
+
+
+    private void AddSpecifiedContent(object sender , KeyEventArgs e)
+    {
+        TextBox textBox = sender as TextBox;
+
+        // Check if the new input is a newline
+        if( e.Key == Key.Enter || e.Key == Key.Return )
+        {
+            // Get the text before the caret
+            string textBeforeCaret = textBox.Text.Substring(0 , textBox.CaretIndex);
+
+            // Get the text after the caret
+            string textAfterCaret = textBox.Text.Substring(textBox.CaretIndex);
+
+            string textFormat = textFormatCurrent;
+            // Insert a newline and a "*" at the beginning of the new line
+            textBox.Text = textBeforeCaret + Environment.NewLine + textFormat + textAfterCaret;
+
+            // Move the caret to after the "* "
+            textBox.CaretIndex = textBeforeCaret.Length + textFormat.Length + 2;
+
+            if( isNumberingChecked )
+            {
+                currentNumberingNum++;
+                textFormatCurrent = SpecifiedFormat(new string[] { " " , currentNumberingNum.ToString() , "." , " " } , new int[] { 4 , 1 , 1 , 2 });
+            }
+
+            e.Handled = true; // Mark the event as handled
+        }
+    }
+
+
+
+
+    private void PreviewAddSpecifiedContent(object sender , TextCompositionEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 
     //private void CmbFontFamily_SelectionChanged(object sender , SelectionChangedEventArgs e)

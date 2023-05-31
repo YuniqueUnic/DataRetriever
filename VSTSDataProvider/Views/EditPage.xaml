@@ -372,9 +372,139 @@
                                           CommandParameter="{Binding Clip}" />
                             </MenuItem>
                         </Menu>
-                        <ToolBar Name="TextBoxToolBar"
+                        <ToolBar Name="EditFuncoolBar"
                                  Grid.Column="1"
-                                 Template="{StaticResource EditFuncToolBarTemplate}" />
+                                 Height="26"
+                                 DockPanel.Dock="{TemplateBinding DockPanel.Dock}">
+                            <ToolBar.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Width" Value="24" />
+                                    <!--<Setter Property="CommandTarget" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Tag}" />-->
+                                </Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Setter Property="Width" Value="20" />
+                                </Style>
+                                <Style TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="Width" Value="24" />
+                                </Style>
+                            </ToolBar.Resources>
+                            <Button Command="ApplicationCommands.Cut">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Cut}" />
+                                        <TextBlock Text="Ctrl+X" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditCut.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Copy">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Copy}" />
+                                        <TextBlock Text="Ctrl+C" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditCopy.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Paste">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Paste}" />
+                                        <TextBlock Text="Ctrl+V" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditPaste.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Undo">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Undo}" />
+                                        <TextBlock Text="Ctrl+Z" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditUndo.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Redo">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Redo}" />
+                                        <TextBlock Text="Ctrl+Y" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditRedo.png" />
+                            </Button>
+                            <!--  Command="EditingCommands.ToggleBullets"  -->
+                            <ToggleButton Name="BulletsToggleButton"
+                                          Checked="BulletsToggleButton_Checked"
+                                          Unchecked="BulletsToggleButton_UnChecked"
+                                          CommandTarget="{Binding ElementName=LeftRTB}">
+                                <ToggleButton.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Bullets}" />
+                                        <TextBlock Text="Ctrl+Shift+L" />
+                                    </StackPanel>
+                                </ToggleButton.ToolTip>
+                                <Image Source="\Images\ListBullets.png" />
+                            </ToggleButton>
+                            <!--  Command="EditingCommands.ToggleNumbering"  -->
+                            <ToggleButton Name="NumberingToggleButton"
+                                          Checked="NumberingToggleButton_Checked"
+                                          Unchecked="NumberingToggleButton_UnChecked"
+                                          CommandTarget="{Binding ElementName=LeftRTB}">
+                                <ToggleButton.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Numbering}" />
+                                        <TextBlock Text="Ctrl+Shift+N" />
+                                    </StackPanel>
+                                </ToggleButton.ToolTip>
+                                <Image Source="\Images\ListNumbering.png" />
+                            </ToggleButton>
+                            <Button Command="EditingCommands.AlignLeft">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignLeft}" />
+                                        <TextBlock Text="Ctrl+L" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphLeftJustify.png" />
+                            </Button>
+                            <Button Command="EditingCommands.AlignCenter">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignCenter}" />
+                                        <TextBlock Text="Ctrl+E" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphCenterJustify.png" />
+                            </Button>
+                            <Button Command="EditingCommands.AlignRight">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignRight}" />
+                                        <TextBlock Text="Ctrl+R" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphRightJustify.png" />
+                            </Button>
+                            <Button Command="EditingCommands.IncreaseIndentation">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.IncreaseIndent}" />
+                                        <TextBlock Text="Ctrl+T" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphIncreaseIndentation.png" />
+                            </Button>
+                            <Button Command="EditingCommands.DecreaseIndentation">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.DecreaseIndent}" />
+                                        <TextBlock Text="Ctrl+Shift+T" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphDecreaseIndentation.png" />
+                            </Button>
+                        </ToolBar>
 
                     </Grid>
                     <TextBox Name="LeftRTB"
