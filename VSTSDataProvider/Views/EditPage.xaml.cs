@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace VSTSDataProvider.Views;
@@ -15,6 +16,7 @@ public partial class EditPage : UserControl
     {
         InitializeComponent();
     }
+    private bool RTBSaved = false;
     private static int currentNumberingNum = 1;
     private static bool isNumberingChecked = false;
     private static string textFormatCurrent = string.Empty;
@@ -82,7 +84,6 @@ public partial class EditPage : UserControl
         leftTextBoxt.PreviewKeyDown -= AddSpecifiedContent;
     }
 
-
     private void AddSpecifiedContent(object sender , KeyEventArgs e)
     {
         TextBox textBox = sender as TextBox;
@@ -113,12 +114,37 @@ public partial class EditPage : UserControl
         }
     }
 
-
-
-
-    private void PreviewAddSpecifiedContent(object sender , TextCompositionEventArgs e)
+    private void IncreaseIndentationButton_Clicked(object sender , System.Windows.RoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        TextBox leftTextBox = (sender as Button)?.CommandTarget as TextBox;
+        //Get the current caret position
+        int caretIndex = leftTextBox.CaretIndex;
+        //Get the current line
+        int lineIndex = leftTextBox.GetLineIndexFromCharacterIndex(caretIndex);
+        //Get the current line text
+        string lineText = leftTextBox.GetLineText(lineIndex);
+        //Increase Indentation from the start of the line text
+        leftTextBox.Text = leftTextBox.Text.Insert(leftTextBox.GetCharacterIndexFromLineIndex(lineIndex) , "\t");
+        //Set the caret index at the end of the text
+        leftTextBox.CaretIndex = caretIndex + 1;
+    }
+
+    private void DecreaseIndentationButton_Clicked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        TextBox leftTextBox = (sender as Button)?.CommandTarget as TextBox;
+        //Get the current caret position
+        int caretIndex = leftTextBox.CaretIndex;
+        //Get the current line
+        int lineIndex = leftTextBox.GetLineIndexFromCharacterIndex(caretIndex);
+        //Get the current line text
+        string lineText = leftTextBox.GetLineText(lineIndex);
+        //Decrease Indentation from the start of the line text
+        if( lineText.StartsWith("\t") )
+        {
+            leftTextBox.Text = leftTextBox.Text.Remove(leftTextBox.GetCharacterIndexFromLineIndex(lineIndex) , 1);
+            //Set the caret index at the end of the text
+            leftTextBox.CaretIndex = caretIndex - 1;
+        }
     }
 
     //private void CmbFontFamily_SelectionChanged(object sender , SelectionChangedEventArgs e)
@@ -248,22 +274,23 @@ public partial class EditPage : UserControl
     //    }
     //}
 
-    //private void Save_Executed(object sender , ExecutedRoutedEventArgs e)
-    //{
-    //    Microsoft.Win32.SaveFileDialog file = new Microsoft.Win32.SaveFileDialog();
+    private void RightSaveMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
+        Microsoft.Win32.SaveFileDialog file = new Microsoft.Win32.SaveFileDialog();
 
-    //    file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|Text Files (*.txt)|*.txt";
-    //    file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|All (*.*)|*.*";
+        file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
 
-    //    if( file.ShowDialog() == true )
-    //    {
-    //        FileStream stream = new FileStream(file.FileName , FileMode.Create);
-    //        TextRange range = new TextRange(rtbEditor.Document.ContentStart , rtbEditor.Document.ContentEnd);
-    //        range.Save(stream , System.Windows.DataFormats.Rtf);
-    //        Title = System.IO.Path.GetFileNameWithoutExtension(file.FileName);
-    //        saved = true;
-    //    }
-    //}
+        if( file.ShowDialog() == true )
+        {
+            System.IO.FileStream stream = new System.IO.FileStream(file.FileName , System.IO.FileMode.Create);
+            TextRange range = new TextRange(rightRichTextBox.Document.ContentStart , rightRichTextBox.Document.ContentEnd);
+            range.Save(stream , System.Windows.DataFormats.Rtf);
+            string Title = System.IO.Path.GetFileNameWithoutExtension(file.FileName);
+            RTBSaved = true;
+        }
+    }
 
     //private void Exit_Executed(object sender , ExecutedRoutedEventArgs e)
     //{

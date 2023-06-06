@@ -9,7 +9,6 @@
              xmlns:iMy="clr-namespace:VSTSDataProvider.Common.UIElementActions"
              xmlns:local="clr-namespace:VSTSDataProvider.Views"
              xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
-             xmlns:rtk="clr-namespace:Topten.RichTextKit;assembly=Topten.RichTextKit"
              xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
              d:Background="White"
              d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
@@ -459,7 +458,7 @@
                                 </ToggleButton.ToolTip>
                                 <Image Source="\Images\ListNumbering.png" />
                             </ToggleButton>
-                            <Button Command="EditingCommands.AlignLeft">
+                            <!--<Button Command="EditingCommands.AlignLeft">
                                 <Button.ToolTip>
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static prop:Resource.AlignLeft}" />
@@ -485,8 +484,11 @@
                                     </StackPanel>
                                 </Button.ToolTip>
                                 <Image Source="\Images\ParagraphRightJustify.png" />
-                            </Button>
-                            <Button Command="EditingCommands.IncreaseIndentation">
+                            </Button>-->
+                            <!--  Command="EditingCommands.IncreaseIndentation"  -->
+                            <Button Name="IncreaseIndentationButton"
+                                    Click="IncreaseIndentationButton_Clicked"
+                                    CommandTarget="{Binding ElementName=LeftRTB}">
                                 <Button.ToolTip>
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static prop:Resource.IncreaseIndent}" />
@@ -495,7 +497,10 @@
                                 </Button.ToolTip>
                                 <Image Source="\Images\ParagraphIncreaseIndentation.png" />
                             </Button>
-                            <Button Command="EditingCommands.DecreaseIndentation">
+                            <!--  Command="EditingCommands.DecreaseIndentation"  -->
+                            <Button Name="DecreaseIndentationButton"
+                                    Click="DecreaseIndentationButton_Clicked"
+                                    CommandTarget="{Binding ElementName=LeftRTB}">
                                 <Button.ToolTip>
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="{x:Static prop:Resource.DecreaseIndent}" />
@@ -544,15 +549,14 @@
                                                    Margin="0"
                                                    Padding="0"
                                                    VerticalAlignment="Center"
-                                                   Text="{Binding RightEditRichTextBoxTitle}" />
+                                                   Text="Menu" />
                                     </StackPanel>
                                 </MenuItem.Header>
-                                <MenuItem Header="{x:Static prop:Resource.Save}"
-                                          Command="{Binding SaveEditingItemCommand}"
-                                          CommandParameter="{Binding ElementName=RightRTB, Path=Document}" />
-                                <MenuItem Header="{x:Static prop:Resource.Reset}"
-                                          Command="{Binding EditinCommand}"
-                                          CommandParameter="{Binding Clip}" />
+                                <MenuItem Click="RightSaveMenuItem_Clicked"
+                                          Header="{x:Static prop:Resource.Save}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                                <!--  Click="RightResetMenuItem_Clicked"  -->
+                                <MenuItem Header="{x:Static prop:Resource.Reset}" CommandTarget="{Binding ElementName=RightRTB}" />
                                 <MenuItem Header="{x:Static prop:Resource.Cancel}"
                                           Command="{Binding AboutCommand}"
                                           CommandParameter="{Binding Clip}" />
