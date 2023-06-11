@@ -1,0 +1,44 @@
+﻿<Window x:Class="VSTSDataProvider.Views.EditedCollectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:local="clr-namespace:VSTSDataProvider.Views"
+        xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+        xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
+        Title="Edited Collection Window"
+        Width="800"
+        Height="450">
+    <Grid>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="{x:Static prop:Resource.Copy}" Command="ApplicationCommands.Copy" />
+            </ContextMenu>
+        </Grid.ContextMenu>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <DataGrid Name="EditingItemDataGrid"
+                      d:ItemsSource="{d:SampleData ItemCount=1}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="True"
+                      SelectionUnit="CellOrRowHeader">
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
+                                <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditDetailsCollectionView}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
+                                <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditOTEsCollectionView}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
+            </DataGrid>
+
+        </Grid>
+    </Grid>
+</Window>

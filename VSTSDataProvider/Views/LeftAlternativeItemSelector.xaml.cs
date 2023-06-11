@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace VSTSDataProvider.Views
 {
@@ -20,9 +8,37 @@ namespace VSTSDataProvider.Views
     /// </summary>
     public partial class LeftAlternativeItemSelector : UserControl
     {
+        Views.EditedCollectionWindow editedCollectionWindow;
+
+        private volatile object _lock = new object();
+        //Singlaton pattern
+        public Views.EditedCollectionWindow CollectionWindow
+        {
+            get
+            {
+                if( editedCollectionWindow == null )
+                {
+                    lock( _lock )
+                    {
+                        editedCollectionWindow ??= new Views.EditedCollectionWindow();
+                    }
+                }
+                return editedCollectionWindow;
+            }
+        }
+
         public LeftAlternativeItemSelector( )
         {
             InitializeComponent();
+        }
+
+        private void ShowDataGridButton_Click(object sender , RoutedEventArgs e)
+        {
+            CollectionWindow.DataContext = this.DataContext;
+            CollectionWindow.WindowState = WindowState.Normal;
+            CollectionWindow.Visibility = Visibility.Visible;
+            CollectionWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            CollectionWindow.Show();
         }
     }
 }

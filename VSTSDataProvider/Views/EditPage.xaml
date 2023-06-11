@@ -353,16 +353,22 @@
                                         <Image Width="12"
                                                Margin="0,0,4,0"
                                                Source="\Images\Menu.png" />
-                                        <TextBlock MaxWidth="120"
+                                        <TextBlock Name="LeftTextBoxTitleTextBlock"
+                                                   MaxWidth="120"
                                                    Margin="0"
                                                    Padding="0"
                                                    VerticalAlignment="Center"
                                                    Text="{Binding LeftEditTextBoxTitle}" />
                                     </StackPanel>
                                 </MenuItem.Header>
-                                <MenuItem Header="{x:Static prop:Resource.Save}"
-                                          Command="{Binding SaveEditingItemCommand}"
-                                          CommandParameter="{Binding ElementName=LeftRTB, Path=Text}" />
+                                <MenuItem Header="{x:Static prop:Resource.Save}" Command="{Binding SaveEditingItemCommand}">
+                                    <!--<MenuItem.CommandParameter>
+                                        <MultiBinding>
+                                            <Binding ElementName="LeftTextBoxTitleTextBlock" Path="Text" />
+                                            <Binding ElementName="LeftRTB" Path="Text" />
+                                        </MultiBinding>
+                                    </MenuItem.CommandParameter>-->
+                                </MenuItem>
                                 <MenuItem Header="{x:Static prop:Resource.Reset}"
                                           Command="{Binding EditinCommand}"
                                           CommandParameter="{Binding Clip}" />
@@ -432,7 +438,6 @@
                                 </Button.ToolTip>
                                 <Image Source="\Images\EditRedo.png" />
                             </Button>
-                            <!--  Command="EditingCommands.ToggleBullets"  -->
                             <ToggleButton Name="BulletsToggleButton"
                                           Checked="BulletsToggleButton_Checked"
                                           Unchecked="BulletsToggleButton_UnChecked"
@@ -485,7 +490,6 @@
                                 </Button.ToolTip>
                                 <Image Source="\Images\ParagraphRightJustify.png" />
                             </Button>-->
-                            <!--  Command="EditingCommands.IncreaseIndentation"  -->
                             <Button Name="IncreaseIndentationButton"
                                     Click="IncreaseIndentationButton_Clicked"
                                     CommandTarget="{Binding ElementName=LeftRTB}">
@@ -497,7 +501,6 @@
                                 </Button.ToolTip>
                                 <Image Source="\Images\ParagraphIncreaseIndentation.png" />
                             </Button>
-                            <!--  Command="EditingCommands.DecreaseIndentation"  -->
                             <Button Name="DecreaseIndentationButton"
                                     Click="DecreaseIndentationButton_Clicked"
                                     CommandTarget="{Binding ElementName=LeftRTB}">
@@ -555,7 +558,6 @@
                                 <MenuItem Click="RightSaveMenuItem_Clicked"
                                           Header="{x:Static prop:Resource.Save}"
                                           CommandTarget="{Binding ElementName=RightRTB}" />
-                                <!--  Click="RightResetMenuItem_Clicked"  -->
                                 <MenuItem Header="{x:Static prop:Resource.Reset}" CommandTarget="{Binding ElementName=RightRTB}" />
                                 <MenuItem Header="{x:Static prop:Resource.Cancel}"
                                           Command="{Binding AboutCommand}"

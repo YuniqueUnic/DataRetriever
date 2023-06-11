@@ -147,6 +147,25 @@ public partial class EditPage : UserControl
         }
     }
 
+    private void RightSaveMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
+    {
+        RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
+        Microsoft.Win32.SaveFileDialog file = new Microsoft.Win32.SaveFileDialog();
+
+        file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|All (*.*)|*.*";
+        file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+        if( file.ShowDialog() == true )
+        {
+            System.IO.FileStream stream = new System.IO.FileStream(file.FileName , System.IO.FileMode.Create);
+            TextRange range = new TextRange(rightRichTextBox.Document.ContentStart , rightRichTextBox.Document.ContentEnd);
+            range.Save(stream , System.Windows.DataFormats.Rtf);
+            string Title = System.IO.Path.GetFileNameWithoutExtension(file.FileName);
+            RTBSaved = true;
+        }
+    }
+
+
     //private void CmbFontFamily_SelectionChanged(object sender , SelectionChangedEventArgs e)
     //{
     //    string fontName = cmbFontFamily.Text;
@@ -274,23 +293,7 @@ public partial class EditPage : UserControl
     //    }
     //}
 
-    private void RightSaveMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
-    {
-        RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
-        Microsoft.Win32.SaveFileDialog file = new Microsoft.Win32.SaveFileDialog();
 
-        file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|All (*.*)|*.*";
-        file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-        if( file.ShowDialog() == true )
-        {
-            System.IO.FileStream stream = new System.IO.FileStream(file.FileName , System.IO.FileMode.Create);
-            TextRange range = new TextRange(rightRichTextBox.Document.ContentStart , rightRichTextBox.Document.ContentEnd);
-            range.Save(stream , System.Windows.DataFormats.Rtf);
-            string Title = System.IO.Path.GetFileNameWithoutExtension(file.FileName);
-            RTBSaved = true;
-        }
-    }
 
     //private void Exit_Executed(object sender , ExecutedRoutedEventArgs e)
     //{

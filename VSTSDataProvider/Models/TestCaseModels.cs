@@ -168,6 +168,11 @@ public class TestCase : ITestObject, IResultsModel
 
         return hashSet;
     }
+
+    public void SetPropertyValue(string propertyName , object value)
+    {
+        throw new System.NotImplementedException();
+    }
 }
 public class TestSuite : ITestObject
 {
@@ -190,6 +195,8 @@ public interface ITestObject
     public string? Name { get; set; }
     public int ID { get; set; }
 }
+
+
 
 
 public class DetailModel : IResultsModel
@@ -322,6 +329,22 @@ public class DetailModel : IResultsModel
 
         return hashSet;
     }
+
+    public void SetPropertyValue(string propertyName , object value)
+    {
+        if( propertyName == "Title" ) propertyName = nameof(Name);
+        if( propertyName == "TestCaseId" ) propertyName = nameof(ID);
+        if( propertyName == "Outcome" ) propertyName = nameof(OutcomeStr);
+
+        // Get the properties infos
+        PropertyInfo propertyInfo = this.GetType().GetProperty(propertyName);
+
+        // If the property exists AND is writable set the value
+        if( propertyInfo != null && propertyInfo.CanWrite )
+        {
+            propertyInfo.SetValue(this , value);
+        }
+    }
 }
 
 public class OTE_OfflineModel : IResultsModel
@@ -429,10 +452,24 @@ public class OTE_OfflineModel : IResultsModel
 
         return hashSet;
     }
+
+    public void SetPropertyValue(string propertyName , object value)
+    {
+        // Get the properties infos
+        PropertyInfo propertyInfo = this.GetType().GetProperty(propertyName);
+
+        // If the property exists AND is writable set the value
+        if( propertyInfo != null && propertyInfo.CanWrite )
+        {
+            propertyInfo.SetValue(this , value);
+        }
+    }
+
 }
 
 public interface IResultsModel
 {
     public abstract bool Contains(string value);
     public abstract HashSet<string> AllToHashSet( );
+    public abstract void SetPropertyValue(string propertyName , object value);
 }

@@ -256,7 +256,8 @@ public class SpecifiedStringToEmptyConverter : MarkupExtension, IValueConverter
 
     public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        return value.ToString();
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider)

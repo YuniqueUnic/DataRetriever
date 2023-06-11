@@ -7,11 +7,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using VSTSDataProvider.Common;
 using VSTSDataProvider.Properties.Language;
@@ -423,7 +420,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        //await ReleaseMethod_TCs();
+        //await ReleaseMethod();
         if( IsDetailsChecked )
         {
             //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
@@ -476,7 +473,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-    private async Task ReleaseMethod_TCs( )
+    private async Task ReleaseMethod( )
     {
         ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
 
@@ -768,7 +765,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private void InitRelayCommandsForEditingWindow( )
     {
-
+        ShowEditedCollectionViewCommand = new RelayCommand(ShowEditedCollectionView);
     }
 
 
@@ -808,7 +805,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         get => _rightEditRichTextBoxTitle;
         set => SetProperty(ref _rightEditRichTextBoxTitle , value);
     }
-
 
     public string LeftEditTextBoxDocument
     {
@@ -943,29 +939,40 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollection { get; set; } = new ObservableCollection<Models.OTE_OfflineModel>();
 
 
+    public ICommand ShowEditedCollectionViewCommand { get; private set; }
     public ICommand SaveEditingItemCommand { get; private set; }
     public ICommand EditinCommand { get; private set; }
 
-    //TODO: Add a command to save the edited item
-    // Solve the problem of the RichTextBox not binding to the FlowDocument
-    public void SaveEditingItem(object content)
+
+
+    public void ShowEditedCollectionView( )
     {
-        string results = string.Empty;
-        RichTextBox r = new RichTextBox();
+        Views.EditedCollectionWindow editedCollectionWindow = new Views.EditedCollectionWindow();
+        editedCollectionWindow.DataContext = this;
+        editedCollectionWindow.Show();
+    }
 
-        if( content is System.Windows.Documents.FlowDocument rtbEditor )
-        {
-            TextRange range = new TextRange(rtbEditor.ContentStart , rtbEditor.ContentEnd);
-            MemoryStream buffer = new MemoryStream();
-            range.Save(buffer , System.Windows.DataFormats.Rtf);
-            results = Encoding.UTF8.GetString(buffer.ToArray());
-        }
-        else if( content is string text )
-        {
-            results = text;
-        }
 
-        System.Windows.MessageBox.Show($"\n\n{results}" , LeftEditTextBoxTitle);
+    //TODO: Add a command to save the edited item
+    public void SaveEditingItem( )
+    {
+        int testcaseID = -1;
+        if( IsDetailsChecked )
+        {
+            testcaseID = EditingDetailObCollection.First().ID;
+            EditingDetailObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument);
+            EditingDetailObCollection.RemoveAt(0);
+            EditingDetailObCollection.Add(EditDetailsCollection.First(i => i.ID == testcaseID));
+            EditDetailsCollectionView.Refresh();
+        }
+        else
+        {
+            testcaseID = EditingOTEObCollection.First().TestCaseId;
+            EditingOTEObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument);
+            EditingOTEObCollection.RemoveAt(0);
+            EditingOTEObCollection.Add(EditOTEsCollection.First(i => i.TestCaseId == testcaseID));
+            EditOTEsCollectionView.Refresh();
+        }
     }
 
     public void Editin(object param)
@@ -982,49 +989,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
         }
     }
-
-    //private void UpdateRichTextTextAsync(object param)
-    //{
-    //    if( param is not RichTextBox richTextBox ) return;
-
-    //    Task t = new Task(( ) =>
-    //    {
-    //        // 将文本内容保存为 RTF 格式
-    //        using( var memoryStream = new MemoryStream() )
-    //        {
-    //            var textRange = new TextRange(richTextBox.Document.ContentStart , richTextBox.Document.ContentEnd);
-    //            textRange.Save(memoryStream , DataFormats.Rtf);
-    //            memoryStream.Seek(0 , SeekOrigin.Begin);
-    //            using( var streamReader = new StreamReader(memoryStream) )
-    //            {
-    //                string rtfText = streamReader.ReadToEnd();
-    //                // 在 UI 线程中更新属性
-    //                Application.Current.Dispatcher.Invoke(( ) =>
-    //                {
-    //                    RightEditRichTextBoxDocument = rtfText;
-    //                });
-    //            }
-    //        }
-    //    });
-
-    //    t.RunSynchronously();
-
-    //    // 将 RTF 格式的文本内容转换为普通文本
-    //    using( var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(RightEditRichTextBoxDocument)) )
-    //    {
-    //        RichTextBox rich = new RichTextBox();
-    //        var textRange = new TextRange(rich.Document.ContentStart , rich.Document.ContentEnd);
-    //        textRange.Load(memoryStream , DataFormats.Rtf);
-    //        string plainTextContent = textRange.Text;
-    //        // 在 UI 线程中更新属性
-    //        Application.Current.Dispatcher.Invoke(( ) =>
-    //        {
-    //            LeftEditTextBoxDocument = plainTextContent;
-    //        });
-    //    }
-
-    //}
-
 
     #endregion Edit Page
 

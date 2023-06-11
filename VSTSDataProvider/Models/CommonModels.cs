@@ -81,6 +81,11 @@ public class EditingModel : Models.IResultsModel
         return false;
     }
 
+    public void SetPropertyValue(string propertyName , object value)
+    {
+        throw new System.NotImplementedException();
+    }
+
     HashSet<string> IResultsModel.AllToHashSet( )
     {
         throw new System.NotImplementedException();

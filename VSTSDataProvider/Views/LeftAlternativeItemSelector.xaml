@@ -31,7 +31,7 @@
                 <Button Name="ShowDataGridButton"
                         Grid.Row="0"
                         Grid.Column="0"
-                        Command="{Binding AboutCommand}">
+                        Click="ShowDataGridButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="👁" />
                         <TextBlock Margin="4,0" Text="Show" />
@@ -50,8 +50,7 @@
                           Visibility="Visible">
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <VirtualizingStackPanel IsVirtualizing="True"
-                                VirtualizationMode="Recycling" />
+                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
                         </ItemsPanelTemplate>
                     </ComboBox.ItemsPanel>
                     <ComboBox.Style>
@@ -87,8 +86,7 @@
                                 <ControlTemplate TargetType="DataGrid">
                                     <Border>
                                         <Grid>
-                                            <Grid.Resources>
-                                            </Grid.Resources>
+                                            <Grid.Resources />
                                             <DataGrid x:Name="OTEsDataGrid"
                                                       Style="{StaticResource BaseDataGridStyle}"
                                                       IsReadOnly="True"

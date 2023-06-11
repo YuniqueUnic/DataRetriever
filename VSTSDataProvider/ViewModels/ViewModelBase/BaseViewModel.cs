@@ -32,7 +32,7 @@ public abstract class BaseViewModel : INotifyPropertyChanged, INotifyPropertyCha
         }
     }
 
-    protected void RaisePropertyChangedFor([CallerMemberName] String propertyName = "")
+    protected void RaisePropertyChangedFor([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this , new PropertyChangedEventArgs(propertyName));
     }
