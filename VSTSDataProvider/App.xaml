@@ -223,6 +223,7 @@
                           CanUserAddRows="{TemplateBinding CanUserAddRows}"
                           CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
                           IsReadOnly="{TemplateBinding IsReadOnly}"
+                          RowHeight="{TemplateBinding RowHeight}"
                           SelectionUnit="{TemplateBinding SelectionUnit}"
                           ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     <DataGrid.Columns>

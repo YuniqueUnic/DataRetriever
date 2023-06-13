@@ -1,7 +1,9 @@
 using MiniExcelLibs.Attributes;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using VSTSDataProvider.Common;
@@ -330,20 +332,41 @@ public class DetailModel : IResultsModel
         return hashSet;
     }
 
+    private static readonly Dictionary<string , string> PropertyNameMappings = new Dictionary<string , string>
+     {
+          { "Title", nameof(Name) },
+          { "TestCaseId", nameof(ID) },
+          { "Outcome", nameof(OutcomeStr) },
+          { "TestTool", nameof(TestToolStr) }
+      };
+
     public void SetPropertyValue(string propertyName , object value)
     {
-        if( propertyName == "Title" ) propertyName = nameof(Name);
-        if( propertyName == "TestCaseId" ) propertyName = nameof(ID);
-        if( propertyName == "Outcome" ) propertyName = nameof(OutcomeStr);
+        if( PropertyNameMappings.TryGetValue(propertyName , out var mappedName) )
+        {
+            propertyName = mappedName;
+        }
 
         // Get the properties infos
-        PropertyInfo propertyInfo = this.GetType().GetProperty(propertyName);
+        PropertyInfo propertyInfo = typeof(DetailModel).GetProperty(propertyName);
 
-        // If the property exists AND is writable set the value
-        if( propertyInfo != null && propertyInfo.CanWrite )
+        // Judge the type of property and convert to the case
+        var converter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+        if( propertyInfo.CanWrite && converter.CanConvertFrom(value.GetType()) )
         {
-            propertyInfo.SetValue(this , value);
+            try
+            {
+                var convertedValue = converter.ConvertFrom(value);
+                propertyInfo.SetValue(this , convertedValue);
+            }
+            catch( System.Exception e )
+            {
+                Console.WriteLine(e.Message);
+                //throw;
+            }
+
         }
+
     }
 }
 
@@ -453,16 +476,38 @@ public class OTE_OfflineModel : IResultsModel
         return hashSet;
     }
 
+
+    private static readonly Dictionary<string , string> PropertyNameMappings = new Dictionary<string , string>
+    {
+          { "Outcome", nameof(OutcomeStr) },
+      };
+
+
     public void SetPropertyValue(string propertyName , object value)
     {
-        // Get the properties infos
-        PropertyInfo propertyInfo = this.GetType().GetProperty(propertyName);
-
-        // If the property exists AND is writable set the value
-        if( propertyInfo != null && propertyInfo.CanWrite )
+        if( PropertyNameMappings.TryGetValue(propertyName , out var mappedName) )
         {
-            propertyInfo.SetValue(this , value);
+            propertyName = mappedName;
         }
+        // Get the properties infos
+        PropertyInfo propertyInfo = typeof(OTE_OfflineModel).GetProperty(propertyName);
+
+        // Judge the type of property and convert to the case
+        var converter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+        if( propertyInfo.CanWrite && converter.CanConvertFrom(value.GetType()) )
+        {
+            try
+            {
+                var convertedValue = converter.ConvertFrom(value);
+                propertyInfo.SetValue(this , convertedValue);
+            }
+            catch( System.Exception e )
+            {
+                Console.WriteLine(e.Message);
+                //throw;
+            }
+        }
+
     }
 
 }

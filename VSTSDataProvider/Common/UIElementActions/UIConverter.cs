@@ -283,3 +283,29 @@ public class SingleObjectToListConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class BooleanInverterConverter : MarkupExtension, IValueConverter
+{
+    public object Convert(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        if( value is bool )
+        {
+            return !(bool)value;
+        }
+        return value;
+    }
+
+    public object ConvertBack(object value , Type targetType , object parameter , CultureInfo culture)
+    {
+        if( value is bool )
+        {
+            return !(bool)value;
+        }
+        return value;
+    }
+
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        return this;
+    }
+}

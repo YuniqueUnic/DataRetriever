@@ -361,7 +361,9 @@
                                                    Text="{Binding LeftEditTextBoxTitle}" />
                                     </StackPanel>
                                 </MenuItem.Header>
-                                <MenuItem Header="{x:Static prop:Resource.Save}" Command="{Binding SaveEditingItemCommand}">
+                                <MenuItem Name="LeftSaveMenuItem"
+                                          Header="{x:Static prop:Resource.Save}"
+                                          Command="{Binding SaveEditingItemCommand}">
                                     <!--<MenuItem.CommandParameter>
                                         <MultiBinding>
                                             <Binding ElementName="LeftTextBoxTitleTextBlock" Path="Text" />
@@ -369,12 +371,8 @@
                                         </MultiBinding>
                                     </MenuItem.CommandParameter>-->
                                 </MenuItem>
-                                <MenuItem Header="{x:Static prop:Resource.Reset}"
-                                          Command="{Binding EditinCommand}"
-                                          CommandParameter="{Binding Clip}" />
-                                <MenuItem Header="{x:Static prop:Resource.Cancel}"
-                                          Command="{Binding AboutCommand}"
-                                          CommandParameter="{Binding Clip}" />
+                                <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding ResetLeftBoxContentToInitCommand}" />
+                                <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="{Binding CancelEditCommand}" />
                             </MenuItem>
                         </Menu>
                         <ToolBar Name="EditFuncoolBar"
@@ -520,7 +518,41 @@
                              AutoWordSelection="True"
                              SpellCheck.IsEnabled="True"
                              TextWrapping="WrapWithOverflow"
-                             Text="{Binding LeftEditTextBoxDocument, UpdateSourceTrigger=PropertyChanged}" />
+                             Text="{Binding LeftEditTextBoxDocument, UpdateSourceTrigger=PropertyChanged}">
+                        <i:Interaction.Triggers>
+                            <i:KeyTrigger Key="S"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl">
+                                <i:InvokeCommandAction Command="{Binding ElementName=LeftSaveMenuItem, Path=Command}" />
+                            </i:KeyTrigger>
+                            <i:KeyTrigger Key="N"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl+Shift">
+                                <i:ChangePropertyAction PropertyName="IsChecked" TargetObject="{Binding ElementName=NumberingToggleButton}">
+                                    <i:ChangePropertyAction.Value>
+                                        <Binding ElementName="NumberingToggleButton" Path="IsChecked">
+                                            <Binding.Converter>
+                                                <cvtr:BooleanInverterConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </i:ChangePropertyAction.Value>
+                                </i:ChangePropertyAction>
+                            </i:KeyTrigger>
+                            <i:KeyTrigger Key="L"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl+Shift">
+                                <i:ChangePropertyAction PropertyName="IsChecked" TargetObject="{Binding ElementName=BulletsToggleButton}">
+                                    <i:ChangePropertyAction.Value>
+                                        <Binding ElementName="BulletsToggleButton" Path="IsChecked">
+                                            <Binding.Converter>
+                                                <cvtr:BooleanInverterConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </i:ChangePropertyAction.Value>
+                                </i:ChangePropertyAction>
+                            </i:KeyTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
 
                 </DockPanel>
             </Grid>

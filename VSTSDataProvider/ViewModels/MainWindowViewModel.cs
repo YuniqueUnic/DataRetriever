@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VSTSDataProvider.Common;
+using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.Properties.Language;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 // using VSTSDataProvider.TestData;
@@ -40,8 +41,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         ModeSwitchCommand = new RelayCommand(ModeSwitch);
         LanguageChangeCommand = new RelayCommand(LanguageChange);
         AboutCommand = new RelayCommand(About);
-        EditinCommand = new RelayCommand(Editin);
-        SaveEditingItemCommand = new RelayCommand(SaveEditingItem);
         ShowStepsCommand = new RelayCommand(ShowSteps);
         InitRelayCommandsForEditingWindow();
     }
@@ -765,7 +764,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private void InitRelayCommandsForEditingWindow( )
     {
+        SaveEditingItemCommand = new RelayCommand(SaveEditingItem);
         ShowEditedCollectionViewCommand = new RelayCommand(ShowEditedCollectionView);
+        ResetLeftBoxContentToInitCommand = new RelayCommand(ResetLeftBoxContentToInit);
+        CancelEditCommand = new RelayCommand(CancelEdit);
     }
 
 
@@ -797,7 +799,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public string LeftEditTextBoxTitle
     {
         get => _leftEditTextBoxTitle;
-        set => SetProperty(ref _leftEditTextBoxTitle , value);
+        set
+        {
+            if( !EqualityComparer<string>.Default.Equals(_leftEditTextBoxTitle , value) )
+            {
+                IsAutoFillLeftTextBox = true;
+            }
+
+            SetProperty(ref _leftEditTextBoxTitle , value);
+        }
     }
 
     public string RightEditRichTextBoxTitle
@@ -806,12 +816,20 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set => SetProperty(ref _rightEditRichTextBoxTitle , value);
     }
 
+    private bool IsAutoFillLeftTextBox = true;
+    private string LeftEditTextBoxDocumentBackUp = string.Empty;
     public string LeftEditTextBoxDocument
     {
         get => _leftEditTextBoxDocument;
         set
         {
             SetProperty(ref _leftEditTextBoxDocument , value);
+
+            if( IsAutoFillLeftTextBox )
+            {
+                LeftEditTextBoxDocumentBackUp = value;
+                IsAutoFillLeftTextBox = false;
+            }
         }
     }
 
@@ -941,7 +959,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     public ICommand ShowEditedCollectionViewCommand { get; private set; }
     public ICommand SaveEditingItemCommand { get; private set; }
-    public ICommand EditinCommand { get; private set; }
+    public ICommand ResetLeftBoxContentToInitCommand { get; private set; }
+    public ICommand CancelEditCommand { get; private set; }
 
 
 
@@ -954,39 +973,53 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
 
     //TODO: Add a command to save the edited item
-    public void SaveEditingItem( )
+    private void SaveEditingItem( )
     {
+        if( LeftEditTextBoxTitle.IsNullOrWhiteSpaceOrEmpty() ) { return; }
+
         int testcaseID = -1;
+        string testcaseName = string.Empty;
         if( IsDetailsChecked )
         {
             testcaseID = EditingDetailObCollection.First().ID;
-            EditingDetailObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument);
+            testcaseName = EditingDetailObCollection.First().Name;
+            EditingDetailObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
             EditingDetailObCollection.RemoveAt(0);
-            EditingDetailObCollection.Add(EditDetailsCollection.First(i => i.ID == testcaseID));
+            EditingDetailObCollection.Add(EditDetailsCollection.First(i => i.ID == testcaseID || i.Name == testcaseName));
             EditDetailsCollectionView.Refresh();
         }
         else
         {
             testcaseID = EditingOTEObCollection.First().TestCaseId;
-            EditingOTEObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument);
+            testcaseName = EditingOTEObCollection.First().Title;
+            EditingOTEObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
             EditingOTEObCollection.RemoveAt(0);
-            EditingOTEObCollection.Add(EditOTEsCollection.First(i => i.TestCaseId == testcaseID));
+            EditingOTEObCollection.Add(EditOTEsCollection.First(i => i.TestCaseId == testcaseID || i.Title == testcaseName));
             EditOTEsCollectionView.Refresh();
         }
+
+        LeftEditTextBoxDocumentBackUp = LeftEditTextBoxDocument;
     }
 
-    public void Editin(object param)
+    private void ResetLeftBoxContentToInit( )
     {
-        string sideofTextBox = param as string ?? "Left";
+        LeftEditTextBoxDocument = LeftEditTextBoxDocumentBackUp;
+    }
 
-        if( sideofTextBox.Equals("Right") )
+
+
+    private void CancelEdit( )
+    {
+        LeftEditTextBoxDocumentBackUp = string.Empty;
+        LeftEditTextBoxDocument = string.Empty;
+        LeftEditTextBoxTitle = string.Empty;
+        if( IsDetailsChecked )
         {
-            ModeToggleButtonState = false;
+            EditingDetailObCollection.Clear();
         }
         else
         {
-            ModeToggleButtonState = true;
-
+            EditingOTEObCollection.Clear();
         }
     }
 

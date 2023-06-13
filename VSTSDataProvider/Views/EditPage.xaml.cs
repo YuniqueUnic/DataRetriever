@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
+using VSTSDataProvider.ViewModels.ViewModelBase;
 
 namespace VSTSDataProvider.Views;
 
@@ -15,7 +16,43 @@ public partial class EditPage : UserControl
     public EditPage( )
     {
         InitializeComponent();
+        LeftRTB.InputBindings.Add(new KeyBinding(IncreaseIndentationCommand , Key.T , ModifierKeys.Control));
+        LeftRTB.InputBindings.Add(new KeyBinding(DecreaseIndentationCommand , Key.T , ModifierKeys.Control | ModifierKeys.Shift));
     }
+
+    private ICommand _increaseIndentationCommand;
+    public ICommand IncreaseIndentationCommand
+    {
+        get
+        {
+            if( _increaseIndentationCommand == null )
+            {
+                _increaseIndentationCommand = new RelayCommand(
+                    param => IncreaseIndentationButton_Clicked(IncreaseIndentationButton , null) ,
+                    param => true
+                );
+            }
+            return _increaseIndentationCommand;
+        }
+    }
+
+    private ICommand _decreaseIndentationCommand;
+    public ICommand DecreaseIndentationCommand
+    {
+        get
+        {
+            if( _decreaseIndentationCommand == null )
+            {
+                _decreaseIndentationCommand = new RelayCommand(
+                    param => DecreaseIndentationButton_Clicked(DecreaseIndentationButton , null) ,
+                    param => true
+                );
+            }
+            return _decreaseIndentationCommand;
+        }
+    }
+
+
     private bool RTBSaved = false;
     private static int currentNumberingNum = 1;
     private static bool isNumberingChecked = false;
@@ -55,7 +92,7 @@ public partial class EditPage : UserControl
     {
         NumberingToggleButton.IsChecked = false;
         TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
-        textFormatCurrent = SpecifiedFormat(new string[] { " " , "*" , " " } , new int[] { 4 , 1 , 2 });
+        textFormatCurrent = SpecifiedFormat(new string[] { "\t" , "*" , " " } , new int[] { 1 , 1 , 2 });
         leftTextBoxt.PreviewKeyDown += AddSpecifiedContent;
     }
 
@@ -71,7 +108,7 @@ public partial class EditPage : UserControl
         BulletsToggleButton.IsChecked = false;
         TextBox leftTextBoxt = (sender as ToggleButton)?.CommandTarget as TextBox;
         isNumberingChecked = true;
-        textFormatCurrent = SpecifiedFormat(new string[] { " " , currentNumberingNum.ToString() , "." , " " } , new int[] { 4 , 1 , 1 , 2 });
+        textFormatCurrent = SpecifiedFormat(new string[] { "\t" , currentNumberingNum.ToString() , "." , " " } , new int[] { 1 , 1 , 1 , 2 });
         leftTextBoxt.PreviewKeyDown += AddSpecifiedContent;
     }
 
@@ -107,7 +144,7 @@ public partial class EditPage : UserControl
             if( isNumberingChecked )
             {
                 currentNumberingNum++;
-                textFormatCurrent = SpecifiedFormat(new string[] { " " , currentNumberingNum.ToString() , "." , " " } , new int[] { 4 , 1 , 1 , 2 });
+                textFormatCurrent = SpecifiedFormat(new string[] { "\t" , currentNumberingNum.ToString() , "." , " " } , new int[] { 1 , 1 , 1 , 2 });
             }
 
             e.Handled = true; // Mark the event as handled

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace VSTSDataProvider.ViewModels.ViewModelBase;
@@ -10,6 +11,7 @@ public class RelayCommand : ICommand
     private readonly Action<object> _execute;
     private readonly Action _executeNonParam;
     private readonly Predicate<object> _canExecute;
+    private Action<object , RoutedEventArgs> decreaseIndentationButton_Clicked;
 
     public event EventHandler CanExecuteChanged;
     //{
@@ -27,6 +29,11 @@ public class RelayCommand : ICommand
     {
         _executeNonParam = executeNonParam ?? throw new ArgumentNullException(nameof(executeNonParam));
         _canExecute = canExecute;
+    }
+
+    public RelayCommand(Action<object , RoutedEventArgs> decreaseIndentationButton_Clicked)
+    {
+        this.decreaseIndentationButton_Clicked = decreaseIndentationButton_Clicked;
     }
 
     public bool CanExecute(object parameter)
