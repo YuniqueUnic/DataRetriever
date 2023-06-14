@@ -43,17 +43,19 @@ public class TestStepExtractor {
         int index=1;
         foreach (XmlNode stepNode in stepNodes)
         {
+            string a = stepNode.SelectSingleNode("description").InnerText.Trim();
             string actionContent=Regex.Replace(stepNode.SelectSingleNode("./parameterizedString[1]").InnerText.Trim(), "<.*?>", "");
             string expectedResultContent=Regex.Replace(stepNode.SelectSingleNode("./parameterizedString[2]").InnerText.Trim(), "<.*?>", "");
-            string descriptionContent=Regex.Replace(stepNode.SelectSingleNode("description").InnerText.Trim(), "<.*?>", "");
+            string descriptionContent = Regex.Replace(stepNode.SelectSingleNode("./description").InnerText.Trim(), "<.*?>", "");
             TestStep testStep = new TestStep();
             // testStep.Index = int.Parse(stepNode.Attributes["id"].Value)-1;
             testStep.Index=index++;
             testStep.Action=WebUtility.HtmlDecode(actionContent);
             testStep.ExpectedResult = WebUtility.HtmlDecode(expectedResultContent);
-            testStep.Description = WebUtility.HtmlDecode(descriptionContent); ;
+            //testStep.Description = WebUtility.HtmlDecode(descriptionContent); ;
             testSteps.Add(testStep);
         }
+        //string descriptionContent = Regex.Replace(stepNodes[0].SelectSingleNode("description").InnerText.Trim(), "<.*?>", "");
 
         return testSteps;
     }

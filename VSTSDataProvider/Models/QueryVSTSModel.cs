@@ -13,7 +13,7 @@ public class QueryVSTSModel : BaseVSTSModel
 
     internal new Dictionary<string , object> optionalParameters = new Dictionary<string , object>
     {
-        { "continuationToken", $"0;1000" },
+        { "continuationToken", $"0;2000" },
         { "returnldentityRef", "true" },
         { "includePointDetails", "true" },
         { "isRecursive", "false" }
