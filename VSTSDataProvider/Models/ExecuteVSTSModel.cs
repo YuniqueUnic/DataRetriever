@@ -100,11 +100,12 @@ public class ExecuteVSTSModel : BaseVSTSModel
         "System.AreaPath",
         "Aspentech.TestCase.StateofTest",
         "Microsoft.VSTS.TCM.Steps",
+        "System.Description",
     };
 
     internal new Dictionary<string , object> optionalParameters = new Dictionary<string , object>
     {
-        { "continuationToken", $"0;1000" },
+        { "continuationToken", $"0;2000" },
         { "expand", "true" },
         { "returnldentityRef", "true" },
         { "excludeFlags", "0" },
@@ -185,6 +186,8 @@ public class ExecuteVSTSModel : BaseVSTSModel
         public string stateofAutomation { get; set; }
         [JsonProperty("Microsoft.VSTS.TCM.Steps")]
         public string testSteps { get; set; }
+        [JsonProperty("System.Description")]
+        public string description { get; set; }
     }
 
     public class PointAssignment

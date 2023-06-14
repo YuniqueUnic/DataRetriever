@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Schema;
 
 public class TestStep{
     public int Index {get; set;}=-1;
@@ -17,26 +19,43 @@ public class TestStepExtractor {
     public TestStepExtractor(string xmlContent) {
         this.xmlContent = xmlContent;
         this.xmlDoc = new XmlDocument();
-        this.xmlDoc.LoadXml(xmlContent);
+        try
+        {
+            if (xmlContent != null) { this.xmlDoc.LoadXml(xmlContent); }
+        }
+        catch (XmlException)
+        {
+            xmlDoc.CreateTextNode(xmlContent);
+            //throw;
+        }
+
     }
 
     public List<TestStep> ExtractTestSteps(){
         List<TestStep> testSteps=new List<TestStep>();
+
+        if (xmlContent == null)
+        {
+            return testSteps;
+        }
+
         XmlNodeList stepNodes = xmlDoc.SelectNodes("//step");
         int index=1;
         foreach (XmlNode stepNode in stepNodes)
         {
+            string a = stepNode.SelectSingleNode("description").InnerText.Trim();
             string actionContent=Regex.Replace(stepNode.SelectSingleNode("./parameterizedString[1]").InnerText.Trim(), "<.*?>", "");
             string expectedResultContent=Regex.Replace(stepNode.SelectSingleNode("./parameterizedString[2]").InnerText.Trim(), "<.*?>", "");
-            string descriptionContent=Regex.Replace(stepNode.SelectSingleNode("description").InnerText.Trim(), "<.*?>", "");
+            string descriptionContent = Regex.Replace(stepNode.SelectSingleNode("./description").InnerText.Trim(), "<.*?>", "");
             TestStep testStep = new TestStep();
             // testStep.Index = int.Parse(stepNode.Attributes["id"].Value)-1;
             testStep.Index=index++;
-            testStep.Action = actionContent;
-            testStep.ExpectedResult =expectedResultContent;
-            testStep.Description = descriptionContent;
+            testStep.Action=WebUtility.HtmlDecode(actionContent);
+            testStep.ExpectedResult = WebUtility.HtmlDecode(expectedResultContent);
+            //testStep.Description = WebUtility.HtmlDecode(descriptionContent); ;
             testSteps.Add(testStep);
         }
+        //string descriptionContent = Regex.Replace(stepNodes[0].SelectSingleNode("description").InnerText.Trim(), "<.*?>", "");
 
         return testSteps;
     }
