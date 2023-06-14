@@ -8,7 +8,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:VSTSDataProvider.Views"
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
-        Title="{x:Static prop:Resource.TestStepsWindow}"
+        Title="{Binding ID, StringFormat='{}{0} TestSteps'}"
         Width="800"
         Height="450">
     <Grid>
@@ -132,6 +132,15 @@
                                             </i:DataTrigger>
                                         </i:Interaction.Triggers>
                                     </CheckBox>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="150" Header="Description">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock LineHeight="1.25"
+                                               TextWrapping="WrapWithOverflow"
+                                               Text="{Binding Description}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

@@ -69,7 +69,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public VSTSDataProcessing SetCookie(string cookie)
     {
-        _cookie = cookie;
+        _cookie = cookie.Trim();
         return this;
     }
 

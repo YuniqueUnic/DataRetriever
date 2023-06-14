@@ -17,7 +17,6 @@ public class OpenSourceProjectInfos
     public string? Url { get; set; } = string.Empty;
 }
 
-
 public class EditingModel : Models.IResultsModel
 {
     public int Index { get; set; } = -1;
