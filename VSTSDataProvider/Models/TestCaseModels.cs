@@ -171,7 +171,7 @@ public class TestCase : ITestObject, IResultsModel
         return hashSet;
     }
 
-    public void SetPropertyValue(string propertyName , object value)
+    public bool SetPropertyValue(string propertyName , object value)
     {
         throw new System.NotImplementedException();
     }
@@ -219,6 +219,7 @@ public class DetailModel : IResultsModel
     public string? LastUpdatedDate { get; set; }
     public string? RunBy { get; set; }
     public string? StateofAutomation { get; set; }
+    [ExcelIgnore]
     public List<TestStep>? TestSteps { get; set; }
 
     [ExcelIgnore]
@@ -335,8 +336,9 @@ public class DetailModel : IResultsModel
           { "TestTool", nameof(TestToolStr) }
       };
 
-    public void SetPropertyValue(string propertyName , object value)
+    public bool SetPropertyValue(string propertyName , object value)
     {
+        bool success = false;
         if( PropertyNameMappings.TryGetValue(propertyName , out var mappedName) )
         {
             propertyName = mappedName;
@@ -353,15 +355,15 @@ public class DetailModel : IResultsModel
             {
                 var convertedValue = converter.ConvertFrom(value);
                 propertyInfo.SetValue(this , convertedValue);
+                success = true;
             }
             catch( System.Exception e )
             {
                 Console.WriteLine(e.Message);
                 //throw;
             }
-
         }
-
+        return success;
     }
 }
 
@@ -478,8 +480,9 @@ public class OTE_OfflineModel : IResultsModel
       };
 
 
-    public void SetPropertyValue(string propertyName , object value)
+    public bool SetPropertyValue(string propertyName , object value)
     {
+        bool success = false;
         if( PropertyNameMappings.TryGetValue(propertyName , out var mappedName) )
         {
             propertyName = mappedName;
@@ -495,6 +498,7 @@ public class OTE_OfflineModel : IResultsModel
             {
                 var convertedValue = converter.ConvertFrom(value);
                 propertyInfo.SetValue(this , convertedValue);
+                success = true;
             }
             catch( System.Exception e )
             {
@@ -502,6 +506,7 @@ public class OTE_OfflineModel : IResultsModel
                 //throw;
             }
         }
+        return success;
 
     }
 
@@ -511,5 +516,5 @@ public interface IResultsModel
 {
     public abstract bool Contains(string value);
     public abstract HashSet<string> AllToHashSet( );
-    public abstract void SetPropertyValue(string propertyName , object value);
+    public abstract bool SetPropertyValue(string propertyName , object value);
 }

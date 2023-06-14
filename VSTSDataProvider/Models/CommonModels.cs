@@ -80,7 +80,7 @@ public class EditingModel : Models.IResultsModel
         return false;
     }
 
-    public void SetPropertyValue(string propertyName , object value)
+    public bool SetPropertyValue(string propertyName , object value)
     {
         throw new System.NotImplementedException();
     }

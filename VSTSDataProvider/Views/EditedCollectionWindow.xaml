@@ -9,7 +9,8 @@
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
         Title="Edited Collection Window"
         Width="800"
-        Height="450">
+        Height="450"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ContextMenu>
             <ContextMenu>
@@ -21,18 +22,18 @@
                       d:ItemsSource="{d:SampleData ItemCount=1}"
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
-                      IsReadOnly="True"
+                      IsReadOnly="False"
                       SelectionUnit="CellOrRowHeader">
                 <DataGrid.Style>
                     <Style TargetType="DataGrid">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
                                 <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
-                                <Setter Property="ItemsSource" Value="{Binding EditDetailsCollectionView}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditDetailObCollectionForWindow}" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
                                 <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
-                                <Setter Property="ItemsSource" Value="{Binding EditOTEsCollectionView}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditingOTEObCollectionForWindow}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

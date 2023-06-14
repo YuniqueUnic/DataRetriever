@@ -293,4 +293,10 @@
   <data name="TestStepsWindow" xml:space="preserve">
     <value>Test Steps</value>
   </data>
+  <data name="MainWindowTitle" xml:space="preserve">
+    <value>VSTS Data Provider</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>Show</value>
+  </data>
 </root>

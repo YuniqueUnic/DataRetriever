@@ -363,14 +363,7 @@
                                 </MenuItem.Header>
                                 <MenuItem Name="LeftSaveMenuItem"
                                           Header="{x:Static prop:Resource.Save}"
-                                          Command="{Binding SaveEditingItemCommand}">
-                                    <!--<MenuItem.CommandParameter>
-                                        <MultiBinding>
-                                            <Binding ElementName="LeftTextBoxTitleTextBlock" Path="Text" />
-                                            <Binding ElementName="LeftRTB" Path="Text" />
-                                        </MultiBinding>
-                                    </MenuItem.CommandParameter>-->
-                                </MenuItem>
+                                          Command="{Binding SaveEditingItemCommand}" />
                                 <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding ResetLeftBoxContentToInitCommand}" />
                                 <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="{Binding CancelEditCommand}" />
                             </MenuItem>
@@ -590,10 +583,13 @@
                                 <MenuItem Click="RightSaveMenuItem_Clicked"
                                           Header="{x:Static prop:Resource.Save}"
                                           CommandTarget="{Binding ElementName=RightRTB}" />
-                                <MenuItem Header="{x:Static prop:Resource.Reset}" CommandTarget="{Binding ElementName=RightRTB}" />
-                                <MenuItem Header="{x:Static prop:Resource.Cancel}"
-                                          Command="{Binding AboutCommand}"
-                                          CommandParameter="{Binding Clip}" />
+                                <MenuItem Click="RightResetMenuItem_Clicked"
+                                          Header="{x:Static prop:Resource.Reset}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                                <MenuItem Click="RightCancelMenuItem_Click"
+                                          Header="{x:Static prop:Resource.Cancel}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                                <!--  Command="{Binding AboutCommand}"  -->
                             </MenuItem>
                         </Menu>
                     </Grid>

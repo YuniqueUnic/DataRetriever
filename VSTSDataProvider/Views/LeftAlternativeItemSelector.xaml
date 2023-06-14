@@ -31,10 +31,11 @@
                 <Button Name="ShowDataGridButton"
                         Grid.Row="0"
                         Grid.Column="0"
-                        Click="ShowDataGridButton_Click">
+                        Click="ShowDataGridButton_Click"
+                        Command="{Binding ShowEditedCollectionViewCommand}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="👁" />
-                        <TextBlock Margin="4,0" Text="Show" />
+                        <TextBlock Margin="4,0" Text="{x:Static prop:Resource.Show}" />
                     </StackPanel>
                 </Button>
                 <ComboBox Name="EditFilterComboBox"

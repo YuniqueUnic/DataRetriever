@@ -10,7 +10,8 @@
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
         Title="{Binding ID, StringFormat='{}{0} TestSteps'}"
         Width="800"
-        Height="450">
+        Height="450"
+        WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.Resources>
             <ResourceDictionary>

@@ -9,10 +9,11 @@
         xmlns:local="clr-namespace:VSTSDataProvider.Views"
         xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
         xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
-        Title="EditTableWindow"
+        Title="{x:Static prop:Resource.MainWindowTitle}"
         Width="800"
         Height="450"
-        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}">
+        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
 
@@ -222,7 +223,6 @@
                                     <Image Source="/Images/ListNumbering.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
-
                             <MenuItem Header="{x:Static prop:Resource.Language}"
                                       Command="{Binding LanguageChangeCommand}"
                                       CommandParameter="{x:Static prop:Resource.Language}">

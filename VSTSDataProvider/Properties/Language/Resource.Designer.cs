@@ -331,6 +331,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 VSTS Data Provider 的本地化字符串。
+        /// </summary>
+        public static string MainWindowTitle {
+            get {
+                return ResourceManager.GetString("MainWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Menu 的本地化字符串。
         /// </summary>
         public static string Menu {
@@ -444,6 +453,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string SaveFileSuccessfully {
             get {
                 return ResourceManager.GetString("SaveFileSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Show 的本地化字符串。
+        /// </summary>
+        public static string Show {
+            get {
+                return ResourceManager.GetString("Show", resourceCulture);
             }
         }
         

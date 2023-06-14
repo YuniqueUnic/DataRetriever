@@ -281,4 +281,10 @@
   <data name="TestStepsWindow" xml:space="preserve">
     <value>测试步骤</value>
   </data>
+  <data name="MainWindowTitle" xml:space="preserve">
+    <value>VSTS 数据提取</value>
+  </data>
+  <data name="Show" xml:space="preserve">
+    <value>查看</value>
+  </data>
 </root>

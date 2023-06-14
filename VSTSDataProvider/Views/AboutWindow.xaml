@@ -13,7 +13,7 @@
         Width="800"
         Height="450"
         d:DataContext="{d:DesignInstance {x:Type vm:AboutViewModel}}"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary />
     </Window.Resources>

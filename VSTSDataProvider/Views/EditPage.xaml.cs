@@ -202,6 +202,17 @@ public partial class EditPage : UserControl
         }
     }
 
+    private void RightResetMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
+    {
+
+    }
+
+    private void RightCancelMenuItem_Click(object sender , System.Windows.RoutedEventArgs e)
+    {
+        RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
+        rightRichTextBox.Document.Blocks.Clear();
+    }
+
 
     //private void CmbFontFamily_SelectionChanged(object sender , SelectionChangedEventArgs e)
     //{

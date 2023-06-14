@@ -10,8 +10,12 @@ public enum OutcomeState : int
     [StringValue("failed")]
     Failed,//failed
 
+
     [StringValue("unspecified")]
     Active,//unspecified
+
+    [StringValue("active")]
+    Active_,
 
     [StringValue("passed")]
     Passed,//passed
@@ -32,7 +36,7 @@ public enum TestTools : int
     UFT,
 }
 
-//还待完善,暂定
+//Obsolete
 public enum ProductAreas
 {
     AAM,

@@ -40,7 +40,7 @@
                     <DataGrid Name="OTEsDataGrid"
                               d:ItemsSource="{d:SampleData ItemCount=100}"
                               IsReadOnly="True"
-                              SelectionUnit="Cell"
+                              SelectionUnit="CellOrRowHeader"
                               Template="{StaticResource OTE_OfflineModelsGridTemplate}"
                               Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibilityReverse}}"
                               ItemsSource="{Binding VstsDataCollectionViewOTEs}" />
@@ -48,7 +48,7 @@
                     <DataGrid Name="DetailsDataGrid"
                               d:ItemsSource="{d:SampleData ItemCount=100}"
                               IsReadOnly="True"
-                              SelectionUnit="Cell"
+                              SelectionUnit="CellOrRowHeader"
                               Template="{StaticResource DetailModelsGridTemplate}"
                               Visibility="{Binding IsDetailsChecked, Converter={StaticResource BoolenNullableToVisibility}}"
                               ItemsSource="{Binding VstsDataCollectionViewDetails}" />

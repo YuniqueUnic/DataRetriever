@@ -356,8 +356,6 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-
-
     //Details ComboBox FilterText
     public string DetailsFilterComboBoxText
     {
@@ -419,58 +417,58 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        await ReleaseMethod();
-        //if( IsDetailsChecked )
-        //{
-        //    //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
-        //    VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
-        //    EditDetailsCollection = await DebugMethod<Models.DetailModel>();
-        //}
-        //else
-        //{
-        //    VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
-        //    EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
-        //}
+        //await ReleaseMethod();
+        if( IsDetailsChecked )
+        {
+            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
+        }
+        else
+        {
+            VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
+        }
 
     }
 
-    //private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
-    //{
-    //    Models.ExecuteVSTSModel.RootObject exeResult;
-    //    Models.QueryVSTSModel.RootObject queResult;
+    private async Task<ConcurrentBag<T>> DebugMethod<T>( ) where T : class, Models.IResultsModel
+    {
+        Models.ExecuteVSTSModel.RootObject exeResult;
+        Models.QueryVSTSModel.RootObject queResult;
 
-    //    using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithDetail.json")) )
-    //    {
-    //        var fileData = await dataFile.ReadToEndAsync();
-    //        exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
-    //    }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithDetail.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            exeResult = new TestData.TestVSTSClass().DeserializeBy<Models.ExecuteVSTSModel.RootObject>(fileData);
+        }
 
-    //    using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithOTE.json")) )
-    //    {
-    //        var fileData = await dataFile.ReadToEndAsync();
-    //        queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
-    //    }
+        using( var dataFile = System.IO.File.OpenText(System.IO.Path.GetFullPath(@"C:\Users\Administrator\source\repos\HysysToolModels\VSTSDataProvider\TestData\StepWithOTE.json")) )
+        {
+            var fileData = await dataFile.ReadToEndAsync();
+            queResult = new TestData.TestVSTSClass().DeserializeBy<Models.QueryVSTSModel.RootObject>(fileData);
+        }
 
-    //    if( typeof(T) == typeof(Models.OTE_OfflineModel) )
-    //    {
-    //        ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new VSTSDataProcessing().MergeModelstoOTEsBy(exeResult , queResult , out bool succeedMergeOTEs);
-    //        return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
-    //    }
-    //    else if( typeof(T) == typeof(Models.TestCase) )
-    //    {
-    //        ConcurrentBag<Models.TestCase> newTCsModel = new VSTSDataProcessing().MergeModelstoTCsBy(exeResult , queResult , out bool succeedMergeTcs);
-    //        return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //    }
-    //    else if( typeof(T) == typeof(Models.DetailModel) )
-    //    {
-    //        ConcurrentBag<Models.DetailModel> newTCsModel = new VSTSDataProcessing().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
-    //        return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
-    //    }
-    //    else
-    //    {
-    //        throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
-    //    }
-    //}
+        if( typeof(T) == typeof(Models.OTE_OfflineModel) )
+        {
+            ConcurrentBag<Models.OTE_OfflineModel> newOTEsModel = new VSTSDataProcessing().MergeModelstoOTEsBy(exeResult , queResult , out bool succeedMergeOTEs);
+            return succeedMergeOTEs ? (ConcurrentBag<T>)(object)newOTEsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.TestCase) )
+        {
+            ConcurrentBag<Models.TestCase> newTCsModel = new VSTSDataProcessing().MergeModelstoTCsBy(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else if( typeof(T) == typeof(Models.DetailModel) )
+        {
+            ConcurrentBag<Models.DetailModel> newTCsModel = new VSTSDataProcessing().MergeModelstoDetailsBy(exeResult , queResult , out bool succeedMergeTcs);
+            return succeedMergeTcs ? (ConcurrentBag<T>)(object)newTCsModel : null;
+        }
+        else
+        {
+            throw new ArgumentException("Invalid type parameter T. T must be either Models.OTE_OfflineModel or Models.TestCase.");
+        }
+    }
 
     private async Task ReleaseMethod( )
     {
@@ -612,7 +610,9 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                 .SetSheetName(IsDetailsChecked ? Resource.Detail : Resource.OTE)
                 .setFileName(fileName)
                 .SetExcelType(excelType)
-                .ExportAsync(IsDetailsChecked ? VstsDataCollectionViewDetails : VstsDataCollectionViewOTEs);
+                .ExportAsync(IsDetailsChecked ?
+                ModeToggleButtonState ? VstsDataCollectionViewDetails : EditDetailsCollectionView
+                : ModeToggleButtonState ? VstsDataCollectionViewOTEs : EditOTEsCollectionView);
 
             if( exportResult.SucceedDone )
             {
@@ -770,18 +770,14 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         CancelEditCommand = new RelayCommand(CancelEdit);
     }
 
-
-
     public IOrderedEnumerable<System.Windows.Media.FontFamily> FontFamiliesList { get; private set; } = System.Windows.Media.Fonts.SystemFontFamilies.OrderBy(f => f.Source);
     public List<Int32> FontSizeList { get; private set; } = new List<Int32>() { 2 , 4 , 6 , 8 , 10 , 12 , 14 , 16 , 18 , 20 , 22 , 24 , 26 , 28 , 32 , 48 , 72 };
-
-    private const string initialXamlDocument = $@"<FlowDocument xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""><Paragraph Foreground=""Black""><Bold></Bold></Paragraph></FlowDocument>";
 
     private string _leftEditTextBoxTitle;
     private string _rightEditRichTextBoxTitle;
 
     private string _leftEditTextBoxDocument;
-    private string _rightEditRichTextBoxDocument = initialXamlDocument;
+    private string _rightEditRichTextBoxDocument;
 
 
     private ConcurrentBag<Models.DetailModel> _editDetailsCollection;
@@ -956,6 +952,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollection { get; set; } = new ObservableCollection<Models.OTE_OfflineModel>();
 
+    public ObservableCollection<Models.DetailModel> EditDetailObCollectionForWindow { get; set; }
+
+    public ObservableCollection<Models.OTE_OfflineModel> EditingOTEObCollectionForWindow { get; set; }
+
 
     public ICommand ShowEditedCollectionViewCommand { get; private set; }
     public ICommand SaveEditingItemCommand { get; private set; }
@@ -966,11 +966,19 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     public void ShowEditedCollectionView( )
     {
-        Views.EditedCollectionWindow editedCollectionWindow = new Views.EditedCollectionWindow();
-        editedCollectionWindow.DataContext = this;
-        editedCollectionWindow.Show();
-    }
+        Views.EditedCollectionWindow CollectionWindow = Views.EditedCollectionWindow.CollectionWindow;
 
+        if( IsDetailsChecked )
+        {
+            EditDetailObCollectionForWindow = new ObservableCollection<Models.DetailModel>(EditDetailsCollection);
+        }
+        else
+        {
+            EditingOTEObCollectionForWindow = new ObservableCollection<Models.OTE_OfflineModel>(EditOTEsCollection);
+        }
+        CollectionWindow.DataContext = this;
+        CollectionWindow.Show();
+    }
 
     //TODO: Add a command to save the edited item
     private void SaveEditingItem( )
@@ -979,12 +987,14 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
         int testcaseID = -1;
         string testcaseName = string.Empty;
+        bool success = false;
+
         if( IsDetailsChecked )
         {
             testcaseID = EditingDetailObCollection.First().ID;
             testcaseName = EditingDetailObCollection.First().Name;
-            EditingDetailObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
-            EditingDetailObCollection.RemoveAt(0);
+            success = EditingDetailObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
+            EditingDetailObCollection.Clear();
             EditingDetailObCollection.Add(EditDetailsCollection.First(i => i.ID == testcaseID || i.Name == testcaseName));
             EditDetailsCollectionView.Refresh();
         }
@@ -992,21 +1002,17 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             testcaseID = EditingOTEObCollection.First().TestCaseId;
             testcaseName = EditingOTEObCollection.First().Title;
-            EditingOTEObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
-            EditingOTEObCollection.RemoveAt(0);
+            success = EditingOTEObCollection.First().SetPropertyValue(LeftEditTextBoxTitle , LeftEditTextBoxDocument.TrimEnd());
+            EditingOTEObCollection.Clear();
             EditingOTEObCollection.Add(EditOTEsCollection.First(i => i.TestCaseId == testcaseID || i.Title == testcaseName));
             EditOTEsCollectionView.Refresh();
         }
 
-        LeftEditTextBoxDocumentBackUp = LeftEditTextBoxDocument;
+        if( success ) { LeftEditTextBoxDocumentBackUp = LeftEditTextBoxDocument; }
+
     }
 
-    private void ResetLeftBoxContentToInit( )
-    {
-        LeftEditTextBoxDocument = LeftEditTextBoxDocumentBackUp;
-    }
-
-
+    private void ResetLeftBoxContentToInit( ) { LeftEditTextBoxDocument = LeftEditTextBoxDocumentBackUp; }
 
     private void CancelEdit( )
     {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using VSTSDataProvider.ViewModels;
 
 namespace VSTSDataProvider.Views
 {
@@ -8,6 +9,25 @@ namespace VSTSDataProvider.Views
     /// </summary>
     public partial class EditedCollectionWindow : Window
     {
+        private static EditedCollectionWindow editedCollectionWindow;
+
+        private static volatile object _lock = new object();
+        //singleton pattern
+        public static EditedCollectionWindow CollectionWindow
+        {
+            get
+            {
+                if( editedCollectionWindow == null )
+                {
+                    lock( _lock )
+                    {
+                        editedCollectionWindow ??= new Views.EditedCollectionWindow();
+                    }
+                }
+                return editedCollectionWindow;
+            }
+        }
+
         public EditedCollectionWindow( )
         {
             InitializeComponent();
@@ -17,6 +37,9 @@ namespace VSTSDataProvider.Views
         {
             e.Cancel = true;
             this.Visibility = Visibility.Hidden;
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel;
+            viewModel.EditDetailObCollectionForWindow = null;
+            viewModel.EditingOTEObCollectionForWindow = null;
             //base.OnClosing(e);
         }
     }
