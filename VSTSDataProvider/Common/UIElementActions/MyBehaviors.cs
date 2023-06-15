@@ -102,6 +102,13 @@ public class DoubleClickToEditItemBehavior : Behavior<FrameworkElement>
 // TODO: This behavior is not complete.
 public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 {
+
+    public string SideName
+    {
+        get { return (string)GetValue(SideNameProperty); }
+        set { SetValue(SideNameProperty , value); }
+    }
+
     public string RichTextBoxTitle
     {
         get { return (string)GetValue(RichTextBoxTitleProperty); }
@@ -148,24 +155,59 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 
     private void EditinTheSideof(object sender , MouseButtonEventArgs e)
     {
-
         if( sender == null ) return;
         try
         {
-
             MenuItem menuItem = sender as MenuItem;
             ContextMenu contextMenu = menuItem?.Parent as ContextMenu;
             DataGridCell dataGridCell = contextMenu?.PlacementTarget as DataGridCell;
-            //DataGridCell dataGridCell = ((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as DataGridCell;
-            DataGridColumn dataGridTextColumn = dataGridCell?.Column;
-            string cellValue = (dataGridCell.Content as TextBlock).Text;
-            string cellColumnHeaderValue = dataGridTextColumn.Header.ToString();
 
-            RichTextBoxTitle = cellColumnHeaderValue;
-            RichTextBoxContent = cellValue;
+            if( SideName == "Left" )
+            {
+                //DataGridCell dataGridCell = ((sender as MenuItem)?.Parent as ContextMenu)?.PlacementTarget as DataGridCell;
+                DataGridColumn dataGridTextColumn = dataGridCell?.Column;
+                string cellValue = (dataGridCell.Content as TextBlock).Text;
+                string cellColumnHeaderValue = dataGridTextColumn.Header.ToString();
 
-            BindingOperations.GetBindingExpression(this , RichTextBoxTitleProperty).UpdateSource();
-            BindingOperations.GetBindingExpression(this , RichTextBoxContentProperty).UpdateSource();
+                RichTextBoxTitle = cellColumnHeaderValue;
+                RichTextBoxContent = cellValue;
+
+                BindingOperations.GetBindingExpression(this , RichTextBoxTitleProperty).UpdateSource();
+                BindingOperations.GetBindingExpression(this , RichTextBoxContentProperty).UpdateSource();
+            }
+            else if( SideName == "Right" )
+            {
+                UserControl userControl = dataGridCell.Tag as UserControl;
+                RichTextBox RightRTB = userControl.FindName("RightRTB") as RichTextBox;
+                ViewModels.MainWindowViewModel vm = contextMenu.DataContext as ViewModels.MainWindowViewModel;
+
+                //Add the extra rtf to the right rich text box
+                Paragraph paragraph = new Paragraph();
+                System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+                if( vm.IsDetailsChecked )
+                {
+                    stringBuilder.AppendLine(@$"TestCase: {vm.EditingDetailObCollection[0].ID}");
+                    stringBuilder.AppendLine(@$"Title: {vm.EditingDetailObCollection[0].Name}");
+                    stringBuilder.AppendLine(@$"Link: {vm.EditingDetailObCollection[0].Configuration}");
+                    stringBuilder.AppendLine(@$"Outcome: {vm.EditingDetailObCollection[0].Outcome}");
+                    RichTextBoxTitle = vm.EditingDetailObCollection[0].ID.ToString();
+                }
+                else
+                {
+
+                    stringBuilder.AppendLine(@$"TestCase: {vm.EditingOTEObCollection[0].TestCaseId}");
+                    stringBuilder.AppendLine(@$"Title: {vm.EditingOTEObCollection[0].Title}");
+                    stringBuilder.AppendLine(@$"Link: {vm.EditingOTEObCollection[0].Configuration}");
+                    stringBuilder.AppendLine(@$"Outcome: {vm.EditingOTEObCollection[0].Outcome}");
+                    RichTextBoxTitle = vm.EditingOTEObCollection[0].TestCaseId.ToString();
+                }
+                RightRTB.Document.Blocks.Clear();
+                paragraph.Inlines.Add(new Run(stringBuilder.ToString()));
+                RightRTB.Document.Blocks.Add(paragraph);
+                RightRTB.CaretPosition = RightRTB.Document.ContentEnd;
+
+                BindingOperations.GetBindingExpression(this , RichTextBoxTitleProperty).UpdateSource();
+            }
         }
         catch( NullReferenceException )
         {

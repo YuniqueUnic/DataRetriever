@@ -276,9 +276,11 @@
                       CanUserDeleteRows="False"
                       IsReadOnly="False"
                       RowHeight="{Binding ElementName=EditingItemDataGrid, Path=ActualHeight}"
-                      SelectionUnit="CellOrRowHeader">
+                      SelectionUnit="CellOrRowHeader"
+                      Tag="{Binding ElementName=RightRTB}">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
+                        <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
                         <Setter Property="ContextMenu">
                             <Setter.Value>
                                 <ContextMenu x:Name="EditColumnContextMenu"
@@ -286,13 +288,17 @@
                                              IsEnabled="True">
                                     <MenuItem Header="{x:Static prop:Resource.EditThisItem}">
                                         <i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}" RichTextBoxTitle="{Binding LeftEditTextBoxTitle}" />
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
+                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"
+                                                                         SideName="Left" />
                                         </i:Interaction.Behaviors>
                                     </MenuItem>
-                                    <MenuItem Header="{x:Static prop:Resource.EditExtraRtf}">
-                                        <!--<i:Interaction.Behaviors>
-                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding RightEditRichTextBoxDocument}" RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}" />
-                                        </i:Interaction.Behaviors>-->
+                                    <MenuItem x:Name="EditRTFFMenuItem" Header="{x:Static prop:Resource.EditExtraRtf}">
+                                        <i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding ElementName=EditColumnContextMenu, Path=Parent}"
+                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}"
+                                                                         SideName="Right" />
+                                        </i:Interaction.Behaviors>
                                     </MenuItem>
                                 </ContextMenu>
                             </Setter.Value>
@@ -577,7 +583,7 @@
                                                    Margin="0"
                                                    Padding="0"
                                                    VerticalAlignment="Center"
-                                                   Text="Menu" />
+                                                   Text="{Binding RightEditRichTextBoxTitle}" />
                                     </StackPanel>
                                 </MenuItem.Header>
                                 <MenuItem Click="RightSaveMenuItem_Clicked"
@@ -589,7 +595,6 @@
                                 <MenuItem Click="RightCancelMenuItem_Click"
                                           Header="{x:Static prop:Resource.Cancel}"
                                           CommandTarget="{Binding ElementName=RightRTB}" />
-                                <!--  Command="{Binding AboutCommand}"  -->
                             </MenuItem>
                         </Menu>
                     </Grid>

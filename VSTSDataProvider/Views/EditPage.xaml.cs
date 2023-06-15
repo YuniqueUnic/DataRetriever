@@ -18,6 +18,7 @@ public partial class EditPage : UserControl
         InitializeComponent();
         LeftRTB.InputBindings.Add(new KeyBinding(IncreaseIndentationCommand , Key.T , ModifierKeys.Control));
         LeftRTB.InputBindings.Add(new KeyBinding(DecreaseIndentationCommand , Key.T , ModifierKeys.Control | ModifierKeys.Shift));
+
     }
 
     private ICommand _increaseIndentationCommand;
@@ -204,7 +205,31 @@ public partial class EditPage : UserControl
 
     private void RightResetMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
     {
+        RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
+        ViewModels.MainWindowViewModel vm = this.DataContext as ViewModels.MainWindowViewModel;
+        Paragraph paragraph = new Paragraph();
+        System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+        if( vm.IsDetailsChecked )
+        {
+            stringBuilder.AppendLine(@$"TestCase: {vm.EditingDetailObCollection[0].ID}");
+            stringBuilder.AppendLine(@$"Title: {vm.EditingDetailObCollection[0].Name}");
+            stringBuilder.AppendLine(@$"Link: {vm.EditingDetailObCollection[0].Configuration}");
+            stringBuilder.AppendLine(@$"Outcome: {vm.EditingDetailObCollection[0].Outcome}");
+            vm.RightEditRichTextBoxTitle = vm.EditingDetailObCollection[0].ID.ToString();
+        }
+        else
+        {
 
+            stringBuilder.AppendLine(@$"TestCase: {vm.EditingOTEObCollection[0].TestCaseId}");
+            stringBuilder.AppendLine(@$"Title: {vm.EditingOTEObCollection[0].Title}");
+            stringBuilder.AppendLine(@$"Link: {vm.EditingOTEObCollection[0].Configuration}");
+            stringBuilder.AppendLine(@$"Outcome: {vm.EditingOTEObCollection[0].Outcome}");
+            vm.RightEditRichTextBoxTitle = vm.EditingOTEObCollection[0].TestCaseId.ToString();
+        }
+        rightRichTextBox.Document.Blocks.Clear();
+        paragraph.Inlines.Add(new Run(stringBuilder.ToString()));
+        rightRichTextBox.Document.Blocks.Add(paragraph);
+        rightRichTextBox.CaretPosition = rightRichTextBox.Document.ContentEnd;
     }
 
     private void RightCancelMenuItem_Click(object sender , System.Windows.RoutedEventArgs e)
@@ -212,6 +237,34 @@ public partial class EditPage : UserControl
         RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
         rightRichTextBox.Document.Blocks.Clear();
     }
+
+    //Replaced by behavior.
+    //private void EditRtfExtraMenuItem_Click(object sender , System.Windows.RoutedEventArgs e)
+    //{
+    //    ViewModels.MainWindowViewModel vm = this.DataContext as ViewModels.MainWindowViewModel;
+    //    //Add the extra rtf to the right rich text box
+    //    Paragraph paragraph = new Paragraph();
+    //    System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+    //    if( vm.IsDetailsChecked )
+    //    {
+    //        stringBuilder.AppendLine(@$"TestCase: {vm.EditingDetailObCollection[0].ID}");
+    //        stringBuilder.AppendLine(@$"Title: {vm.EditingDetailObCollection[0].Name}");
+    //        stringBuilder.AppendLine(@$"Link: {vm.EditingDetailObCollection[0].Configuration}");
+    //        stringBuilder.AppendLine(@$"Outcome: {vm.EditingDetailObCollection[0].Outcome}");
+    //    }
+    //    else
+    //    {
+
+    //        stringBuilder.AppendLine(@$"TestCase: {vm.EditingOTEObCollection[0].TestCaseId}");
+    //        stringBuilder.AppendLine(@$"Title: {vm.EditingOTEObCollection[0].Title}");
+    //        stringBuilder.AppendLine(@$"Link: {vm.EditingOTEObCollection[0].Configuration}");
+    //        stringBuilder.AppendLine(@$"Outcome: {vm.EditingOTEObCollection[0].Outcome}");
+    //    }
+
+    //    paragraph.Inlines.Add(new Run(stringBuilder.ToString()));
+    //    RightRTB.Document.Blocks.Add(paragraph);
+    //    RightRTB.CaretPosition = RightRTB.Document.ContentEnd;
+    //}
 
 
     //private void CmbFontFamily_SelectionChanged(object sender , SelectionChangedEventArgs e)
