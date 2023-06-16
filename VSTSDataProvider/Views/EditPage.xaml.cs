@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
+using VSTSDataProvider.Properties.Language;
 using VSTSDataProvider.ViewModels.ViewModelBase;
 
 namespace VSTSDataProvider.Views;
@@ -13,6 +16,7 @@ namespace VSTSDataProvider.Views;
 /// </summary>
 public partial class EditPage : UserControl
 {
+
     public EditPage( )
     {
         InitializeComponent();
@@ -188,12 +192,28 @@ public partial class EditPage : UserControl
     private void RightSaveMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
     {
         RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
+
+        if (rightRichTextBox.Document.Blocks.Count <= 0) return;
+
         Microsoft.Win32.SaveFileDialog file = new Microsoft.Win32.SaveFileDialog();
 
         file.Filter = "Doc Files (*.doc)|*.doc|Rich Text Files (*.rtf)|*.rtf|All (*.*)|*.*";
         file.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        file.Title = Resource.SaveFileDialogTitle;
+        ViewModels.MainWindowViewModel MainWindowViewModel = this.DataContext as ViewModels.MainWindowViewModel;
 
-        if( file.ShowDialog() == true )
+        if (MainWindowViewModel.IsDetailsChecked)
+        {
+            if (MainWindowViewModel.EditingDetailObCollection.Count <= 0) return;
+            file.FileName = "TC_" + MainWindowViewModel.EditingDetailObCollection[0].ID.ToString();
+        }
+        else
+        {
+            if (MainWindowViewModel.EditingOTEObCollection.Count <= 0) return;
+            file.FileName = "TC_" + MainWindowViewModel.EditingOTEObCollection[0].TestCaseId.ToString();
+        }
+
+        if ( file.ShowDialog() == true )
         {
             System.IO.FileStream stream = new System.IO.FileStream(file.FileName , System.IO.FileMode.Create);
             TextRange range = new TextRange(rightRichTextBox.Document.ContentStart , rightRichTextBox.Document.ContentEnd);
@@ -206,30 +226,66 @@ public partial class EditPage : UserControl
     private void RightResetMenuItem_Clicked(object sender , System.Windows.RoutedEventArgs e)
     {
         RichTextBox rightRichTextBox = (sender as MenuItem)?.CommandTarget as RichTextBox;
-        ViewModels.MainWindowViewModel vm = this.DataContext as ViewModels.MainWindowViewModel;
         Paragraph paragraph = new Paragraph();
+        Hyperlink hyperlink;
         System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
-        if( vm.IsDetailsChecked )
+        ViewModels.MainWindowViewModel vm = this.DataContext as ViewModels.MainWindowViewModel;
+        if (vm.IsDetailsChecked )
         {
+            if (vm.EditingDetailObCollection.Count <= 0) return;
             stringBuilder.AppendLine(@$"TestCase: {vm.EditingDetailObCollection[0].ID}");
             stringBuilder.AppendLine(@$"Title: {vm.EditingDetailObCollection[0].Name}");
-            stringBuilder.AppendLine(@$"Link: {vm.EditingDetailObCollection[0].Configuration}");
+            hyperlink = new Hyperlink(new Run(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}"));
+            hyperlink.NavigateUri = new Uri(@$"https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}");
+            //stringBuilder.AppendLine(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}");
             stringBuilder.AppendLine(@$"Outcome: {vm.EditingDetailObCollection[0].Outcome}");
             vm.RightEditRichTextBoxTitle = vm.EditingDetailObCollection[0].ID.ToString();
         }
         else
         {
-
+            if (vm.EditingOTEObCollection.Count <= 0) return;
             stringBuilder.AppendLine(@$"TestCase: {vm.EditingOTEObCollection[0].TestCaseId}");
             stringBuilder.AppendLine(@$"Title: {vm.EditingOTEObCollection[0].Title}");
-            stringBuilder.AppendLine(@$"Link: {vm.EditingOTEObCollection[0].Configuration}");
+            //stringBuilder.AppendLine(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}");
+            hyperlink = new Hyperlink(new Run(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}"));
+            hyperlink.NavigateUri = new Uri(@$"https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}");
             stringBuilder.AppendLine(@$"Outcome: {vm.EditingOTEObCollection[0].Outcome}");
             vm.RightEditRichTextBoxTitle = vm.EditingOTEObCollection[0].TestCaseId.ToString();
         }
         rightRichTextBox.Document.Blocks.Clear();
         paragraph.Inlines.Add(new Run(stringBuilder.ToString()));
+        hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
+        paragraph.Inlines.Add(hyperlink);
         rightRichTextBox.Document.Blocks.Add(paragraph);
         rightRichTextBox.CaretPosition = rightRichTextBox.Document.ContentEnd;
+    }
+    private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    {
+        try
+        {
+            // open the link in the default browser
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = e.Uri.AbsoluteUri,
+                UseShellExecute = true
+            };
+
+            // open the link in Chrome browser
+            //ProcessStartInfo startInfo = new ProcessStartInfo
+            //{
+            //    FileName = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ,
+            //    Arguments = e.Uri.AbsoluteUri ,
+            //    UseShellExecute = false
+            //};
+
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            // handle the exception
+        }
+
+        e.Handled = true;
     }
 
     private void RightCancelMenuItem_Click(object sender , System.Windows.RoutedEventArgs e)

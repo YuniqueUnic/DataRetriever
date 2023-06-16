@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -9,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using VSTSDataProvider.ViewModels;
 
 namespace VSTSDataProvider.Common.UIElementActions;
 
@@ -180,7 +182,7 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
                 UserControl userControl = dataGridCell.Tag as UserControl;
                 RichTextBox RightRTB = userControl.FindName("RightRTB") as RichTextBox;
                 ViewModels.MainWindowViewModel vm = contextMenu.DataContext as ViewModels.MainWindowViewModel;
-
+                Hyperlink hyperlink;
                 //Add the extra rtf to the right rich text box
                 Paragraph paragraph = new Paragraph();
                 System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
@@ -188,8 +190,10 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
                 {
                     stringBuilder.AppendLine(@$"TestCase: {vm.EditingDetailObCollection[0].ID}");
                     stringBuilder.AppendLine(@$"Title: {vm.EditingDetailObCollection[0].Name}");
-                    stringBuilder.AppendLine(@$"Link: {vm.EditingDetailObCollection[0].Configuration}");
+                    //stringBuilder.AppendLine(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}");
                     stringBuilder.AppendLine(@$"Outcome: {vm.EditingDetailObCollection[0].Outcome}");
+                    hyperlink = new Hyperlink(new Run(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}"));
+                    hyperlink.NavigateUri = new Uri(@$"https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingDetailObCollection[0].ID}");
                     RichTextBoxTitle = vm.EditingDetailObCollection[0].ID.ToString();
                 }
                 else
@@ -197,12 +201,16 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
 
                     stringBuilder.AppendLine(@$"TestCase: {vm.EditingOTEObCollection[0].TestCaseId}");
                     stringBuilder.AppendLine(@$"Title: {vm.EditingOTEObCollection[0].Title}");
-                    stringBuilder.AppendLine(@$"Link: {vm.EditingOTEObCollection[0].Configuration}");
+                    //stringBuilder.AppendLine(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}");
                     stringBuilder.AppendLine(@$"Outcome: {vm.EditingOTEObCollection[0].Outcome}");
+                    hyperlink = new Hyperlink(new Run(@$"Link: https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}"));
+                    hyperlink.NavigateUri = new Uri(@$"https://aspentech-alm.visualstudio.com/AspenTech/_workitems/edit/{vm.EditingOTEObCollection[0].TestCaseId}");
                     RichTextBoxTitle = vm.EditingOTEObCollection[0].TestCaseId.ToString();
                 }
                 RightRTB.Document.Blocks.Clear();
                 paragraph.Inlines.Add(new Run(stringBuilder.ToString()));
+                hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
+                paragraph.Inlines.Add(hyperlink);
                 RightRTB.Document.Blocks.Add(paragraph);
                 RightRTB.CaretPosition = RightRTB.Document.ContentEnd;
 
@@ -214,6 +222,35 @@ public class EditinTheSideOfBehavior : Behavior<FrameworkElement>
             throw;
         }
 
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    {
+        try
+        {
+            // open the link in the default browser
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = e.Uri.AbsoluteUri,
+                UseShellExecute = true
+            };
+
+            // open the link in Chrome browser
+            //ProcessStartInfo startInfo = new ProcessStartInfo
+            //{
+            //    FileName = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" ,
+            //    Arguments = e.Uri.AbsoluteUri ,
+            //    UseShellExecute = false
+            //};
+
+            Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            // handle the exception
+        }
+
+        e.Handled = true;
     }
 
     protected override void OnDetaching( )
