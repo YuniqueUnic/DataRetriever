@@ -14,7 +14,9 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     private string? _cookie;
     private int _testPlanID;
+    private string? _testPlanName;
     private int _testSuiteID;
+    private string? _testSuiteName;
     private int _totalCount;
 
     private TestPlan? _testPlan;
@@ -27,7 +29,9 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public string? Cooike => _cookie;
     public int TestSuiteID => _testSuiteID;
+    public string? TestSuiteName => _testSuiteName;
     public int TestPlanID => _testPlanID;
+    public string? TestPlanName => _testPlanName;
     public int TotalCount => _totalCount;
 
     public TestPlan TestPlan
@@ -102,6 +106,8 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         {
             _queryRootObject = queryVSTSModel;
             _exeRootObject = executeVSTSModel;
+            _testPlanName = queryVSTSModel.value[0].testPlan.name;
+            _testSuiteName = queryVSTSModel.value[0].testSuite.name;
             return true;
         }
 
@@ -109,7 +115,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     //TODO to show the concat progress
-    [Obsolete("Recommend using DetailModel.")]
+    [Obsolete("Recommend using DetailModel. Out of date!!! No latest changes.")]
     public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync( )
     {
         IsTestCasesLoadOver = false;
