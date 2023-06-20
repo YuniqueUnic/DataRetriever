@@ -235,7 +235,7 @@
                         <DataGridTextColumn Binding="{Binding StepExpected}" Header="StepExpected" />
                         <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
                         <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
-                        <DataGridTextColumn Binding="{Binding AssignTo}" Header="AssignTo" />
+                        <DataGridTextColumn Binding="{Binding AssignTo}" Header="AssignedTo" />
                         <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
                         <DataGridTextColumn Binding="{Binding Comment}" Header="Comment" />
                         <DataGridTextColumn Binding="{Binding Defects}" Header="Defects" />
