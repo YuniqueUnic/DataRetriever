@@ -208,6 +208,7 @@ public class DetailModel : IResultsModel
     public int TestPlanId { get; set; } = -1;
     public int TestSuiteId { get; set; } = -1;
     public int ID { get; set; } = -1;
+    [ExcelColumnName("Title")]
     public string? Name { get; set; }
     public string? CQID { get; set; }
     public string? ProductArea { get; set; }
@@ -379,12 +380,14 @@ public class OTE_OfflineModel : IResultsModel
     public string? StepExpected { get; set; } = string.Empty;
     public int TestPointId { get; set; } = -1;
     public string? Configuration { get; set; }
+
+    [ExcelColumnName("AssignedTo")]
     public string? AssignTo { get; set; }
+    public OutcomeState Outcome { get; set; }
     public string? Comment { get; set; } = string.Empty;
     public string? Defects { get; set; } = string.Empty;
     public string? RunBy { get; set; }
 
-    public OutcomeState Outcome { get; set; }
 
     [ExcelIgnore]
     public string? OutcomeStr

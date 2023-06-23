@@ -48,9 +48,13 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
 
     #region UI Binding - BindingProperties
+
     private int _totalCount;
     private bool _isDetailsChecked = true;
     private bool _modeToggleButtonState = true;
+
+    private string? _testPlanName;
+    private string? _testSuiteName;
 
     private string? _testPlanID;
     private string? _testSuiteID;
@@ -206,6 +210,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
+    public string? TestPlanName
+    {
+        get => _testPlanName ?? "TestPlanName";
+        set
+        {
+            SetProperty(ref _testPlanName, value);
+        }
+    }
+
     public string? TestSuiteID
     {
         get => _testSuiteID ?? "TestTestSuiteID";
@@ -213,6 +226,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         {
             SetProperty(ref _testSuiteID , value);
             GetDataButtonClickedCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    public string? TestSuiteName
+    {
+        get => _testSuiteName ?? "TestSuiteName";
+        set
+        {
+            SetProperty(ref _testSuiteName, value);
         }
     }
 
@@ -494,6 +516,9 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                 EditOTEsCollection = await mVSTSDataProvider.MergeLocalModelsAgainAsync<Models.OTE_OfflineModel>();
             }
 
+            TestPlanName = mVSTSDataProvider.TestPlanName;
+            TestSuiteName = mVSTSDataProvider.TestSuiteName;
+
             ConsoleRelated.ConsoleEx.Log("End of Loading VSTS Data...");
         }
     }
@@ -588,7 +613,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
         // set the default Title and File name
         saveFileDialog.Title = Resource.SaveFileDialogTitle;
-        saveFileDialog.FileName = (IsDetailsChecked ? "Detail_" : "OTE_") + $"{Guid.NewGuid()}";
+        saveFileDialog.FileName = (IsDetailsChecked ? "Detail_" : "OTE_") + $"{TestSuiteName ?? Guid.NewGuid().ToString()}";
 
         // set the file Filter
         saveFileDialog.Filter = "Excel (*.xlsx)|*.xlsx|CSV (*.csv)|*.csv|All (*.*)|*.*";
