@@ -44,9 +44,9 @@ public abstract class BaseVSTSModel : IVSTSModel
 
     public virtual async Task<T> GetModel<T>(Action callBackAction)
     {
-        //"y2qyttomd7bsbjw6htual3vwqngvrrh4ibiwajh3zrysbmd3rx3a"
         var responseContent = await NetUtils.SendRequestWithAccessToken(TargetUriBuilder.ToString(), Cookie, callBackAction);
-        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "nResult1.txt"), nResult1).ConfigureAwait(false);
+        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{DateTime.Now.ToString("HH_mm_ss")}.txt"), responseContent).ConfigureAwait(false);
+
 
         //var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
         //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "nResult2.txt"), responseContent).ConfigureAwait(false);
