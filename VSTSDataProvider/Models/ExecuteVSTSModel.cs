@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using VSTSDataProvider.Common;
+using static VSTSDataProvider.Models.QueryVSTSModel;
 
 namespace VSTSDataProvider.Models;
 public interface IVSTSModel
@@ -42,7 +44,13 @@ public abstract class BaseVSTSModel : IVSTSModel
 
     public virtual async Task<T> GetModel<T>(Action callBackAction)
     {
-        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
+        var responseContent = await NetUtils.SendRequestWithAccessToken(TargetUriBuilder.ToString(), Cookie, callBackAction);
+        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{DateTime.Now.ToString("HH_mm_ss")}.txt"), responseContent).ConfigureAwait(false);
+
+
+        //var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
+        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "nResult2.txt"), responseContent).ConfigureAwait(false);
+
         return DeserializeBy<T>(responseContent);
     }
 

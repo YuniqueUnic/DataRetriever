@@ -32,7 +32,7 @@ public enum TestTools : int
     [StringValue]
     Silk4Net,
 
-    [StringValue]
+    [StringValue("UFT Developer")]
     UFT,
 }
 
