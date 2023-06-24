@@ -380,9 +380,7 @@ public class OTE_OfflineModel : IResultsModel
     public string? StepExpected { get; set; } = string.Empty;
     public int TestPointId { get; set; } = -1;
     public string? Configuration { get; set; }
-
-    [ExcelColumnName("AssignedTo")]
-    public string? AssignTo { get; set; }
+    public string? AssignedTo { get; set; }
     public OutcomeState Outcome { get; set; }
     public string? Comment { get; set; } = string.Empty;
     public string? Defects { get; set; } = string.Empty;

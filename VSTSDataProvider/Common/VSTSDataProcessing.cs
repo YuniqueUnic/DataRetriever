@@ -14,9 +14,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     private string? _cookie;
     private int _testPlanID;
-    private string? _testPlanName;
     private int _testSuiteID;
-    private string? _testSuiteName;
     private int _totalCount;
 
     private TestPlan? _testPlan;
@@ -29,9 +27,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public string? Cooike => _cookie;
     public int TestSuiteID => _testSuiteID;
-    public string? TestSuiteName => _testSuiteName;
     public int TestPlanID => _testPlanID;
-    public string? TestPlanName => _testPlanName;
     public int TotalCount => _totalCount;
 
     public TestPlan TestPlan
@@ -106,8 +102,10 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
         {
             _queryRootObject = queryVSTSModel;
             _exeRootObject = executeVSTSModel;
-            _testPlanName = queryVSTSModel.value[0].testPlan.name;
-            _testSuiteName = queryVSTSModel.value[0].testSuite.name;
+
+            TestSuite = new TestSuite() { ID = _exeRootObject.value[0].testSuite.id , Name = _exeRootObject.value[0].testSuite.name };
+            TestPlan = new TestPlan() { ID = _exeRootObject.value[0].testPlan.id , Name = _exeRootObject.value[0].testPlan.name };
+
             return true;
         }
 
@@ -115,7 +113,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     //TODO to show the concat progress
-    [Obsolete("Recommend using DetailModel. Out of date!!! No latest changes.")]
+    [Obsolete("Recommend using DetailModel.")]
     public async Task<ConcurrentBag<Models.TestCase>> GET_TCsAsync( )
     {
         IsTestCasesLoadOver = false;
@@ -246,32 +244,32 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     }
 
     [Obsolete("Recommend using Async.")]
-    public ConcurrentBag<DetailModel> MergeModelstoDetailsBy(ExecuteVSTSModel.RootObject exeModel, QueryVSTSModel.RootObject querModel, out bool succeedMerge)
+    public ConcurrentBag<DetailModel> MergeModelstoDetailsBy(ExecuteVSTSModel.RootObject exeModel , QueryVSTSModel.RootObject querModel , out bool succeedMerge)
     {
         succeedMerge = false;
 
-        if (!CheckModels(exeModel, querModel)) return null;
+        if( !CheckModels(exeModel , querModel) ) return null;
         int index = exeModel.count;
         var DetailModels = new ConcurrentBag<DetailModel>(exeModel.value.Select(v =>
         {
             return new DetailModel()
             {
-                Index = index--,
-                TestPlanId = exeModel.value[0].testPlan.id,
-                TestSuiteId = exeModel.value[0].testSuite.id,
-                ID = v.workItem.id,
-                Name = v.workItem.name,
-                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId,
-                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea,
-                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName,
-                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool,
-                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome,
-                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id,
-                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName,
-                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate,
-                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName,
-                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation,
-                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
+                Index = index-- ,
+                TestPlanId = exeModel.value[0].testPlan.id ,
+                TestSuiteId = exeModel.value[0].testSuite.id ,
+                ID = v.workItem.id ,
+                Name = v.workItem.name ,
+                CQID = v.workItem.fields.FirstOrDefault(field => field.CQId != null)?.CQId ,
+                ProductArea = v.workItem.fields.FirstOrDefault(field => field.productArea != null)?.productArea ,
+                ScriptName = v.workItem.fields.FirstOrDefault(field => field.scriptName != null)?.scriptName ,
+                TestToolStr = v.workItem.fields.FirstOrDefault(field => field.testTool != null)?.testTool ,
+                OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
+                TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
+                Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
+                LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
+                RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
+                StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
+                TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps ,
                 //TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps.Replace("<description/>", "<description>" + v.workItem.fields.FirstOrDefault(field => field.description != null)?.description + "</description>"),
             };
         }));
@@ -295,7 +293,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                 Title = v.workItem.name ,
                 TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
                 Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
-                AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                AssignedTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
                 OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
                 RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
             };
@@ -338,7 +336,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                     LastUpdatedDate = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.lastUpdatedDate ,
                     RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
                     StateofAutomation = v.workItem.fields.FirstOrDefault(field => field.stateofAutomation != null)?.stateofAutomation ,
-                    TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps,
+                    TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps ,
                     //TestStepsStr = v.workItem.fields.FirstOrDefault(field => field.testSteps != null)?.testSteps.Replace("<description/>", "<description>" + v.workItem.fields.FirstOrDefault(field => field.description != null)?.description+ "</description>"), 
                 };
             }));
@@ -370,7 +368,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
                     Title = v.workItem.name ,
                     TestPointId = (int)v.pointAssignments.FirstOrDefault(point => point.id >= default(int))?.id ,
                     Configuration = v.pointAssignments.FirstOrDefault(point => point.configurationName != null)?.configurationName ,
-                    AssignTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
+                    AssignedTo = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.displayName ,
                     OutcomeStr = querModel.value.FirstOrDefault(tempQueryModel => tempQueryModel.testCaseReference.id == v.workItem.id)?.results.outcome ,
                     RunBy = v.pointAssignments.FirstOrDefault(point => point.tester != null)?.tester.uniqueName ,
                 };
