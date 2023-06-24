@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows;
+using VSTSDataProvider.Common.Helpers;
 
 namespace VSTSDataProvider.Common;
 
@@ -34,19 +36,33 @@ public class NetUtils
     }
 
     //需要再完善
-    public static async Task SendRequestWithAccessToken(string apiUrl , string accessToken)
+    public static async Task<string> SendRequestWithAccessToken(string apiUrl , string accessToken, Action callBackAction = null)
     {
-        using( HttpClient client = new HttpClient() )
-        {
-            // Set the authorization header with bearer token
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer" , accessToken);
+            using (var httpClient = new HttpClient())
+            {
+            if (!accessToken.IsNullOrWhiteSpaceOrEmpty())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String
+                (System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", accessToken))));
 
-            // Send the request with the access token
-            HttpResponseMessage response = await client.GetAsync(apiUrl);
-            string responseString = await response.Content.ReadAsStringAsync();
+            }
 
-            // Process the response
-        }
+            using (var response = await httpClient.GetAsync(apiUrl))
+                {
+                //    string responseData = await response.Content.ReadAsStringAsync();
+
+                //// 发送 HTTP GET 请求并获取响应
+                //HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+
+                // 创建一个 ResponseHandler 对象，以处理响应并执行回调函数
+                ResponseHandler responseHandler = new ResponseHandler(response, callBackAction);
+
+                // 调用 ResponseHandler 对象的 HandleResponseAsync 方法，以处理响应并返回 JObject 对象
+                return await responseHandler.HandleResponseAsync<string>();
+
+                }
+            }
+
     }
 
     /// <summary>
