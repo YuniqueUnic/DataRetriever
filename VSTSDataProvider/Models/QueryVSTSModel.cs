@@ -19,32 +19,18 @@ public class QueryVSTSModel : BaseVSTSModel
         { "isRecursive", "false" }
     };
 
-    public QueryVSTSModel(string cookie , int testPlanId , int testSuiteId)
-            : base(cookie , testPlanId , testSuiteId)
+    public QueryVSTSModel(string tokenOrCookie , int testPlanId , int testSuiteId , bool isToken)
+            : base(tokenOrCookie , testPlanId , testSuiteId , isToken)
     {
         base.targetVSTSObject = this.targetVSTSObject;
         base.selectFields = this.selectFields;
         base.optionalParameters = this.optionalParameters;
     }
 
-    public QueryVSTSModel(string token , int testPlanId , int testSuiteId , bool isToken = true)
-            : base(token , testPlanId , testSuiteId , isToken)
+    public async Task<QueryVSTSModel.RootObject> GetModelAsync(Action action = null)
     {
-        base.targetVSTSObject = this.targetVSTSObject;
-        base.selectFields = this.selectFields;
-        base.optionalParameters = this.optionalParameters;
+        return await base.GetModelAsync<QueryVSTSModel.RootObject>(this.UseToken , action);
     }
-
-    public async Task<QueryVSTSModel.RootObject> GetModelByCookieAsync(Action action = null)
-    {
-        return await base.GetModelByCookieAsync<QueryVSTSModel.RootObject>(action);
-    }
-
-    public async Task<QueryVSTSModel.RootObject> GetModelByTokenAsync(Action action = null)
-    {
-        return await base.GetModelByTokenAsync<QueryVSTSModel.RootObject>(action);
-    }
-
 
     #region Json to Entity Class
     public class Tester

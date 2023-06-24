@@ -89,7 +89,7 @@
                                                  Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <TextBox.FontSize>
                                                 <Binding Converter="{StaticResource DoubleValueScaleConverter}"
-                                                         ConverterParameter="1.5"
+                                                         ConverterParameter="1.2"
                                                          ElementName="TitleLabel"
                                                          Path="FontSize" />
                                             </TextBox.FontSize>

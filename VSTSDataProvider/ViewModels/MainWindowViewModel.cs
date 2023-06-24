@@ -460,18 +460,18 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        //await ReleaseMethod();
-        if( IsDetailsChecked )
-        {
-            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
-            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
-            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
-        }
-        else
-        {
-            VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
-            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
-        }
+        await ReleaseMethod();
+        //if( IsDetailsChecked )
+        //{
+        //    //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+        //    VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+        //    EditDetailsCollection = await DebugMethod<Models.DetailModel>();
+        //}
+        //else
+        //{
+        //    VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+        //    EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
+        //}
 
     }
 
@@ -522,6 +522,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         ConsoleRelated.ConsoleEx.Log("Start getting VSTS Data...");
 
         var mVSTSDataProvider = GetVSTSDataProvider();
+        mVSTSDataProvider.UsingTokenToGET = true;
         var succeedLoadData = await mVSTSDataProvider.PreLoadData();
 
         ConsoleRelated.ConsoleEx.Log("End of getting VSTS Data...");

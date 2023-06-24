@@ -9,69 +9,55 @@ using VSTSDataProvider.Common.Helpers;
 
 namespace VSTSDataProvider.Common;
 
+
 public class NetUtils
 {
+    private static NetUtils _instance;
+    private static readonly object _lockObject = new object();
+    private HttpClient _httpClient;
 
-    //需要再完善
-    public static async Task<string> SendRequestWithAccessToken(string apiUrl , string accessToken , Action callBackAction = null)
+    private NetUtils( )
     {
-        using( var httpClient = new HttpClient() )
+        _httpClient = new HttpClient();
+    }
+
+    public static NetUtils Instance
+    {
+        get
         {
-            if( !accessToken.IsNullOrWhiteSpaceOrEmpty() )
+            lock( _lockObject )
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic" , Convert.ToBase64String
-                (System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}" , "" , accessToken))));
-
+                if( _instance == null )
+                {
+                    _instance = new NetUtils();
+                }
             }
-
-            using( var response = await httpClient.GetAsync(apiUrl) )
-            {
-                //    string responseData = await response.Content.ReadAsStringAsync();
-
-                //// 发送 HTTP GET 请求并获取响应
-                //HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
-
-                // 创建一个 ResponseHandler 对象，以处理响应并执行回调函数
-                ResponseHandler responseHandler = new ResponseHandler(response , callBackAction);
-
-                // 调用 ResponseHandler 对象的 HandleResponseAsync 方法，以处理响应并返回 JObject 对象
-                return await responseHandler.HandleResponseAsync<string>();
-
-            }
+            return _instance;
         }
-
     }
 
     /// <summary>
-    /// 使用指定的 Cookie 值向指定的 API 地址发送 HTTP GET 请求，并在请求完成后执行指定的回调函数。
+    /// 使用指定的 Token 值向指定的 API 地址发送 HTTP GET 请求，并在请求完成后执行指定的回调函数。
     /// </summary>
     /// <param name="apiUrl">要发送请求的 API 地址。</param>
-    /// <param name="accessCookie">要在请求头中设置的 Cookie 值。</param>
+    /// <param name="accessToken">要在请求头中设置的 Token 值。</param>
     /// <param name="callBackAction">请求完成后要执行的回调函数。</param>
     /// <returns>表示操作结果的 Task，其 Result 属性将包含响应内容的 JObject 对象。</returns>
-    public static async Task<string> SendRequestWithCookieForStr(string apiUrl , string accessCookie , Action callBackAction = null)
+    public async Task<string> SendRequestWithAccessTokenStr(string apiUrl , string accessToken , Action callBackAction = null)
     {
-        // 创建一个 HttpClient 对象，并使用 using 语句确保在使用完毕后正确释放资源
-        using( HttpClient httpClient = new HttpClient() )
+        if( !_httpClient.DefaultRequestHeaders.Contains("Authorization") && !accessToken.IsNullOrWhiteSpaceOrEmpty() )
         {
-            // 如果 accessCookie 不为空，将其添加到请求头中的 Cookie 值中
-            if( !string.IsNullOrEmpty(accessCookie) )
-            {
-                httpClient.DefaultRequestHeaders.Add("Cookie" , accessCookie);
-            }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic" , Convert.ToBase64String
+            (System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}" , "" , accessToken))));
+        }
 
-            // 发送 HTTP GET 请求并获取响应
-            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
-
-            // 创建一个 ResponseHandler 对象，以处理响应并执行回调函数
+        using( var response = await _httpClient.GetAsync(apiUrl) )
+        {
             ResponseHandler responseHandler = new ResponseHandler(response , callBackAction);
-
-            // 调用 ResponseHandler 对象的 HandleResponseAsync 方法，以处理响应并返回 JObject 对象
             return await responseHandler.HandleResponseAsync<string>();
         }
     }
 
-
     /// <summary>
     /// 使用指定的 Cookie 值向指定的 API 地址发送 HTTP GET 请求，并在请求完成后执行指定的回调函数。
     /// </summary>
@@ -79,29 +65,37 @@ public class NetUtils
     /// <param name="accessCookie">要在请求头中设置的 Cookie 值。</param>
     /// <param name="callBackAction">请求完成后要执行的回调函数。</param>
     /// <returns>表示操作结果的 Task，其 Result 属性将包含响应内容的 JObject 对象。</returns>
-    public static async Task<JObject> SendRequestWithCookieForJObj(string apiUrl , string accessCookie , Action callBackAction = null)
+    public async Task<string> SendRequestWithCookieForStr(string apiUrl , string accessCookie , Action callBackAction = null)
     {
-        // 创建一个 HttpClient 对象，并使用 using 语句确保在使用完毕后正确释放资源
-        using( HttpClient httpClient = new HttpClient() )
+        if( !_httpClient.DefaultRequestHeaders.Contains("Cookie") && !accessCookie.IsNullOrWhiteSpaceOrEmpty() )
         {
-            // 如果 accessCookie 不为空，将其添加到请求头中的 Cookie 值中
-            if( !string.IsNullOrEmpty(accessCookie) )
-            {
-                httpClient.DefaultRequestHeaders.Add("Cookie" , accessCookie);
-            }
+            _httpClient.DefaultRequestHeaders.Add("Cookie" , accessCookie);
+        }
 
-            // 发送 HTTP GET 请求并获取响应
-            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
-
+        using( var response = await _httpClient.GetAsync(apiUrl) )
+        {
             // 创建一个 ResponseHandler 对象，以处理响应并执行回调函数
             ResponseHandler responseHandler = new ResponseHandler(response , callBackAction);
 
-            // 调用 ResponseHandler 对象的 HandleResponseAsync 方法，以处理响应并返回 JObject 对象
+            // 调用 ResponseHandler 对象的 HandleResponseAsync 方法
+            return await responseHandler.HandleResponseAsync<string>();
+        }
+    }
+
+    public async Task<JObject> SendRequestWithCookieForJObj(string apiUrl , string accessCookie , Action callBackAction = null)
+    {
+        if( !_httpClient.DefaultRequestHeaders.Contains("Cookie") )
+        {
+            _httpClient.DefaultRequestHeaders.Add("Cookie" , accessCookie);
+        }
+
+        using( var response = await _httpClient.GetAsync(apiUrl) )
+        {
+            ResponseHandler responseHandler = new ResponseHandler(response , callBackAction);
             return await responseHandler.HandleResponseAsync<JObject>();
         }
     }
 }
-
 
 
 // Refractor --- HttpMethods

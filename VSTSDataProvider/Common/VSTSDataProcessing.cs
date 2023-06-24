@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.Models;
 
 namespace VSTSDataProvider.Common;
@@ -33,6 +32,12 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     public int TestSuiteID => _testSuiteID;
     public int TestPlanID => _testPlanID;
     public int TotalCount => _totalCount;
+
+    public bool UsingTokenToGET
+    {
+        get => _usingTokenToGetData;
+        set => SetProperty(ref _usingTokenToGetData , value);
+    }
 
     public TestPlan TestPlan
     {
@@ -107,20 +112,13 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public async Task<bool> PreLoadData(System.Action action = null)
     {
-        VSTSDataProvider.Models.ExecuteVSTSModel.RootObject executeVSTSModel;
-        VSTSDataProvider.Models.QueryVSTSModel.RootObject queryVSTSModel;
+        //VSTSDataProvider.Models.ExecuteVSTSModel.RootObject executeVSTSModel;
+        //VSTSDataProvider.Models.QueryVSTSModel.RootObject queryVSTSModel;
+        bool useToken = UsingTokenToGET && !string.IsNullOrEmpty(_token);
+        bool useCookie = !UsingTokenToGET && !string.IsNullOrEmpty(_cookie);
 
-        if( _token is null || _token.IsNullOrWhiteSpaceOrEmpty() || _usingTokenToGetData == false )
-        {
-            executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModelByCookieAsync(action);
-            queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModelByCookieAsync(action);
-        }
-        else
-        {
-            executeVSTSModel = await new ExecuteVSTSModel(_token , _testPlanID , _testSuiteID , true).GetModelByTokenAsync(action);
-            queryVSTSModel = await new QueryVSTSModel(_token , _testPlanID , _testSuiteID , true).GetModelByTokenAsync(action);
-        }
-
+        var executeVSTSModel = await new ExecuteVSTSModel(useToken ? _token : _cookie , _testPlanID , _testSuiteID , useToken || !useCookie).GetModelAsync(action);
+        var queryVSTSModel = await new QueryVSTSModel(useToken ? _token : _cookie , _testPlanID , _testSuiteID , useToken || !useCookie).GetModelAsync(action);
 
         if( CheckModels(executeVSTSModel , queryVSTSModel) )
         {
