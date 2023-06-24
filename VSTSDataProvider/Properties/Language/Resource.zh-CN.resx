@@ -122,7 +122,7 @@
     <comment>完整的 url 路径</comment>
   </data>
   <data name="Cookie" xml:space="preserve">
-    <value>Cookie</value>
+    <value>网络浏览器 Cookie</value>
   </data>
   <data name="Copy" xml:space="preserve">
     <value>复制</value>
@@ -286,5 +286,11 @@
   </data>
   <data name="Show" xml:space="preserve">
     <value>查看</value>
+  </data>
+  <data name="Token" xml:space="preserve">
+    <value>令牌</value>
+  </data>
+  <data name="AccessMode" xml:space="preserve">
+    <value>验证模式</value>
   </data>
 </root>

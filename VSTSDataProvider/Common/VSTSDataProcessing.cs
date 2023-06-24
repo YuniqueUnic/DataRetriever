@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.Models;
 
 namespace VSTSDataProvider.Common;
@@ -12,7 +13,9 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     private Models.QueryVSTSModel.RootObject _queryRootObject;
     private Models.ExecuteVSTSModel.RootObject _exeRootObject;
 
+    private bool _usingTokenToGetData = false;
     private string? _cookie;
+    private string? _token;
     private int _testPlanID;
     private int _testSuiteID;
     private int _totalCount;
@@ -26,6 +29,7 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     private bool _testCasesLoadOver = false;
 
     public string? Cooike => _cookie;
+    public string? Token => _token;
     public int TestSuiteID => _testSuiteID;
     public int TestPlanID => _testPlanID;
     public int TotalCount => _totalCount;
@@ -70,6 +74,14 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
     public VSTSDataProcessing SetCookie(string cookie)
     {
         _cookie = cookie.Trim();
+        _usingTokenToGetData = false;
+        return this;
+    }
+
+    public VSTSDataProcessing SetToken(string token)
+    {
+        _token = token.Trim();
+        _usingTokenToGetData = true;
         return this;
     }
 
@@ -95,8 +107,20 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public async Task<bool> PreLoadData(System.Action action = null)
     {
-        var executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
-        var queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModel(action);
+        VSTSDataProvider.Models.ExecuteVSTSModel.RootObject executeVSTSModel;
+        VSTSDataProvider.Models.QueryVSTSModel.RootObject queryVSTSModel;
+
+        if( _token is null || _token.IsNullOrWhiteSpaceOrEmpty() || _usingTokenToGetData == false )
+        {
+            executeVSTSModel = await new ExecuteVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModelByCookieAsync(action);
+            queryVSTSModel = await new QueryVSTSModel(_cookie , _testPlanID , _testSuiteID).GetModelByCookieAsync(action);
+        }
+        else
+        {
+            executeVSTSModel = await new ExecuteVSTSModel(_token , _testPlanID , _testSuiteID , true).GetModelByTokenAsync(action);
+            queryVSTSModel = await new QueryVSTSModel(_token , _testPlanID , _testSuiteID , true).GetModelByTokenAsync(action);
+        }
+
 
         if( CheckModels(executeVSTSModel , queryVSTSModel) )
         {

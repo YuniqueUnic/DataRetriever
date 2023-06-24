@@ -299,4 +299,10 @@
   <data name="Show" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="Token" xml:space="preserve">
+    <value>Token</value>
+  </data>
+  <data name="AccessMode" xml:space="preserve">
+    <value>Access Mode</value>
+  </data>
 </root>

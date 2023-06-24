@@ -50,6 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private int _totalCount;
     private bool _isDetailsChecked = true;
+    private bool _isAccessByToken = true;
     private bool _modeToggleButtonState = true;
 
     private string? _testPlanName;
@@ -59,6 +60,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     private string? _testSuiteID;
     private string? _completeUrl;
     private string? _cookie;
+    private string? _accessToken;
     private bool? _progressBarShowing;
 
     #region Obsolete TCModels
@@ -193,6 +195,16 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
+    public bool IsAccessByToken
+    {
+        get => _isAccessByToken;
+        set
+        {
+            SetProperty(ref _isAccessByToken , value);
+            GetDataButtonClickedCommand.RaiseCanExecuteChanged();
+        }
+    }
+
     public bool ModeToggleButtonState
     {
         get => _modeToggleButtonState;
@@ -260,6 +272,16 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         set
         {
             SetProperty(ref _cookie , value);
+            GetDataButtonClickedCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    public string AccessToken
+    {
+        get => _accessToken ?? "";
+        set
+        {
+            SetProperty(ref _accessToken , value);
             GetDataButtonClickedCommand.RaiseCanExecuteChanged();
         }
     }
@@ -419,10 +441,10 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
     public bool CanGetData(object p)
     {
         bool hasValidID = isValidID(out _);
-        bool hasValidCookie = !string.IsNullOrEmpty(Cookie);
+        bool hasValidCookieOrToken = IsAccessByToken ? !string.IsNullOrEmpty(AccessToken) : !string.IsNullOrEmpty(Cookie);
         bool hasValidUrl = !string.IsNullOrEmpty(CompleteUrl);
 
-        return (hasValidID && hasValidCookie) || (hasValidUrl && hasValidCookie);
+        return (hasValidID && hasValidCookieOrToken) || (hasValidUrl && hasValidCookieOrToken);
     }
 
     private bool isValidID(out Models.TestPlanSuiteId idGroup)
@@ -541,13 +563,15 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                 TestSuiteID = m_IDGroup.SuiteId.ToString();
             }
 
-            mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+            mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId);
+            mVSTSDataProvider = IsAccessByToken ? mVSTSDataProvider.SetToken(AccessToken) : mVSTSDataProvider.SetCookie(Cookie);
         }
         else
         {
             if( isValidID(out m_IDGroup) )
             {
-                mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+                mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId);
+                mVSTSDataProvider = IsAccessByToken ? mVSTSDataProvider.SetToken(AccessToken) : mVSTSDataProvider.SetCookie(Cookie);
             }
             else
             {
@@ -558,7 +582,8 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
                     TestSuiteID = m_IDGroup.SuiteId.ToString();
                 }
 
-                mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId).SetCookie(Cookie);
+                mVSTSDataProvider = new VSTSDataProvider.Common.VSTSDataProcessing().SetTestPlanSuiteID(m_IDGroup.PlanId , m_IDGroup.SuiteId);
+                mVSTSDataProvider = IsAccessByToken ? mVSTSDataProvider.SetToken(AccessToken) : mVSTSDataProvider.SetCookie(Cookie);
             }
         }
 

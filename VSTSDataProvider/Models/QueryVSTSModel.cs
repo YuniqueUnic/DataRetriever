@@ -27,9 +27,22 @@ public class QueryVSTSModel : BaseVSTSModel
         base.optionalParameters = this.optionalParameters;
     }
 
-    public async Task<QueryVSTSModel.RootObject> GetModel(Action action = null)
+    public QueryVSTSModel(string token , int testPlanId , int testSuiteId , bool isToken = true)
+            : base(token , testPlanId , testSuiteId , isToken)
     {
-        return await base.GetModel<QueryVSTSModel.RootObject>(action);
+        base.targetVSTSObject = this.targetVSTSObject;
+        base.selectFields = this.selectFields;
+        base.optionalParameters = this.optionalParameters;
+    }
+
+    public async Task<QueryVSTSModel.RootObject> GetModelByCookieAsync(Action action = null)
+    {
+        return await base.GetModelByCookieAsync<QueryVSTSModel.RootObject>(action);
+    }
+
+    public async Task<QueryVSTSModel.RootObject> GetModelByTokenAsync(Action action = null)
+    {
+        return await base.GetModelByTokenAsync<QueryVSTSModel.RootObject>(action);
     }
 
 

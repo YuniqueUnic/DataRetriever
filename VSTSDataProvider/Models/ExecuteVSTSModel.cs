@@ -1,16 +1,14 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using VSTSDataProvider.Common;
-using static VSTSDataProvider.Models.QueryVSTSModel;
 
 namespace VSTSDataProvider.Models;
 public interface IVSTSModel
 {
     UriBuilder TargetUriBuilder { get; }
-    Task<T> GetModel<T>(Action action);
+    Task<T> GetModelByCookieAsync<T>(Action action);
 }
 
 public abstract class BaseVSTSModel : IVSTSModel
@@ -32,6 +30,7 @@ public abstract class BaseVSTSModel : IVSTSModel
     public virtual UriBuilder TargetUriBuilder => ParseToUriBuilder(_vstsBaseUri , selectFields , optionalParameters);
 
     internal string Cookie { get; }
+    internal string Token { get; }
     internal int TestPlanId { get; }
     internal int TestSuiteId { get; }
 
@@ -42,15 +41,24 @@ public abstract class BaseVSTSModel : IVSTSModel
         TestSuiteId = testSuiteId;
     }
 
-    public virtual async Task<T> GetModel<T>(Action callBackAction)
+    public BaseVSTSModel(string token , int testPlanId , int testSuiteId , bool isToken = true)
     {
-        var responseContent = await NetUtils.SendRequestWithAccessToken(TargetUriBuilder.ToString(), Cookie, callBackAction);
-        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{DateTime.Now.ToString("HH_mm_ss")}.txt"), responseContent).ConfigureAwait(false);
+        Token = token;
+        TestPlanId = testPlanId;
+        TestSuiteId = testSuiteId;
+    }
 
+    public virtual async Task<T> GetModelByTokenAsync<T>(Action callBackAction)
+    {
+        var responseContent = await NetUtils.SendRequestWithAccessToken(TargetUriBuilder.ToString() , Token , callBackAction);
+        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{DateTime.Now.ToString("HH_mm_ss")}_Token.txt"), responseContent).ConfigureAwait(false);
+        return DeserializeBy<T>(responseContent);
+    }
 
-        //var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
-        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "nResult2.txt"), responseContent).ConfigureAwait(false);
-
+    public virtual async Task<T> GetModelByCookieAsync<T>(Action callBackAction)
+    {
+        var responseContent = await NetUtils.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction);
+        //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), $"{DateTime.Now.ToString("HH_mm_ss")}_Cookie.txt"), responseContent).ConfigureAwait(false);
         return DeserializeBy<T>(responseContent);
     }
 
@@ -128,9 +136,22 @@ public class ExecuteVSTSModel : BaseVSTSModel
         base.optionalParameters = this.optionalParameters;
     }
 
-    public async Task<ExecuteVSTSModel.RootObject> GetModel(Action action = null)
+    public ExecuteVSTSModel(string token , int testPlanId , int testSuiteId , bool isToken = true)
+            : base(token , testPlanId , testSuiteId , isToken)
     {
-        return await base.GetModel<ExecuteVSTSModel.RootObject>(action);
+        base.targetVSTSObject = this.targetVSTSObject;
+        base.selectFields = this.selectFields;
+        base.optionalParameters = this.optionalParameters;
+    }
+
+    public async Task<ExecuteVSTSModel.RootObject> GetModelByCookieAsync(Action action = null)
+    {
+        return await base.GetModelByCookieAsync<ExecuteVSTSModel.RootObject>(action);
+    }
+
+    public async Task<ExecuteVSTSModel.RootObject> GetModelByTokenAsync(Action action = null)
+    {
+        return await base.GetModelByTokenAsync<ExecuteVSTSModel.RootObject>(action);
     }
 
     #region Json to Entity Class

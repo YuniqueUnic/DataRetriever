@@ -79,6 +79,15 @@ namespace VSTSDataProvider.Properties.Language {
         }
         
         /// <summary>
+        ///   查找类似 Access Mode 的本地化字符串。
+        /// </summary>
+        public static string AccessMode {
+            get {
+                return ResourceManager.GetString("AccessMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Align Center 的本地化字符串。
         /// </summary>
         public static string AlignCenter {
@@ -507,6 +516,15 @@ namespace VSTSDataProvider.Properties.Language {
         public static string TestSuite {
             get {
                 return ResourceManager.GetString("TestSuite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Token 的本地化字符串。
+        /// </summary>
+        public static string Token {
+            get {
+                return ResourceManager.GetString("Token", resourceCulture);
             }
         }
         

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -12,56 +11,34 @@ namespace VSTSDataProvider.Common;
 
 public class NetUtils
 {
+
     //需要再完善
-    public static async Task<string> GetAccessToken(string apiUrl , string username , string password)
+    public static async Task<string> SendRequestWithAccessToken(string apiUrl , string accessToken , Action callBackAction = null)
     {
-        using( HttpClient client = new HttpClient() )
+        using( var httpClient = new HttpClient() )
         {
-            // Set the authorization header with basic authentication
-            string basicAuthString = $"{username}:{password}";
-            string base64EncodedAuthString = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(basicAuthString));
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic" , base64EncodedAuthString);
-
-            // Send the request to get the access token
-            HttpResponseMessage response = await client.GetAsync($"{apiUrl}/auth");
-            string responseString = await response.Content.ReadAsStringAsync();
-
-            // Parse the access token from the response
-            // Note: This assumes that the access token is returned in the "access_token" field of the response JSON
-            dynamic jsonResponse = Newtonsoft.Json.JsonConvert.DeserializeObject(responseString);
-            string accessToken = jsonResponse.access_token;
-
-            return accessToken;
-        }
-    }
-
-    //需要再完善
-    public static async Task<string> SendRequestWithAccessToken(string apiUrl , string accessToken, Action callBackAction = null)
-    {
-            using (var httpClient = new HttpClient())
+            if( !accessToken.IsNullOrWhiteSpaceOrEmpty() )
             {
-            if (!accessToken.IsNullOrWhiteSpaceOrEmpty())
-            {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String
-                (System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", "", accessToken))));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic" , Convert.ToBase64String
+                (System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}" , "" , accessToken))));
 
             }
 
-            using (var response = await httpClient.GetAsync(apiUrl))
-                {
+            using( var response = await httpClient.GetAsync(apiUrl) )
+            {
                 //    string responseData = await response.Content.ReadAsStringAsync();
 
                 //// 发送 HTTP GET 请求并获取响应
                 //HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
 
                 // 创建一个 ResponseHandler 对象，以处理响应并执行回调函数
-                ResponseHandler responseHandler = new ResponseHandler(response, callBackAction);
+                ResponseHandler responseHandler = new ResponseHandler(response , callBackAction);
 
                 // 调用 ResponseHandler 对象的 HandleResponseAsync 方法，以处理响应并返回 JObject 对象
                 return await responseHandler.HandleResponseAsync<string>();
 
-                }
             }
+        }
 
     }
 
