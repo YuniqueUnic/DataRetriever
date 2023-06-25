@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using VSTSDataProvider.Common;
 using VSTSDataProvider.Common.Helpers;
 using VSTSDataProvider.Properties.Language;
 using VSTSDataProvider.ViewModels.ViewModelBase;
@@ -460,18 +461,18 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
     private async Task GetVSTSDataTask(CancellationToken cts)
     {
-        await ReleaseMethod();
-        //if( IsDetailsChecked )
-        //{
-        //    //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
-        //    VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
-        //    EditDetailsCollection = await DebugMethod<Models.DetailModel>();
-        //}
-        //else
-        //{
-        //    VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
-        //    EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
-        //}
+        //await ReleaseMethod();
+        if( IsDetailsChecked )
+        {
+            //VSTSDataCollectionTCs = await DebugMethod<Models.TestCase>();
+            VSTSDataCollectionDetails = await DebugMethod<Models.DetailModel>();
+            EditDetailsCollection = await DebugMethod<Models.DetailModel>();
+        }
+        else
+        {
+            VSTSDataCollectionOTEs = await DebugMethod<Models.OTE_OfflineModel>();
+            EditOTEsCollection = await DebugMethod<Models.OTE_OfflineModel>();
+        }
 
     }
 
@@ -670,27 +671,79 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
 
             if( exportResult.SucceedDone )
             {
-                // MessageBox show the successfully saving information, 
-                var userSelection = System.Windows.MessageBox.Show(
-                     $"Saved Path: {saveFileDialog.FileName}\n\n" +
-                     $"Click Yes to open the directory of it." ,
-                     Resource.SaveFileSuccessfully ,
-                     System.Windows.MessageBoxButton.YesNo ,
-                     System.Windows.MessageBoxImage.Information);
+                // Modify some string to ideal result
+                await Task.Yield();
 
-                // and if user click ok to open the directory of saved file.
-                if( userSelection == System.Windows.MessageBoxResult.Yes )
+                var modifyRules = new ExcelModifyRule[]
                 {
-                    try
+                    new()
                     {
-                        Process.Start("explorer.exe" , $"/select,\"{exportResult.FullPath}\"");
-                    }
-                    catch( Exception ex )
+                        ColumnName="Outcome",
+                        ModifyRule=(result)=>
+                        {if( string.Equals(result.ToString() , "Active" , StringComparison.OrdinalIgnoreCase) )
+                          {
+                              return string.Empty;
+                          }
+                          else
+                          {
+                              return result;
+                          } }
+                    },
+                    new()
                     {
-                        // exception dealing
-                    }
-                }
+                        ColumnName="TestTool",
+                        ModifyRule=(result)=>
+                        {
+                            if( string.Equals(result.ToString() , "Null" , StringComparison.OrdinalIgnoreCase) )
+                            {
+                                return string.Empty;
+                            }
+                            else if(string.Equals(result.ToString(),"UFT", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return "UFT Developer";
+                            }
+                            else
+                            {
+                                return result;
+                            } }
+                    },
+                };
 
+                var modifyResult = await ExcelOperator.ModifyColumn(saveFileDialog.FileName , modifyRules);
+
+                if( modifyResult.SucceedDone )
+                {
+                    // MessageBox show the successfully saving information, 
+                    var userSelection = System.Windows.MessageBox.Show(
+                         $"Saved Path: {saveFileDialog.FileName}\n\n" +
+                         $"Click Yes to open the directory of it." ,
+                         Resource.SaveFileSuccessfully ,
+                         System.Windows.MessageBoxButton.YesNo ,
+                         System.Windows.MessageBoxImage.Information);
+
+                    // and if user click ok to open the directory of saved file.
+                    if( userSelection == System.Windows.MessageBoxResult.Yes )
+                    {
+                        try
+                        {
+                            Process.Start("explorer.exe" , $"/select,\"{exportResult.FullPath}\"");
+                        }
+                        catch( Exception ex )
+                        {
+                            // exception dealing
+                        }
+                    }
+
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show(
+                        $"{Resource.SaveFileFailed}\n\n" +
+                        $"Fail Reason: {exportResult.Info}" ,
+                        Resource.SaveFileFailed ,
+                        System.Windows.MessageBoxButton.OK ,
+                        System.Windows.MessageBoxImage.Error);
+                }
             }
             else
             {

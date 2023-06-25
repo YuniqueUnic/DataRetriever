@@ -1,4 +1,6 @@
 ﻿using MiniExcelLibs;
+using MiniExcelLibs.Csv;
+using MiniExcelLibs.OpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +18,13 @@ public record class ExcelOperatorResult
     public string? Info;
     public IEnumerable<IResultsModel>? resultModels;
 }
+
+public record class ExcelModifyRule
+{
+    public string ColumnName;
+    public Func<object , object> ModifyRule;
+}
+
 
 public class ExcelOperator
 {
@@ -103,10 +112,16 @@ public class ExcelOperator
 
         if( TargetObj == null ) { return result; }
 
+        var miniExcelConfig = GetDefaultConfiguration(_excelType);
+
         try
         {
-            await MiniExcelLibs.MiniExcel.SaveAsAsync(_FullPath , TargetObj ,
-                sheetName: _sheetName ?? "Sheet1" , excelType: _excelType ?? MiniExcelLibs.ExcelType.XLSX);
+            await MiniExcelLibs.MiniExcel.SaveAsAsync(_FullPath ,
+                TargetObj ,
+                sheetName: _sheetName ?? "Sheet1" ,
+                excelType: _excelType ?? MiniExcelLibs.ExcelType.XLSX ,
+                configuration: miniExcelConfig ?? default).ConfigureAwait(false);
+
             result.SucceedDone = true;
         }
         catch( Exception e )
@@ -162,6 +177,110 @@ public class ExcelOperator
         return await ImportAsyncBy<TModel>(_FullPath);
     }
 
+    /// <summary>
+    /// Modify column values according to rules.
+    /// Automatically determine whether the column exists.
+    /// Only existing columns will be modified.
+    /// </summary>
+    /// <param name="fileFullPath"></param>
+    /// <param name="excelModifyRules"></param>
+    /// <returns></returns>
+    public async static Task<ExcelOperatorResult> ModifyColumn(string fileFullPath , ExcelModifyRule[] excelModifyRules)
+    {
+        var result = new ExcelOperatorResult()
+        {
+            SucceedDone = false ,
+            FullPath = fileFullPath ,
+            Info = "NullReferenceException" ,
+        };
+
+        if( excelModifyRules is null )
+        {
+            result.Info = $"{excelModifyRules} is null.";
+            return result;
+        }
+
+        if( !File.Exists(fileFullPath) )
+        {
+            result.Info = $"{fileFullPath} not exists.";
+            return result;
+        }
+
+        ExcelType _excelType = ParseExcelType(Path.GetFileName(fileFullPath));
+
+        var data = (await MiniExcelLibs.MiniExcel.QueryAsync(fileFullPath , useHeaderRow: true , excelType: _excelType))
+                                                   .Cast<IDictionary<string , object>>();
+
+        List<Dictionary<string , object>> listDics = data.Select(dict =>
+                                                          dict.ToDictionary(kv =>
+                                                               kv.Key , kv => kv.Value))
+                                                               .ToList();
+
+        result.Info = string.Empty;
+
+        foreach( var item in listDics )
+        {
+            for( int i = 0; i < excelModifyRules.Length; i++ )
+            {
+                if( item.ContainsKey(excelModifyRules[i].ColumnName) )
+                {
+                    // modify the value of the column by modifyRule ★☆★☆★
+                    item[excelModifyRules[i].ColumnName] = excelModifyRules[i].ModifyRule(item[excelModifyRules[i].ColumnName]);
+                    result.Info += $"{excelModifyRules[i].ColumnName} modified successfully." + Environment.NewLine;
+                }
+                else
+                {
+                    result.Info += $"{excelModifyRules[i].ColumnName} not exists." + Environment.NewLine;
+                }
+            }
+        }
+
+        try
+        {
+            dynamic miniExcelConfig = GetDefaultConfiguration(_excelType);
+
+            // Use the await Task.Yield() statement before SaveAsAsync the method to release the current thread and
+            // perform the save operation on the background thread.
+            // This will cause the save operation to be performed on the background thread and allow the main thread to continue processing other tasks,
+            // thereby improving the responsiveness of the application.
+            await Task.Yield();
+
+            await MiniExcelLibs.MiniExcel.SaveAsAsync(fileFullPath ,
+                                                      listDics ,
+                                                      excelType: _excelType ,
+                                                      configuration: miniExcelConfig ?? default ,
+                                                      overwriteFile: true).ConfigureAwait(false);
+
+            result.SucceedDone = true;
+        }
+        catch( Exception e )
+        {
+            result.Info += e.Message + Environment.NewLine;
+            return result;
+            throw;
+        }
+
+        return result;
+    }
+
+    private static dynamic GetDefaultConfiguration(ExcelType? _excelType)
+    {
+        dynamic miniExcelConfig = new OpenXmlConfiguration();
+
+        if( _excelType.Equals(ExcelType.XLSX) )
+        {
+            miniExcelConfig = new OpenXmlConfiguration()
+            {
+                TableStyles = TableStyles.None ,
+            };
+        }
+        else if( _excelType.Equals(ExcelType.CSV) )
+        {
+            miniExcelConfig = new CsvConfiguration();
+        }
+
+        return miniExcelConfig;
+    }
 }
 
 
