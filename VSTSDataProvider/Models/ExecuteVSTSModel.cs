@@ -50,7 +50,7 @@ public abstract class BaseVSTSModel : IVSTSModel
         string responseContent;
 
         if( useToken ) { responseContent = await NetUtils.Instance.SendRequestWithAccessTokenStr(TargetUriBuilder.ToString() , Token , callBackAction); }
-        else { responseContent = await NetUtils.Instance.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Token , callBackAction); }
+        else { responseContent = await NetUtils.Instance.SendRequestWithCookieForStr(TargetUriBuilder.ToString() , Cookie , callBackAction); }
 
         //await File.WriteAllTextAsync(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) , $"{DateTime.Now.ToString("HH_mm_ss")}_CookieToken.txt") , responseContent).ConfigureAwait(false);
         return DeserializeBy<T>(responseContent);

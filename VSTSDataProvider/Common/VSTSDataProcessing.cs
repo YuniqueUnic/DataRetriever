@@ -115,13 +115,8 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     public async Task<bool> PreLoadData(System.Action action = null)
     {
-        //VSTSDataProvider.Models.ExecuteVSTSModel.RootObject executeVSTSModel;
-        //VSTSDataProvider.Models.QueryVSTSModel.RootObject queryVSTSModel;
-        bool useToken = UsingTokenToGET && !string.IsNullOrEmpty(_token);
-        bool useCookie = !UsingTokenToGET && !string.IsNullOrEmpty(_cookie);
-
-        var executeVSTSModel = await new ExecuteVSTSModel(useToken ? _token : _cookie , _testPlanID , _testSuiteID , useToken || !useCookie).GetModelAsync(action);
-        var queryVSTSModel = await new QueryVSTSModel(useToken ? _token : _cookie , _testPlanID , _testSuiteID , useToken || !useCookie).GetModelAsync(action);
+        var executeVSTSModel = await new ExecuteVSTSModel(UsingTokenToGET ? _token : _cookie , _testPlanID , _testSuiteID , UsingTokenToGET).GetModelAsync(action);
+        var queryVSTSModel = await new QueryVSTSModel(UsingTokenToGET ? _token : _cookie , _testPlanID , _testSuiteID , UsingTokenToGET).GetModelAsync(action);
 
         if( CheckModels(executeVSTSModel , queryVSTSModel) )
         {
