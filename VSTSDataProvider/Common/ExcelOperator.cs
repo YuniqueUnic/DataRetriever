@@ -47,15 +47,30 @@ public class ExcelOperator
 
     public ExcelOperator(string directoryPath) => _directoryPath = directoryPath;
 
-    public ExcelOperator(string fileName , string directoryPath)
+    public ExcelOperator(string fileFullPath , bool autoSetExcelType = true)
     {
-        _fileName = fileName;
-        _directoryPath = directoryPath;
+        _fileName = Path.GetFileName(fileFullPath);
+        _directoryPath = Path.GetDirectoryName(fileFullPath) ?? Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        if( autoSetExcelType ) { _excelType = ParseExcelType(_fileName); }
     }
 
-    public ExcelOperator setFileName(string fileName)
+    public ExcelOperator(string fileNameWithEx , string directoryPath , bool autoSetExcelType = true)
     {
-        _fileName = fileName;
+        _fileName = fileNameWithEx;
+        _directoryPath = directoryPath;
+        if( autoSetExcelType ) { _excelType = ParseExcelType(fileNameWithEx); }
+    }
+
+    public ExcelOperator setFileName(string fileNameWithoutEx)
+    {
+        _fileName = fileNameWithoutEx;
+        return this;
+    }
+
+    public ExcelOperator setFileNameWithEx(string fileNameWithEx)
+    {
+        _fileName = fileNameWithEx;
+        _excelType = ParseExcelType(fileNameWithEx);
         return this;
     }
 

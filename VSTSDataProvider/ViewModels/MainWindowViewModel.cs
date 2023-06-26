@@ -668,16 +668,16 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         if( result == true )
         {
             // get the selected or input file name after clicking the save button
-            string fileName = saveFileDialog.SafeFileName;
-            string directoryPath = saveFileDialog.FileName.Replace(fileName , "");
+            string fileNameWithEx = saveFileDialog.SafeFileName;
+            string directoryPath = saveFileDialog.FileName.Replace(fileNameWithEx , "");
 
             // According to the file extension to determine the ExcelType
-            ExcelType excelType = Common.ExcelOperator.ParseExcelType(fileName);
+            ExcelType excelType = Common.ExcelOperator.ParseExcelType(fileNameWithEx);
 
             // export as Excel
             var exportResult = await new Common.ExcelOperator(directoryPath)
                 .SetSheetName(IsDetailsChecked ? Resource.Detail : Resource.OTE)
-                .setFileName(fileName)
+                .setFileNameWithEx(fileNameWithEx)
                 .SetExcelType(excelType)
                 .ExportAsync(IsDetailsChecked ?
                 ModeToggleButtonState ? VstsDataCollectionViewDetails : EditDetailsCollectionView
