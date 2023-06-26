@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <!-- 设置应用程序版本号 -->
-    <Version>2.2.1.0</Version>
+    <Version>2.2.2.0</Version>
     <!-- 设置应用程序作者 -->
     <Authors>Yun</Authors>
     <!-- 设置应用程序产品名称 -->
@@ -13,9 +13,9 @@
     <!-- 设置应用程序描述 -->
     <Description>Get the VSTS Query or Execute Information</Description>
     <!-- 设置程序集版本号 -->
-    <AssemblyVersion>2.2.1.0</AssemblyVersion>
+    <AssemblyVersion>2.2.2.0</AssemblyVersion>
     <!-- 设置文件版本号-->
-    <FileVersion>2.2.1.0</FileVersion>
+    <FileVersion>2.2.2.0</FileVersion>
     <!--设置软件图标-->
     <ApplicationIcon>DataProvider2.ico</ApplicationIcon>
   </PropertyGroup>

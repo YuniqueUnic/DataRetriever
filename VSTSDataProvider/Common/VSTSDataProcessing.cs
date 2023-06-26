@@ -27,6 +27,9 @@ public class VSTSDataProcessing : ViewModels.ViewModelBase.BaseViewModel
 
     private bool _testCasesLoadOver = false;
 
+    public Models.QueryVSTSModel.RootObject QueryRootObject => _queryRootObject;
+    public Models.ExecuteVSTSModel.RootObject ExeRootObject => _exeRootObject;
+
     public string? Cooike => _cookie;
     public string? Token => _token;
     public int TestSuiteID => _testSuiteID;

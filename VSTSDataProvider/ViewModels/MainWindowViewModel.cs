@@ -550,7 +550,7 @@ public partial class MainWindowViewModel : ViewModelBase.BaseViewModel
         }
     }
 
-    private VSTSDataProvider.Common.VSTSDataProcessing GetVSTSDataProvider( )
+    public VSTSDataProvider.Common.VSTSDataProcessing GetVSTSDataProvider( )
     {
         VSTSDataProvider.Common.VSTSDataProcessing mVSTSDataProvider;
         Models.TestPlanSuiteId m_IDGroup;
