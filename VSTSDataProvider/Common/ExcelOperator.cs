@@ -125,7 +125,7 @@ public class ExcelOperator
             Info = "NullReferenceException" ,
         };
 
-        if( TargetObj == null ) { return result; }
+        if( TargetObj is null ) { return result; }
 
         var miniExcelConfig = GetDefaultConfiguration(_excelType);
 
@@ -271,6 +271,46 @@ public class ExcelOperator
         catch( Exception e )
         {
             result.Info += e.Message + Environment.NewLine;
+            return result;
+            throw;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Export multiple sheets to a single excel file.
+    /// </summary>
+    /// <param name="fileFullPath"></param>
+    /// <param name="sheetsDic"></param>
+    /// <returns></returns>
+    public async static Task<ExcelOperatorResult> ExportMultiSheetAsync(string fileFullPath , IDictionary<string , object> sheetsDic)
+    {
+        var result = new ExcelOperatorResult()
+        {
+            SucceedDone = false ,
+            FullPath = fileFullPath ,
+            Info = "NullReferenceException" ,
+        };
+
+        if( sheetsDic is null ) { return result; }
+
+        var execlType = ParseExcelType(Path.GetFileName(fileFullPath));
+        var miniExcelConfig = GetDefaultConfiguration(execlType);
+
+        try
+        {
+            await MiniExcelLibs.MiniExcel.SaveAsAsync(fileFullPath ,
+                sheetsDic ,
+                excelType: execlType ,
+                configuration: miniExcelConfig ?? default).ConfigureAwait(false);
+
+            result.Info = $"Export data to {fileFullPath} successfully.";
+            result.SucceedDone = true;
+        }
+        catch( Exception e )
+        {
+            result.Info = e.Message;
             return result;
             throw;
         }
