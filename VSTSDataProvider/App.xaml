@@ -1,0 +1,271 @@
+﻿<Application x:Class="VSTSDataProvider.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+             xmlns:local="clr-namespace:VSTSDataProvider">
+    <!--  StartupUri="/Views/MainWindow.xaml"  -->
+    <Application.Resources>
+        <ResourceDictionary>
+
+            <cvtr:DoubleValueScaleConverter x:Key="DoubleValueScaleConverter" />
+            <cvtr:BoolenNullableToVisibility x:Key="BoolenNullableToVisibility" IsEnabled="True" />
+            <cvtr:BoolenNullableToVisibility x:Key="BoolenNullableToVisibilityReverse"
+                                             IsEnabled="True"
+                                             Reverse="True" />
+            <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityConverter" />
+
+            <cvtr:StringMatchToVisibilityConverter x:Key="StringMatchNullorEmptyToVisibilityReverseConverter" Reverse="True" />
+
+            <cvtr:SpecifiedStringToEmptyConverter x:Key="NullStringToEmptyConverter" ComparisonString="Null" />
+
+            <Style x:Key="TextBoxShortWithLabel" TargetType="TextBox">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Padding="2"
+                                    BorderBrush="Black"
+                                    BorderThickness="1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Name="TitleLabel"
+                                           Grid.Row="0"
+                                           Padding="4,2"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           Content="{TemplateBinding Tag}" />
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                        <TextBox Name="ContentTextBox"
+                                                 Grid.Row="1"
+                                                 MinHeight="18"
+                                                 Padding="4"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.FontSize>
+                                                <Binding Converter="{StaticResource DoubleValueScaleConverter}"
+                                                         ElementName="TitleLabel"
+                                                         Path="FontSize" />
+                                            </TextBox.FontSize>
+                                        </TextBox>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="TextBoxLongWithLabel" TargetType="TextBox">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Padding="4"
+                                    BorderBrush="Black"
+                                    BorderThickness="1">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Name="TitleLabel"
+                                           Grid.Row="0"
+                                           Padding="4,2"
+                                           VerticalContentAlignment="Center"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           Content="{TemplateBinding Tag}" />
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                        <TextBox Name="ContentTextBox"
+                                                 Grid.Row="1"
+                                                 MinHeight="18"
+                                                 Padding="4"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="{TemplateBinding TextWrapping}"
+                                                 Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <TextBox.FontSize>
+                                                <Binding Converter="{StaticResource DoubleValueScaleConverter}"
+                                                         ConverterParameter="1.2"
+                                                         ElementName="TitleLabel"
+                                                         Path="FontSize" />
+                                            </TextBox.FontSize>
+                                        </TextBox>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="LabeledTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TextBox}">
+                            <StackPanel>
+                                <TextBlock Margin="0,0,0,5" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <TextBox Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="BaseButtonStyle" TargetType="Button">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Padding" Value="4" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="BaseDataGridStyle" TargetType="{x:Type DataGrid}">
+                <Setter Property="AutoGenerateColumns" Value="False" />
+                <Setter Property="CanUserReorderColumns" Value="True" />
+                <Setter Property="CanUserResizeColumns" Value="True" />
+                <Setter Property="CanUserResizeRows" Value="True" />
+                <Setter Property="CanUserSortColumns" Value="True" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="RowStyle">
+                    <Setter.Value>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Outcome}" Value="Passed">
+                                    <Setter Property="Background" Value="#C8E6C9" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Outcome}" Value="Active">
+                                    <Setter Property="Background" Value="#B3E5FC" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Outcome}" Value="Failed">
+                                    <Setter Property="Background" Value="#FFCDD2" />
+                                    <Setter Property="Foreground" Value="Black" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ColumnHeaderStyle">
+                    <Setter.Value>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Padding" Value="4,4" />
+                            <Setter Property="FontWeight" Value="DemiBold" />
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="CellStyle">
+                    <Setter.Value>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="4,2" />
+                        </Style>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <ControlTemplate x:Key="DetailModelsGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          CanUserAddRows="{TemplateBinding CanUserAddRows}"
+                          CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
+                          EnableColumnVirtualization="True"
+                          EnableRowVirtualization="True"
+                          IsReadOnly="{TemplateBinding IsReadOnly}"
+                          RowHeight="{TemplateBinding RowHeight}"
+                          SelectionUnit="{TemplateBinding SelectionUnit}"
+                          VirtualizingStackPanel.IsVirtualizing="True"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DataGrid.Columns>
+                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
+                        <DataGridTextColumn Binding="{Binding Index}" Header="No." />
+                        <DataGridTextColumn Binding="{Binding TestPlanId}" Header="TestPlanId" />
+                        <DataGridTextColumn Binding="{Binding TestSuiteId}" Header="TestSuiteId" />
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                        <DataGridTextColumn Binding="{Binding TestTool, Converter={StaticResource NullStringToEmptyConverter}}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding LastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
+                        <DataGridTextColumn Binding="{Binding StateofAutomation}" Header="StateofAutomation" />
+                        <DataGridTemplateColumn Header="Test Steps">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Command="{Binding DataContext.ShowStepsCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource self}, Path=DataContext}"
+                                                Content="Show Steps" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="OTE_OfflineModelsGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}"
+                          CanUserAddRows="{TemplateBinding CanUserAddRows}"
+                          CanUserDeleteRows="{TemplateBinding CanUserDeleteRows}"
+                          IsReadOnly="{TemplateBinding IsReadOnly}"
+                          RowHeight="{TemplateBinding RowHeight}"
+                          SelectionUnit="{TemplateBinding SelectionUnit}"
+                          ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Index}" Header="No." />
+                        <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding TestStep}" Header="TestStep" />
+                        <DataGridTextColumn Binding="{Binding StepAction}" Header="StepAction" />
+                        <DataGridTextColumn Binding="{Binding StepExpected}" Header="StepExpected" />
+                        <DataGridTextColumn Binding="{Binding TestPointId}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding Configuration}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding AssignedTo}" Header="AssignedTo" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding Comment}" Header="Comment" />
+                        <DataGridTextColumn Binding="{Binding Defects}" Header="Defects" />
+                        <DataGridTextColumn Binding="{Binding RunBy}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
+            <!--  [Obsolete("Recommend using DetailModel.")]  -->
+            <ControlTemplate x:Key="TestCaseGridTemplate" TargetType="{x:Type DataGrid}">
+                <DataGrid Style="{StaticResource BaseDataGridStyle}" ItemsSource="{Binding ItemsSource, RelativeSource={RelativeSource TemplatedParent}}">
+                    <DataGrid.Columns>
+                        <!-- <DataGridTextColumn Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}}" Header="No." /> -->
+                        <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                        <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                        <DataGridTextColumn Binding="{Binding CQID}" Header="CQID" />
+                        <DataGridTextColumn Binding="{Binding ProductArea}" Header="ProductArea" />
+                        <DataGridTextColumn Binding="{Binding ScriptName}" Header="ScriptName" />
+                        <DataGridTextColumn Binding="{Binding TestTool}" Header="TestTool" />
+                        <DataGridTextColumn Binding="{Binding Outcome}" Header="Outcome" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.ID}" Header="TestPointId" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.Name}" Header="Configuration" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.lastUpdatedDate}" Header="LastUpdatedDate" />
+                        <DataGridTextColumn Binding="{Binding SelfTestPoint.uniqueName}" Header="RunBy" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </ControlTemplate>
+
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

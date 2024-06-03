@@ -1,0 +1,172 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <!-- 设置应用程序版本号 -->
+    <Version>2.2.2.0</Version>
+    <!-- 设置应用程序作者 -->
+    <Authors>Yun</Authors>
+    <!-- 设置应用程序产品名称 -->
+    <Product>VSTSDataProvider</Product>
+    <!-- 设置应用程序描述 -->
+    <Description>Get the VSTS Query or Execute Information</Description>
+    <!-- 设置程序集版本号 -->
+    <AssemblyVersion>2.2.2.0</AssemblyVersion>
+    <!-- 设置文件版本号-->
+    <FileVersion>2.2.2.0</FileVersion>
+    <!--设置软件图标-->
+    <ApplicationIcon>DataProvider2.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Images\Add.png" />
+    <None Remove="Images\AddPicture.png" />
+    <None Remove="Images\AllDone.png" />
+    <None Remove="Images\BackgroundHightlight.png" />
+    <None Remove="Images\BoldText.png" />
+    <None Remove="Images\CharacterGrowFont.png" />
+    <None Remove="Images\CharacterShrinkFont.png" />
+    <None Remove="Images\Download.png" />
+    <None Remove="Images\EditCopy.png" />
+    <None Remove="Images\EditCut.png" />
+    <None Remove="Images\EditPaste.png" />
+    <None Remove="Images\EditRedo.png" />
+    <None Remove="Images\EditUndo.png" />
+    <None Remove="Images\FontColor.png" />
+    <None Remove="Images\ItalicText.png" />
+    <None Remove="Images\ListBullets.png" />
+    <None Remove="Images\ListNumbering.png" />
+    <None Remove="Images\Menu.png" />
+    <None Remove="Images\ParagraphCenterJustify.png" />
+    <None Remove="Images\ParagraphDecreaseIndentation.png" />
+    <None Remove="Images\ParagraphFullJustify.png" />
+    <None Remove="Images\ParagraphIncreaseIndentation.png" />
+    <None Remove="Images\ParagraphLeftJustify.png" />
+    <None Remove="Images\ParagraphRightJustify.png" />
+    <None Remove="Images\Translate.png" />
+    <None Remove="Images\UnderlineText.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DataProvider2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\BackgroundHightlight.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+    <PackageReference Include="MiniExcel" Version="1.30.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Language\Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Language\Resource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\Add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\AddPicture.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\AllDone.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\BoldText.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\CharacterGrowFont.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\CharacterShrinkFont.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EditCopy.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EditCut.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EditPaste.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EditRedo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\EditUndo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\FontColor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ItalicText.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ListBullets.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ListNumbering.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Menu.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphCenterJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphDecreaseIndentation.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphFullJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphIncreaseIndentation.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphLeftJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\ParagraphRightJustify.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Translate.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\UnderlineText.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+</Project>
+
+<!-- <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Version>1.0.0.0</Version> 设置应用程序版本号 
+    <Authors>Your Name</Authors> 设置应用程序作者
+    <Company>Your Company</Company>设置应用程序公司名称
+    <Product>Your Product Name</Product> 设置应用程序产品名称
+    <Description>Your Application Description</Description> 设置应用程序描述
+    <AssemblyVersion>1.0.0.0</AssemblyVersion> 设置程序集版本号
+    <FileVersion>1.0.0.0</FileVersion> 设置文件版本号
+  </PropertyGroup> -->

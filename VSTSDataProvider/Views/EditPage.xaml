@@ -1,0 +1,607 @@
+﻿<UserControl x:Class="VSTSDataProvider.Views.EditPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iMy="clr-namespace:VSTSDataProvider.Common.UIElementActions"
+             xmlns:local="clr-namespace:VSTSDataProvider.Views"
+             xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+             xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
+             d:Background="White"
+             d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!--
+                By default pressing tab moves focus to the next control.
+                Setting AcceptsTab to true allows the RichTextBox to accept tab characters.
+            -->
+            <Style x:Key="BaseRichTextBoxStyle" TargetType="{x:Type RichTextBox}">
+                <Setter Property="Padding" Value="0,8" />
+                <Setter Property="AutoWordSelection" Value="True" />
+                <Setter Property="AcceptsTab" Value="True" />
+            </Style>
+
+            <iMy:BindingProxy x:Key="BindingProxy" Data="{Binding}" />
+
+            <!--  This tool bar contains all the editing buttons.  -->
+            <ControlTemplate x:Key="EditFuncToolBarTemplate" TargetType="ToolBar">
+                <ToolBar Name="EditFuncoolBar"
+                         Height="26"
+                         DockPanel.Dock="{TemplateBinding DockPanel.Dock}"
+                         ItemsSource="{TemplateBinding ItemsSource}">
+                    <ToolBar.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Width" Value="24" />
+                            <!--<Setter Property="CommandTarget" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Tag}" />-->
+                        </Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Setter Property="Width" Value="20" />
+                        </Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Width" Value="24" />
+                        </Style>
+                    </ToolBar.Resources>
+                    <ToolBar.Header>
+                        <Viewbox MaxWidth="54">
+                            <TextBlock Margin="0"
+                                       Padding="0"
+                                       Foreground="Blue"
+                                       FontSize="12"
+                                       Text="{TemplateBinding Header}" />
+                        </Viewbox>
+                    </ToolBar.Header>
+                    <Button Command="ApplicationCommands.Cut">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Cut}" />
+                                <TextBlock Text="Ctrl+X" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\EditCut.png" />
+                    </Button>
+                    <Button Command="ApplicationCommands.Copy">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Copy}" />
+                                <TextBlock Text="Ctrl+C" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\EditCopy.png" />
+                    </Button>
+                    <Button Command="ApplicationCommands.Paste">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Paste}" />
+                                <TextBlock Text="Ctrl+V" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\EditPaste.png" />
+                    </Button>
+                    <Button Command="ApplicationCommands.Undo">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Undo}" />
+                                <TextBlock Text="Ctrl+Z" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\EditUndo.png" />
+                    </Button>
+                    <Button Command="ApplicationCommands.Redo">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Redo}" />
+                                <TextBlock Text="Ctrl+Y" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\EditRedo.png" />
+                    </Button>
+                    <ToggleButton x:Name="BoldToggleButton" Command="EditingCommands.ToggleBold">
+                        <ToggleButton.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Bold}" />
+                                <TextBlock Text="Ctrl+B" />
+                            </StackPanel>
+                        </ToggleButton.ToolTip>
+                        <Image Source="\Images\BoldText.png" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="ItalicToggleButton" Command="EditingCommands.ToggleItalic">
+                        <ToggleButton.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Italic}" />
+                                <TextBlock Text="Ctrl+I" />
+                            </StackPanel>
+                        </ToggleButton.ToolTip>
+                        <Image Source="\Images\ItalicText.png" />
+                    </ToggleButton>
+                    <ToggleButton x:Name="UnderlineToggleButton" Command="EditingCommands.ToggleUnderline">
+                        <ToggleButton.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Underline}" />
+                                <TextBlock Text="Ctrl+U" />
+                            </StackPanel>
+                        </ToggleButton.ToolTip>
+                        <Image Source="\Images\UnderlineText.png" />
+                    </ToggleButton>
+                    <Button Command="EditingCommands.IncreaseFontSize">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.GrowFont}" />
+                                <TextBlock Text="Ctrl+]" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\CharacterGrowFont.png" />
+                    </Button>
+                    <Button Command="EditingCommands.DecreaseFontSize">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.ShrinkFont}" />
+                                <TextBlock Text="Ctrl+[" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\CharacterShrinkFont.png" />
+                    </Button>
+                    <Button Command="EditingCommands.ToggleBullets">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Bullets}" />
+                                <TextBlock Text="Ctrl+Shift+L" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ListBullets.png" />
+                    </Button>
+                    <Button Command="EditingCommands.ToggleNumbering">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.Numbering}" />
+                                <TextBlock Text="Ctrl+Shift+N" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ListNumbering.png" />
+                    </Button>
+
+                    <!--<Separator />
+                    <ComboBox x:Name="FontFamilyComboBox"
+                              Width="150"
+                              ItemsSource="{Binding FontFamiliesList}" />
+                    <ComboBox x:Name="FontSizeComboBox"
+                              Width="50"
+                              ItemsSource="{Binding FontSizeList}" />
+                    <Separator />
+                    <Button Name="FontColorButton">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.FontColor}" />
+                                <TextBlock Text="" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\FontColor.png" />
+                    </Button>
+                    <Rectangle Name="CurrentFontColor"
+                               Width="16"
+                               Height="16"
+                               Fill="Black" />
+                    <Button Name="btnHighlightColor" Command="">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.BackgroundColor}" />
+                                <TextBlock Text="" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images/BackgroundHightlight.png" />
+                    </Button>
+                    <Rectangle Name="CurrentBackgroundColor"
+                               Width="16"
+                               Height="16"
+                               Fill="Black" />
+                    <Separator />-->
+
+                    <Button Command="EditingCommands.AlignLeft">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.AlignLeft}" />
+                                <TextBlock Text="Ctrl+L" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphLeftJustify.png" />
+                    </Button>
+                    <Button Command="EditingCommands.AlignCenter">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.AlignCenter}" />
+                                <TextBlock Text="Ctrl+E" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphCenterJustify.png" />
+                    </Button>
+                    <Button Command="EditingCommands.AlignRight">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.AlignRight}" />
+                                <TextBlock Text="Ctrl+R" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphRightJustify.png" />
+                    </Button>
+                    <Button Command="EditingCommands.AlignJustify">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.AlignJustify}" />
+                                <TextBlock Text="Ctrl+J" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphFullJustify.png" />
+                    </Button>
+                    <Button Command="EditingCommands.IncreaseIndentation">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.IncreaseIndent}" />
+                                <TextBlock Text="Ctrl+T" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphIncreaseIndentation.png" />
+                    </Button>
+                    <Button Command="EditingCommands.DecreaseIndentation">
+                        <Button.ToolTip>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{x:Static prop:Resource.DecreaseIndent}" />
+                                <TextBlock Text="Ctrl+Shift+T" />
+                            </StackPanel>
+                        </Button.ToolTip>
+                        <Image Source="\Images\ParagraphDecreaseIndentation.png" />
+                    </Button>
+                </ToolBar>
+            </ControlTemplate>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"
+                           MinHeight="28"
+                           MaxHeight="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=ActualHeight, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.8'}" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <DataGrid Name="EditingItemDataGrid"
+                      d:ItemsSource="{d:SampleData ItemCount=1}"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="False"
+                      RowHeight="{Binding ElementName=EditingItemDataGrid, Path=ActualHeight}"
+                      SelectionUnit="CellOrRowHeader"
+                      Tag="{Binding ElementName=RightRTB}">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Tag" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu x:Name="EditColumnContextMenu"
+                                             DataContext="{Binding Data, Source={StaticResource BindingProxy}}"
+                                             IsEnabled="True">
+                                    <MenuItem Header="{x:Static prop:Resource.EditThisItem}">
+                                        <i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding LeftEditTextBoxDocument}"
+                                                                         RichTextBoxTitle="{Binding LeftEditTextBoxTitle}"
+                                                                         SideName="Left" />
+                                        </i:Interaction.Behaviors>
+                                    </MenuItem>
+                                    <MenuItem x:Name="EditRTFFMenuItem" Header="{x:Static prop:Resource.EditExtraRtf}">
+                                        <i:Interaction.Behaviors>
+                                            <iMy:EditinTheSideOfBehavior RichTextBoxContent="{Binding ElementName=EditColumnContextMenu, Path=Parent}"
+                                                                         RichTextBoxTitle="{Binding RightEditRichTextBoxTitle}"
+                                                                         SideName="Right" />
+                                        </i:Interaction.Behaviors>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Resources>
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
+                                <Setter Property="Template" Value="{StaticResource DetailModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditingDetailObCollection}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
+                                <Setter Property="Template" Value="{StaticResource OTE_OfflineModelsGridTemplate}" />
+                                <Setter Property="ItemsSource" Value="{Binding EditingOTEObCollection}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Style>
+            </DataGrid>
+
+        </Grid>
+        <GridSplitter Grid.Row="1"
+                      Grid.Column="0"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="#2000">
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger EventName="DragCompleted">
+                    <i:ChangePropertyAction PropertyName="RowHeight"
+                                            TargetObject="{Binding ElementName=EditingItemDataGrid}"
+                                            Value="{Binding ActualHeight, ElementName=EditingItemDataGrid}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
+        </GridSplitter>
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0"
+                  Grid.Column="0"
+                  MinWidth="32">
+                <DockPanel Name="LeftDockPanel"
+                           Margin="2,0"
+                           LastChildFill="True">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Menu Grid.Column="0" VerticalAlignment="Center">
+                            <MenuItem>
+                                <MenuItem.Header>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <Image Width="12"
+                                               Margin="0,0,4,0"
+                                               Source="\Images\Menu.png" />
+                                        <TextBlock Name="LeftTextBoxTitleTextBlock"
+                                                   MaxWidth="120"
+                                                   Margin="0"
+                                                   Padding="0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding LeftEditTextBoxTitle}" />
+                                    </StackPanel>
+                                </MenuItem.Header>
+                                <MenuItem Name="LeftSaveMenuItem"
+                                          Header="{x:Static prop:Resource.Save}"
+                                          Command="{Binding SaveEditingItemCommand}" />
+                                <MenuItem Header="{x:Static prop:Resource.Reset}" Command="{Binding ResetLeftBoxContentToInitCommand}" />
+                                <MenuItem Header="{x:Static prop:Resource.Cancel}" Command="{Binding CancelEditCommand}" />
+                            </MenuItem>
+                        </Menu>
+                        <ToolBar Name="EditFuncoolBar"
+                                 Grid.Column="1"
+                                 Height="26"
+                                 DockPanel.Dock="{TemplateBinding DockPanel.Dock}">
+                            <ToolBar.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Width" Value="24" />
+                                    <!--<Setter Property="CommandTarget" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Tag}" />-->
+                                </Style>
+                                <Style TargetType="{x:Type Image}">
+                                    <Setter Property="Width" Value="20" />
+                                </Style>
+                                <Style TargetType="{x:Type ToggleButton}">
+                                    <Setter Property="Width" Value="24" />
+                                </Style>
+                            </ToolBar.Resources>
+                            <Button Command="ApplicationCommands.Cut">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Cut}" />
+                                        <TextBlock Text="Ctrl+X" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditCut.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Copy">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Copy}" />
+                                        <TextBlock Text="Ctrl+C" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditCopy.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Paste">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Paste}" />
+                                        <TextBlock Text="Ctrl+V" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditPaste.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Undo">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Undo}" />
+                                        <TextBlock Text="Ctrl+Z" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditUndo.png" />
+                            </Button>
+                            <Button Command="ApplicationCommands.Redo">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Redo}" />
+                                        <TextBlock Text="Ctrl+Y" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\EditRedo.png" />
+                            </Button>
+                            <ToggleButton Name="BulletsToggleButton"
+                                          Checked="BulletsToggleButton_Checked"
+                                          Unchecked="BulletsToggleButton_UnChecked"
+                                          CommandTarget="{Binding ElementName=LeftRTB}">
+                                <ToggleButton.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Bullets}" />
+                                        <TextBlock Text="Ctrl+Shift+L" />
+                                    </StackPanel>
+                                </ToggleButton.ToolTip>
+                                <Image Source="\Images\ListBullets.png" />
+                            </ToggleButton>
+                            <!--  Command="EditingCommands.ToggleNumbering"  -->
+                            <ToggleButton Name="NumberingToggleButton"
+                                          Checked="NumberingToggleButton_Checked"
+                                          Unchecked="NumberingToggleButton_UnChecked"
+                                          CommandTarget="{Binding ElementName=LeftRTB}">
+                                <ToggleButton.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.Numbering}" />
+                                        <TextBlock Text="Ctrl+Shift+N" />
+                                    </StackPanel>
+                                </ToggleButton.ToolTip>
+                                <Image Source="\Images\ListNumbering.png" />
+                            </ToggleButton>
+                            <!--<Button Command="EditingCommands.AlignLeft">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignLeft}" />
+                                        <TextBlock Text="Ctrl+L" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphLeftJustify.png" />
+                            </Button>
+                            <Button Command="EditingCommands.AlignCenter">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignCenter}" />
+                                        <TextBlock Text="Ctrl+E" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphCenterJustify.png" />
+                            </Button>
+                            <Button Command="EditingCommands.AlignRight">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.AlignRight}" />
+                                        <TextBlock Text="Ctrl+R" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphRightJustify.png" />
+                            </Button>-->
+                            <Button Name="IncreaseIndentationButton"
+                                    Click="IncreaseIndentationButton_Clicked"
+                                    CommandTarget="{Binding ElementName=LeftRTB}">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.IncreaseIndent}" />
+                                        <TextBlock Text="Ctrl+T" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphIncreaseIndentation.png" />
+                            </Button>
+                            <Button Name="DecreaseIndentationButton"
+                                    Click="DecreaseIndentationButton_Clicked"
+                                    CommandTarget="{Binding ElementName=LeftRTB}">
+                                <Button.ToolTip>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static prop:Resource.DecreaseIndent}" />
+                                        <TextBlock Text="Ctrl+Shift+T" />
+                                    </StackPanel>
+                                </Button.ToolTip>
+                                <Image Source="\Images\ParagraphDecreaseIndentation.png" />
+                            </Button>
+                        </ToolBar>
+
+                    </Grid>
+                    <TextBox Name="LeftRTB"
+                             AcceptsReturn="True"
+                             AutoWordSelection="True"
+                             SpellCheck.IsEnabled="True"
+                             TextWrapping="WrapWithOverflow"
+                             Text="{Binding LeftEditTextBoxDocument, UpdateSourceTrigger=PropertyChanged}">
+                        <i:Interaction.Triggers>
+                            <i:KeyTrigger Key="S"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl">
+                                <i:InvokeCommandAction Command="{Binding ElementName=LeftSaveMenuItem, Path=Command}" />
+                            </i:KeyTrigger>
+                            <i:KeyTrigger Key="N"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl+Shift">
+                                <i:ChangePropertyAction PropertyName="IsChecked" TargetObject="{Binding ElementName=NumberingToggleButton}">
+                                    <i:ChangePropertyAction.Value>
+                                        <Binding ElementName="NumberingToggleButton" Path="IsChecked">
+                                            <Binding.Converter>
+                                                <cvtr:BooleanInverterConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </i:ChangePropertyAction.Value>
+                                </i:ChangePropertyAction>
+                            </i:KeyTrigger>
+                            <i:KeyTrigger Key="L"
+                                          ActiveOnFocus="True"
+                                          Modifiers="Ctrl+Shift">
+                                <i:ChangePropertyAction PropertyName="IsChecked" TargetObject="{Binding ElementName=BulletsToggleButton}">
+                                    <i:ChangePropertyAction.Value>
+                                        <Binding ElementName="BulletsToggleButton" Path="IsChecked">
+                                            <Binding.Converter>
+                                                <cvtr:BooleanInverterConverter />
+                                            </Binding.Converter>
+                                        </Binding>
+                                    </i:ChangePropertyAction.Value>
+                                </i:ChangePropertyAction>
+                            </i:KeyTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
+
+                </DockPanel>
+            </Grid>
+            <GridSplitter Grid.Row="0"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="#2000" />
+            <Grid Grid.Row="0"
+                  Grid.Column="2"
+                  MinWidth="32">
+                <DockPanel Name="RightDockPanel" Margin="2,0">
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ToolBar Name="RichTextBoxToolBar"
+                                 Grid.Column="0"
+                                 Template="{StaticResource EditFuncToolBarTemplate}" />
+                        <Menu Grid.Column="1" VerticalAlignment="Center">
+                            <MenuItem>
+                                <MenuItem.Header>
+                                    <StackPanel Margin="0" Orientation="Horizontal">
+                                        <Image Width="12"
+                                               Margin="0,0,4,0"
+                                               Source="\Images\Menu.png" />
+                                        <TextBlock MaxWidth="120"
+                                                   Margin="0"
+                                                   Padding="0"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding RightEditRichTextBoxTitle}" />
+                                    </StackPanel>
+                                </MenuItem.Header>
+                                <MenuItem Click="RightSaveMenuItem_Clicked"
+                                          Header="{x:Static prop:Resource.Save}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                                <MenuItem Click="RightResetMenuItem_Clicked"
+                                          Header="{x:Static prop:Resource.Reset}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                                <MenuItem Click="RightCancelMenuItem_Click"
+                                          Header="{x:Static prop:Resource.Cancel}"
+                                          CommandTarget="{Binding ElementName=RightRTB}" />
+                            </MenuItem>
+                        </Menu>
+                    </Grid>
+
+                    <RichTextBox Name="RightRTB" Style="{StaticResource BaseRichTextBoxStyle}" />
+                </DockPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

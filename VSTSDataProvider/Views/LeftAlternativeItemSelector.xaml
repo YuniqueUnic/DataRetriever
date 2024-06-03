@@ -1,0 +1,140 @@
+﻿<UserControl x:Class="VSTSDataProvider.Views.LeftAlternativeItemSelector"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:iMy="clr-namespace:VSTSDataProvider.Common.UIElementActions"
+             xmlns:local="clr-namespace:VSTSDataProvider.Views"
+             xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+             d:Background="White"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <DockPanel Name="TopFunctionDockPanel">
+            <Grid Margin="0,2"
+                  VerticalAlignment="Center"
+                  DockPanel.Dock="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Name="ShowDataGridButton"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Click="ShowDataGridButton_Click"
+                        Command="{Binding ShowEditedCollectionViewCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👁" />
+                        <TextBlock Margin="4,0" Text="{x:Static prop:Resource.Show}" />
+                    </StackPanel>
+                </Button>
+                <ComboBox Name="EditFilterComboBox"
+                          Grid.Row="0"
+                          Grid.Column="1"
+                          Height="{Binding ElementName=ShowDataGridButton, Path=ActualHeight}"
+                          Margin="4,0,0,0"
+                          Padding="4,0"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center"
+                          IsEditable="True"
+                          IsTextSearchEnabled="True"
+                          Visibility="Visible">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel IsVirtualizing="True" VirtualizationMode="Recycling" />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
+                                    <Setter Property="Text" Value="{Binding EditDetailsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Setter Property="ItemsSource" Value="{Binding EditDetailsFilterCollectionsComboBox}" />
+                                    <Setter Property="Tag" Value="{Binding EditDetailsCollectionView}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
+                                    <Setter Property="Text" Value="{Binding EditOTEsFilterComboBoxText, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Setter Property="ItemsSource" Value="{Binding EditOTEsFilterCollectionsComboBox}" />
+                                    <Setter Property="Tag" Value="{Binding EditOTEsCollectionView}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                    <i:Interaction.Behaviors>
+                        <iMy:RefreshCollectionViewBehavior TargetCollectionView="{Binding ElementName=EditFilterComboBox, Path=Tag}" />
+                    </i:Interaction.Behaviors>
+                </ComboBox>
+            </Grid>
+        </DockPanel>
+
+
+        <Grid Grid.Row="1" Grid.Column="0">
+            <DataGrid Grid.Row="1" Grid.Column="0">
+                <DataGrid.Style>
+                    <Style TargetType="DataGrid">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGrid">
+                                    <Border>
+                                        <Grid>
+                                            <Grid.Resources />
+                                            <DataGrid x:Name="OTEsDataGrid"
+                                                      Style="{StaticResource BaseDataGridStyle}"
+                                                      IsReadOnly="True"
+                                                      SelectionUnit="FullRow"
+                                                      ItemsSource="{Binding EditOTEsCollectionView}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Index}" Header="No." />
+                                                    <DataGridTextColumn Binding="{Binding TestCaseId}" Header="TestCaseId" />
+                                                    <DataGridTextColumn Binding="{Binding Title}" Header="Title" />
+                                                </DataGrid.Columns>
+                                                <i:Interaction.Behaviors>
+                                                    <iMy:DoubleClickToEditItemBehavior TargetEditingList="{Binding EditingOTEObCollection}" />
+                                                </i:Interaction.Behaviors>
+                                            </DataGrid>
+                                            <DataGrid x:Name="DetailsDataGrid"
+                                                      Style="{StaticResource BaseDataGridStyle}"
+                                                      IsReadOnly="True"
+                                                      SelectionUnit="FullRow"
+                                                      Visibility="Collapsed"
+                                                      ItemsSource="{Binding EditDetailsCollectionView}">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Binding="{Binding Index}" Header="No." />
+                                                    <DataGridTextColumn Binding="{Binding ID}" Header="TestCaseId" />
+                                                    <DataGridTextColumn Binding="{Binding Name}" Header="Title" />
+                                                </DataGrid.Columns>
+                                                <i:Interaction.Behaviors>
+                                                    <iMy:DoubleClickToEditItemBehavior TargetEditingList="{Binding EditingDetailObCollection}" />
+                                                </i:Interaction.Behaviors>
+                                            </DataGrid>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsDetailsChecked}" Value="True">
+                                            <Setter TargetName="OTEsDataGrid" Property="Visibility" Value="Collapsed" />
+                                            <Setter TargetName="DetailsDataGrid" Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsDetailsChecked}" Value="False">
+                                            <Setter TargetName="OTEsDataGrid" Property="Visibility" Value="Visible" />
+                                            <Setter TargetName="DetailsDataGrid" Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.Style>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>

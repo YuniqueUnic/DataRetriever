@@ -1,0 +1,284 @@
+﻿<Window x:Class="VSTSDataProvider.Views.EditTableWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:cvtr="clr-namespace:VSTSDataProvider.Common"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:VSTSDataProvider.Views"
+        xmlns:prop="clr-namespace:VSTSDataProvider.Properties.Language"
+        xmlns:vm="clr-namespace:VSTSDataProvider.ViewModels"
+        Title="{x:Static prop:Resource.MainWindowTitle}"
+        Width="800"
+        Height="450"
+        d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+
+            <cvtr:MainPageDataGridTemplateSelector x:Key="MainPageDataGridTemplateSelector" />
+
+            <DataTemplate x:Key="VSTSPageContent" DataType="{x:Type local:VSTSPage}">
+                <local:VSTSPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+            </DataTemplate>
+
+            <DataTemplate x:Key="EditPageContent" DataType="{x:Type local:EditPage}">
+                <local:EditPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="164"
+                                  MinWidth="38"
+                                  MaxWidth="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource DoubleValueScaleConverter}, ConverterParameter='0.5'}" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Name="LeftFuncGrid"
+                  Grid.Row="0"
+                  Grid.Column="0"
+                  Margin="4,0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MaxHeight="100" />
+                        <RowDefinition Height="Auto" MaxHeight="100" />
+                        <RowDefinition Height="Auto" MaxHeight="100" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0"
+                                Margin="0,4,0,0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <ToggleButton Name="ModeToggleButton"
+                                      BorderBrush="Transparent"
+                                      IsChecked="{Binding ModeToggleButtonState}">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Background" Value="#323B64AD" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter Property="Background" Value="#323B64FF" />
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <TextBlock Foreground="Blue"
+                                                               FontSize="12"
+                                                               FontWeight="DemiBold"
+                                                               Text="VSTS" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter Property="Background" Value="#3996CAAB" />
+                                            <Setter Property="Content">
+                                                <Setter.Value>
+                                                    <TextBlock Foreground="#FF2CA120"
+                                                               FontSize="12"
+                                                               FontWeight="DemiBold"
+                                                               Text="Edit" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ToggleButton.Style>
+                        </ToggleButton>
+                        <RadioButton Name="TCsRadioButton"
+                                     Grid.Row="0"
+                                     Margin="4,0"
+                                     VerticalContentAlignment="Center"
+                                     GroupName="DataGridTypeRadioGroup"
+                                     IsChecked="{Binding IsDetailsChecked}"
+                                     Content="{x:Static prop:Resource.Detail}" />
+                        <RadioButton Name="OTEsRadioButton"
+                                     Grid.Row="0"
+                                     Margin="4,0"
+                                     VerticalContentAlignment="Center"
+                                     GroupName="DataGridTypeRadioGroup"
+                                     Content="{x:Static prop:Resource.OTE}" />
+                    </StackPanel>
+                    <TextBox Name="TestPlanTextBox"
+                             Style="{StaticResource TextBoxShortWithLabel}"
+                             Grid.Row="1"
+                             Margin="0,4"
+                             d:Text="Test Plan"
+                             Tag="{x:Static prop:Resource.TestPlan}"
+                             Text="{Binding TestPlanID, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Name="TestSuiteTextBox"
+                             Style="{StaticResource TextBoxShortWithLabel}"
+                             Grid.Row="2"
+                             Margin="0,4"
+                             d:Text="Test Suite"
+                             Tag="{x:Static prop:Resource.TestSuite}"
+                             Text="{Binding TestSuiteID, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+
+                <!--  TODO: Try to custom this part  -->
+                <!--  VSTS mode: Keep it as followed style  -->
+                <!--  Edit mode: Change it to look up the specified TestCase Item to Edit its properties.  -->
+                <!--<Grid Name="AlternativeLeftFuncGrid"
+                      Grid.Row="1"
+                      Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBox Name="CompleteURLTextBox"
+                             Style="{StaticResource TextBoxLongWithLabel}"
+                             Grid.Row="0"
+                             Margin="0,4"
+                             Tag="{x:Static prop:Resource.CompleteUrl}"
+                             TextWrapping="Wrap"
+                             Text="{Binding CompleteUrl, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Name="CookieTextBox"
+                             Style="{StaticResource TextBoxLongWithLabel}"
+                             Grid.Row="1"
+                             Margin="0,4"
+                             d:Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod lacus quis semper consequat. Donec commodo, erat eu aliquam ornare, ipsum nisl euismod est, at lacinia nunc felis a nisi. Nulla facilisi. Nunc vel lorem id sapien tristique iaculis. Aenean molestie, tellus in suscipit commodo, libero mauris efficitur nibh, a euismod mauris eros nec diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec venenatis, ex vel cursus interdum, ipsum lacus sollicitudin sapien, vel rutrum velit velit sit amet lectus. Nam condimentum nisl quis tellus feugiat, vel eleifend erat accumsan. Sed vel ultricies nunc. Duis eget lacinia sapien. Vivamus mollis leo nec tortor faucibus, a efficitur nibh molestie."
+                             Tag="{x:Static prop:Resource.Cookie}"
+                             TextWrapping="Wrap"
+                             Text="{Binding Cookie, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>-->
+                <local:LeftAlternativeTextBoxPage x:Name="LeftAlternativeTextBoxPage"
+                                                  Grid.Row="1"
+                                                  Grid.Column="0"
+                                                  DataContext="{Binding}"
+                                                  Visibility="{Binding ElementName=ModeToggleButton, Path=IsChecked, Converter={StaticResource BoolenNullableToVisibility}}" />
+                <local:LeftAlternativeItemSelector x:Name="LeftAlternativeItemSelector"
+                                                   Grid.Row="1"
+                                                   Grid.Column="0"
+                                                   DataContext="{Binding}"
+                                                   Visibility="{Binding ElementName=LeftAlternativeTextBoxPage, Path=Visibility, Converter={StaticResource StringMatchNullorEmptyToVisibilityReverseConverter}, ConverterParameter='Visible'}" />
+                <DockPanel Name="LeftBottomFuncGrid"
+                           Grid.Row="2"
+                           Grid.Column="0"
+                           Margin="0,0,0,4"
+                           LastChildFill="True">
+                    <Menu Grid.Row="0"
+                          Grid.Column="0"
+                          VerticalContentAlignment="Center"
+                          DockPanel.Dock="Left">
+                        <MenuItem VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  FontStyle="Oblique"
+                                  FontWeight="SemiBold">
+                            <MenuItem.Header>
+                                <TextBlock Margin="0"
+                                           Padding="0"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           FontStyle="Normal"
+                                           FontWeight="Regular"
+                                           Text="{x:Static prop:Resource.Menu}" />
+                            </MenuItem.Header>
+                            <MenuItem.Icon>
+                                <Image Width="18"
+                                       Cursor="Hand"
+                                       Stretch="Uniform"
+                                       Source="/Images/Menu.png" />
+                            </MenuItem.Icon>
+                            <MenuItem Header="{x:Static prop:Resource.Export}" Command="{Binding ExportCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Download.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{x:Static prop:Resource.Import}" Command="{Binding ImportCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Add.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Command="{Binding ModeSwitchCommand}">
+                                <MenuItem.Style>
+                                    <Style TargetType="{x:Type MenuItem}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=ModeToggleButton, Path=IsChecked}" Value="True">
+                                                <Setter Property="Foreground" Value="DarkCyan" />
+                                                <Setter Property="Header" Value="{x:Static prop:Resource.EditTab}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ElementName=ModeToggleButton, Path=IsChecked}" Value="False">
+                                                <Setter Property="Foreground" Value="Blue" />
+                                                <Setter Property="Header" Value="{x:Static prop:Resource.VSTSTab}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </MenuItem.Style>
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/ListNumbering.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{x:Static prop:Resource.Language}"
+                                      Command="{Binding LanguageChangeCommand}"
+                                      CommandParameter="{x:Static prop:Resource.Language}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/Translate.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="{x:Static prop:Resource.About}" Command="{Binding AboutCommand}">
+                                <MenuItem.Icon>
+                                    <Image Source="/Images/ItalicText.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="1"
+                               Margin="0,0,4,0"
+                               VerticalAlignment="Center"
+                               d:Text="Sum: 100"
+                               DockPanel.Dock="Right"
+                               Text="{Binding TotalCount, StringFormat='Sum: {0}'}" />
+                    <Label IsEnabled="False" />
+                </DockPanel>
+            </Grid>
+            <GridSplitter Grid.Row="0"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="#2000" />
+            <Grid Name="MainContentGrid"
+                  Grid.Row="0"
+                  Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentControl x:Name="PageContentControl"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Content="{Binding ElementName=ModeToggleButton, Path=Content.Text}">
+                    <ContentControl.ContentTemplateSelector>
+                        <cvtr:MainPageDataGridTemplateSelector>
+                            <cvtr:MainPageDataGridTemplateSelector.VSTSPageDataTemplate>
+                                <DataTemplate DataType="{x:Type local:VSTSPage}">
+                                    <local:VSTSPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </DataTemplate>
+                            </cvtr:MainPageDataGridTemplateSelector.VSTSPageDataTemplate>
+                            <cvtr:MainPageDataGridTemplateSelector.EditPageDataTemplate>
+                                <DataTemplate DataType="{x:Type local:EditPage}">
+                                    <local:EditPage DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
+                                </DataTemplate>
+                            </cvtr:MainPageDataGridTemplateSelector.EditPageDataTemplate>
+                        </cvtr:MainPageDataGridTemplateSelector>
+                    </ContentControl.ContentTemplateSelector>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
